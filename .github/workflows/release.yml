@@ -48,8 +48,8 @@ jobs:
           npx -y vercel deploy --token=${{ secrets.VERCEL_TOKEN }} \
             --target=${{ github.event_name == 'push' && 'production' || 'preview' }} \
             --build-env MDX=docs \
-            --build-env NEXT_PUBLIC_LIBNAME="Poimandres" \
-            --build-env NEXT_PUBLIC_LIBNAME_SHORT="pmndrs" \
+            --build-env NEXT_PUBLIC_LIBNAME="IMQA SDK" \
+            --build-env NEXT_PUBLIC_LIBNAME_SHORT="imqa" \
             --build-env BASE_PATH= \
             --build-env DIST_DIR= \
             --build-env OUTPUT= \

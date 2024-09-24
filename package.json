@@ -55,7 +55,7 @@
     "tailwind-merge": "^2.5.2"
   },
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' next",
+    "dev": "NODE_OPTIONS='--inspect' MDX=docs next",
     "start": "next start",
     "build": "next build",
     "format": "prettier -w src/",
