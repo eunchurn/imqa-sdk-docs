@@ -35,7 +35,7 @@ export default async function Layoutt({ params, children }: Props) {
   const header = (
     <div className="flex h-[--header-height] items-center gap-[--rgrid-m] px-[--rgrid-m]">
       <div className="flex items-center">
-        <Link href="/" aria-label="Poimandres Docs">
+        <Link href="/" aria-label="IMQA Docs">
           <span className="font-bold">
             {NEXT_PUBLIC_LIBNAME_SHORT && (
               <span className="inline lg:hidden">{NEXT_PUBLIC_LIBNAME_SHORT}</span>
@@ -46,7 +46,7 @@ export default async function Layoutt({ params, children }: Props) {
           </span>
         </Link>
         <span className="font-normal">
-          .<a href="https://docs.pmnd.rs">docs</a>
+          .<a href="/getting-started/introduction">docs</a>
         </span>
       </div>
 
