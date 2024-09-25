@@ -132,18 +132,17 @@ window.imqa.api.propagation.setBaggage(
   baggage,
 );
 ```
-
-참조 링크:
-- [OpenTelemetry Baggage](https://opentelemetry.io/docs/concepts/signals/baggage/)
-- [OpenTelemetry in JavaScript](https://scoutapm.com/blog/opentelemetry-in-javascript)
+> [!NOTE]
+> [OpenTelemetry Baggage](https://opentelemetry.io/docs/concepts/signals/baggage/) 참조해주세요.
 
 ## 수동 계측
 
 `<script />` 태그로 초기화되면, `window` 속성에 `imqa`가 노출됩니다. 이는 수동으로 스팬을 생성할 수 있는 기능을 제공합니다.
 
 글로벌 `imqa` 객체는 다음을 포함합니다:
-- `api` - [@opentelemetry/api](https://www.npmjs.com/package/@opentelemetry/api) 모듈 노출
-- `tracer` - [@opentelemetry/tracing](https://www.npmjs.com/package/@opentelemetry/tracing)에서 가져온 `Tracer`의 인스턴스
+- `api` - [@opentelemetry/api](https://github.com/open-telemetry/opentelemetry-js/tree/main/api) 모듈 노출
+- `tracer` - [@opentelemetry/sdk-trace-base
+](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Tracer.ts#L36)에서 가져온 `Tracer`의 인스턴스
 - `recordError` - 주어진 메시지와 선택적 속성으로 오류를 생성하는 함수
 
 예시:
@@ -194,7 +193,7 @@ imqa.registerInstrumentations();
 
 ## 예제 프로그램
 
-아래와 같은 예제 파일을 설정합니다.
+아래와 같이 예제 파일을 설정합니다.
 
 ```bash
 ├── index.html
@@ -202,6 +201,8 @@ imqa.registerInstrumentations();
     └── web-agent-v0.0.1.min.js
 ```
 
+
+`index.html`을 열고 아래 코드를 추가합니다. collector 주소가 설정되어 있지 않은 경우 오류가 발생하지만 브라우저 inspection 도구를 통해 network 탭에서 Trace와 Log 데이터를 직접 확인할 수 있습니다.
 
 ```html {7, 8-15, 26, 29, 42-44, 48-50} showLineNumbers filename="index.html"
 <!DOCTYPE html>

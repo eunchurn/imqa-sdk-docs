@@ -130,8 +130,8 @@ const libs: Record<string, Library> = {
   },
 }
 
-const title = 'Poimandres documentation'
-const description = `Index of documentation for pmndrs/* libraries`
+const title = 'IMQA SDK'
+const description = `IMQA SDK documentation`
 const icon = []
 if (process.env.ICON) {
   icon.push({
