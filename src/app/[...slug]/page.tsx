@@ -51,7 +51,7 @@ export default async function Page({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  console.log('generateStaticParams')
+  // console.log('generateStaticParams')
 
   // return [
   //   { slug: ['getting-started', 'introduction'] },
