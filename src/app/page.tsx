@@ -6,10 +6,8 @@ import r3fIcon from '@/assets/r3f-icon.svg'
 import reactSpringIcon from '@/assets/react-spring-icon.svg'
 import uiKitIcon from '@/assets/uikit-icon.svg'
 import zustandIcon from '@/assets/zustand-icon.svg'
-import Icon from '@/components/Icon'
 import { svg } from '@/utils/icon'
 import { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
@@ -163,15 +161,19 @@ export default function Page() {
       <div className="min-h-screen">
         <div className="px-4 py-8 pb-12 lg:px-28 lg:py-12 lg:pb-20">
           <header className="text-center text-3xl lg:text-left">
-            <Link href="/" aria-label="Poimandres Docs" className="font-bold">
+            <Link
+              href="/getting-started/introduction"
+              aria-label="Poimandres Docs"
+              className="font-bold"
+            >
               <span className="sm:hidden">docs</span>
               <span className="hidden sm:inline">documentation</span>
             </Link>
-            .<Link href="https://pmnd.rs">pmnd.rs</Link>
+            .<Link href="https://imqa.io">imqa</Link>
           </header>
 
           <main className="max-w-8xl mt-8 grid w-full grid-cols-1 gap-8 lg:mt-10 lg:grid-cols-2 lg:gap-12 2xl:grid-cols-3">
-            {Object.entries(libs).map(([id, data]) => (
+            {/* {Object.entries(libs).map(([id, data]) => (
               <div
                 key={id}
                 className="group/card bg-surface-container relative overflow-hidden rounded-md border border-outline-variant font-normal"
@@ -223,7 +225,7 @@ export default function Page() {
                   </div>
                 </div>
               </div>
-            ))}
+            ))} */}
           </main>
         </div>
       </div>
