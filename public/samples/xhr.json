@@ -1,0 +1,514 @@
+[
+  {
+    "resource": {
+      "attributes": [
+        {
+          "key": "service.name",
+          "value": {
+            "stringValue": "real-world-web-rum"
+          }
+        },
+        {
+          "key": "telemetry.sdk.language",
+          "value": {
+            "stringValue": "webjs"
+          }
+        },
+        {
+          "key": "telemetry.sdk.name",
+          "value": {
+            "stringValue": "opentelemetry"
+          }
+        },
+        {
+          "key": "telemetry.sdk.version",
+          "value": {
+            "stringValue": "1.25.1"
+          }
+        },
+        {
+          "key": "imqa.rum.version",
+          "value": {
+            "stringValue": "0.0.1"
+          }
+        },
+        {
+          "key": "sampling.probability",
+          "value": {
+            "intValue": 1
+          }
+        },
+        {
+          "key": "imqa.telemetry.sdk.export_timestamp",
+          "value": {
+            "doubleValue": 1727077301288.4
+          }
+        }
+      ],
+      "droppedAttributesCount": 0
+    },
+    "scopeSpans": [
+      {
+        "scope": {
+          "name": "@opentelemetry/instrumentation-xml-http-request",
+          "version": "0.52.1"
+        },
+        "spans": [
+          {
+            "traceId": "8bdc2b76474e74d9fced7e16779989ae",
+            "spanId": "7926c41855ed53aa",
+            "name": "GET",
+            "kind": 3,
+            "startTimeUnixNano": "1727078494789000000",
+            "endTimeUnixNano": "1727078495170000000",
+            "attributes": [
+              {
+                "key": "http.method",
+                "value": {
+                  "stringValue": "GET"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/api/products?limit=8&page=1&category=null"
+                }
+              },
+              {
+                "key": "document.visibilityState",
+                "value": {
+                  "stringValue": "visible"
+                }
+              },
+              {
+                "key": "session.id",
+                "value": {
+                  "stringValue": "cf8679f7cf0df94cb437b52a5859932c"
+                }
+              },
+              {
+                "key": "location.href",
+                "value": {
+                  "stringValue": "http://localhost:3002/products"
+                }
+              },
+              {
+                "key": "http.response_content_length",
+                "value": {
+                  "intValue": 2
+                }
+              },
+              {
+                "key": "http.status_code",
+                "value": {
+                  "intValue": 200
+                }
+              },
+              {
+                "key": "http.status_text",
+                "value": {
+                  "stringValue": "OK"
+                }
+              },
+              {
+                "key": "http.host",
+                "value": {
+                  "stringValue": "localhost:3002"
+                }
+              },
+              {
+                "key": "http.scheme",
+                "value": {
+                  "stringValue": "http"
+                }
+              },
+              {
+                "key": "http.user_agent",
+                "value": {
+                  "stringValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0,
+            "events": [
+              {
+                "attributes": [],
+                "name": "open",
+                "timeUnixNano": "1727078494789300000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "send",
+                "timeUnixNano": "1727078494789600000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "fetchStart",
+                "timeUnixNano": "1727078494790799902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupStart",
+                "timeUnixNano": "1727078494790799902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupEnd",
+                "timeUnixNano": "1727078494790799902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectStart",
+                "timeUnixNano": "1727078494790799902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectEnd",
+                "timeUnixNano": "1727078494790799902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "requestStart",
+                "timeUnixNano": "1727078494793899902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseStart",
+                "timeUnixNano": "1727078495167299902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseEnd",
+                "timeUnixNano": "1727078495169199902",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "loaded",
+                "timeUnixNano": "1727078495170000000",
+                "droppedAttributesCount": 0
+              }
+            ],
+            "droppedEventsCount": 0,
+            "status": {
+              "code": 0
+            },
+            "links": [],
+            "droppedLinksCount": 0
+          },
+          {
+            "traceId": "7a728aa925f4b74ec6975e45ad2e5dd4",
+            "spanId": "4908565014eb590d",
+            "name": "GET",
+            "kind": 3,
+            "startTimeUnixNano": "1727078494794000000",
+            "endTimeUnixNano": "1727078495193000000",
+            "attributes": [
+              {
+                "key": "http.method",
+                "value": {
+                  "stringValue": "GET"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/api/products?limit=8&page=1&category=null"
+                }
+              },
+              {
+                "key": "document.visibilityState",
+                "value": {
+                  "stringValue": "visible"
+                }
+              },
+              {
+                "key": "session.id",
+                "value": {
+                  "stringValue": "cf8679f7cf0df94cb437b52a5859932c"
+                }
+              },
+              {
+                "key": "location.href",
+                "value": {
+                  "stringValue": "http://localhost:3002/products"
+                }
+              },
+              {
+                "key": "http.response_content_length",
+                "value": {
+                  "intValue": 2
+                }
+              },
+              {
+                "key": "http.status_code",
+                "value": {
+                  "intValue": 200
+                }
+              },
+              {
+                "key": "http.status_text",
+                "value": {
+                  "stringValue": "OK"
+                }
+              },
+              {
+                "key": "http.host",
+                "value": {
+                  "stringValue": "localhost:3002"
+                }
+              },
+              {
+                "key": "http.scheme",
+                "value": {
+                  "stringValue": "http"
+                }
+              },
+              {
+                "key": "http.user_agent",
+                "value": {
+                  "stringValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0,
+            "events": [
+              {
+                "attributes": [],
+                "name": "open",
+                "timeUnixNano": "1727078494794200000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "send",
+                "timeUnixNano": "1727078494794300000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "fetchStart",
+                "timeUnixNano": "1727078494795699951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupStart",
+                "timeUnixNano": "1727078494795699951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupEnd",
+                "timeUnixNano": "1727078494795699951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectStart",
+                "timeUnixNano": "1727078494795699951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectEnd",
+                "timeUnixNano": "1727078494795699951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "requestStart",
+                "timeUnixNano": "1727078495167899951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseStart",
+                "timeUnixNano": "1727078495192399951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseEnd",
+                "timeUnixNano": "1727078495193299951",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "loaded",
+                "timeUnixNano": "1727078495193000000",
+                "droppedAttributesCount": 0
+              }
+            ],
+            "droppedEventsCount": 0,
+            "status": {
+              "code": 0
+            },
+            "links": [],
+            "droppedLinksCount": 0
+          },
+          {
+            "traceId": "e2066d046a2abf8352ca6a9bff2ccf8e",
+            "spanId": "77303c281bf1adc5",
+            "name": "GET",
+            "kind": 3,
+            "startTimeUnixNano": "1727078494799000000",
+            "endTimeUnixNano": "1727078495210000000",
+            "attributes": [
+              {
+                "key": "http.method",
+                "value": {
+                  "stringValue": "GET"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/api/products?limit=8&page=1&category=null"
+                }
+              },
+              {
+                "key": "document.visibilityState",
+                "value": {
+                  "stringValue": "visible"
+                }
+              },
+              {
+                "key": "session.id",
+                "value": {
+                  "stringValue": "cf8679f7cf0df94cb437b52a5859932c"
+                }
+              },
+              {
+                "key": "location.href",
+                "value": {
+                  "stringValue": "http://localhost:3002/products"
+                }
+              },
+              {
+                "key": "http.response_content_length",
+                "value": {
+                  "intValue": 2
+                }
+              },
+              {
+                "key": "http.status_code",
+                "value": {
+                  "intValue": 200
+                }
+              },
+              {
+                "key": "http.status_text",
+                "value": {
+                  "stringValue": "OK"
+                }
+              },
+              {
+                "key": "http.host",
+                "value": {
+                  "stringValue": "localhost:3002"
+                }
+              },
+              {
+                "key": "http.scheme",
+                "value": {
+                  "stringValue": "http"
+                }
+              },
+              {
+                "key": "http.user_agent",
+                "value": {
+                  "stringValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0,
+            "events": [
+              {
+                "attributes": [],
+                "name": "open",
+                "timeUnixNano": "1727078494799000000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "send",
+                "timeUnixNano": "1727078494799200000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "fetchStart",
+                "timeUnixNano": "1727078494799400048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupStart",
+                "timeUnixNano": "1727078494799400048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domainLookupEnd",
+                "timeUnixNano": "1727078494799400048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectStart",
+                "timeUnixNano": "1727078494799400048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "connectEnd",
+                "timeUnixNano": "1727078494799400048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "requestStart",
+                "timeUnixNano": "1727078495192500048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseStart",
+                "timeUnixNano": "1727078495208500048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "responseEnd",
+                "timeUnixNano": "1727078495209500048",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "loaded",
+                "timeUnixNano": "1727078495210000000",
+                "droppedAttributesCount": 0
+              }
+            ],
+            "droppedEventsCount": 0,
+            "status": {
+              "code": 0
+            },
+            "links": [],
+            "droppedLinksCount": 0
+          }
+        ]
+      }
+    ]
+  }
+]
