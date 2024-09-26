@@ -1,0 +1,119 @@
+[
+  {
+    "resource": {
+      "attributes": [
+        {
+          "key": "service.name",
+          "value": {
+            "stringValue": "real-world-web-rum"
+          }
+        },
+        {
+          "key": "imqa.rum.version",
+          "value": {
+            "stringValue": "0.0.1"
+          }
+        },
+        {
+          "key": "http.user_agent",
+          "value": {
+            "stringValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+          }
+        }
+      ],
+      "droppedAttributesCount": 0
+    },
+    "scopeLogs": [
+      {
+        "scope": {
+          "name": "@imqa/web-agent",
+          "version": "0.0.1"
+        },
+        "logRecords": [
+          {
+            "timeUnixNano": "1727076937781099902",
+            "observedTimeUnixNano": "1727076937781099902",
+            "severityNumber": 17,
+            "body": {
+              "stringValue": "Uncaught Error: NEXT_REDIRECT"
+            },
+            "attributes": [
+              {
+                "key": "type",
+                "value": {
+                  "stringValue": "uncaughtException"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/cart"
+                }
+              },
+              {
+                "key": "error.name",
+                "value": {
+                  "stringValue": "Error"
+                }
+              },
+              {
+                "key": "error.message",
+                "value": {
+                  "stringValue": "NEXT_REDIRECT"
+                }
+              },
+              {
+                "key": "error.stack",
+                "value": {
+                  "stringValue": "Error: NEXT_REDIRECT\n    at getRedirectError (webpack-internal:///(rsc)/../../node_modules/.pnpm/next@14.2.5_@babel+core@7.25.2_@opentelemetry+api@1.9.0_@playwright+test@1.46.0_babel-plugin-_m2wbcmq5xzgzdt5bjyzphpzg6i/node_modules/next/dist/client/components/redirect.js:49:19)\n    at redirect (webpack-internal:///(rsc)/../../node_modules/.pnpm/next@14.2.5_@babel+core@7.25.2_@opentelemetry+api@1.9.0_@playwright+test@1.46.0_babel-plugin-_m2wbcmq5xzgzdt5bjyzphpzg6i/node_modules/next/dist/client/components/redirect.js:60:11)\n    at DashboardLayout (webpack-internal:///(rsc)/./src/app/(dashboard)/dashboard/layout.tsx:21:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0
+          },
+          {
+            "timeUnixNano": "1727076937783299902",
+            "observedTimeUnixNano": "1727076937783299902",
+            "severityNumber": 17,
+            "body": {
+              "stringValue": "Uncaught Error: NEXT_REDIRECT"
+            },
+            "attributes": [
+              {
+                "key": "type",
+                "value": {
+                  "stringValue": "uncaughtException"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/cart"
+                }
+              },
+              {
+                "key": "error.name",
+                "value": {
+                  "stringValue": "Error"
+                }
+              },
+              {
+                "key": "error.message",
+                "value": {
+                  "stringValue": "NEXT_REDIRECT"
+                }
+              },
+              {
+                "key": "error.stack",
+                "value": {
+                  "stringValue": "Error: NEXT_REDIRECT\n    at getRedirectError (webpack-internal:///(rsc)/../../node_modules/.pnpm/next@14.2.5_@babel+core@7.25.2_@opentelemetry+api@1.9.0_@playwright+test@1.46.0_babel-plugin-_m2wbcmq5xzgzdt5bjyzphpzg6i/node_modules/next/dist/client/components/redirect.js:49:19)\n    at redirect (webpack-internal:///(rsc)/../../node_modules/.pnpm/next@14.2.5_@babel+core@7.25.2_@opentelemetry+api@1.9.0_@playwright+test@1.46.0_babel-plugin-_m2wbcmq5xzgzdt5bjyzphpzg6i/node_modules/next/dist/client/components/redirect.js:60:11)\n    at DashboardLayout (webpack-internal:///(rsc)/./src/app/(dashboard)/dashboard/layout.tsx:21:66)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0
+          }
+        ]
+      }
+    ]
+  }
+]
