@@ -9,7 +9,7 @@ nav: 1
 웹사이트에서 IMQA로 계측을 시작하는 가장 쉬운 방법은 아래 코드를 `<head></head>` 태그 내부에 추가하는 방법입니다:
 
 ```html
-<script src="./js/web-agent-v1.0.0.min.js" type="text/javascript"></script>
+<script src="./js/web-agent-v0.0.1.min.js" type="text/javascript"></script>
 <script>
   window.imqa &&
     window.imqa.initialize({
@@ -35,7 +35,7 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
       ((e = d.createElement('script')).async = 1),
       (e.src = r),
       (n = d.getElementsByTagName('script')[0]).parentNode.insertBefore(e, n);
-  })(window, 'imqa', document, './js/web-agent-v1.0.0.min.js');
+  })(window, 'imqa', document, './js/web-agent-v0.0.1.min.js');
 
   window.imqa.onReady(function () {
     window.imqa.initialize({
