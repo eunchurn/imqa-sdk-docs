@@ -22,7 +22,7 @@ function Heading({ id, Tag, ...props }: { id?: string; Tag: Hn } & ComponentProp
   return (
     <a
       href={`#${id}`}
-      className="tracking-light my-6 mt-8 block text-balance text-3xl font-bold text-on-surface no-underline hover:underline"
+      className="tracking-light my-6 mt-8 block text-balance text-3xl text-on-surface no-underline hover:underline"
     >
       <Tag id={id} {...props} />
     </a>
