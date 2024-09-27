@@ -13,7 +13,7 @@ export function Keypoints({
       {...props}
       className={cn(className, 'bg-surface-dim my-8 rounded-xl border border-outline-variant p-6')}
     >
-      <h2 className="mb-6 text-2xl font-bold">{title}</h2>
+      <h2 className="mb-6 text-2xl">{title}</h2>
 
       <Ul className="mb-0 text-sm">{children}</Ul>
     </section>
