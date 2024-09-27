@@ -213,6 +213,18 @@ h4 {
   font-size: 1.25rem;
 }
 
+h1 {
+  font-weight: 600;
+}
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: 500;
+}
+
 .text-xs h4 {
   font-size: 0.9rem;
   line-height: 0.8;
