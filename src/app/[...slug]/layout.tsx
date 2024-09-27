@@ -71,7 +71,7 @@ export default async function Layoutt({ params, children }: Props) {
         ))}
         {/* <ToggleTheme className="hidden size-9 items-center justify-center sm:flex" /> */}
 
-        <Menu className="z-100 bg-surface absolute inset-0 top-[--header-height] h-[calc(100dvh-var(--header-height))] w-full overflow-auto lg:hidden">
+        <Menu className="z-100 bg-zinc-50 absolute inset-0 top-[--header-height] h-[calc(100dvh-var(--header-height))] w-full overflow-auto lg:hidden">
           <Nav docs={docs} asPath={asPath} collapsible={false} />
         </Menu>
       </div>
@@ -106,7 +106,7 @@ export default async function Layoutt({ params, children }: Props) {
                   className={cn('mb-2 text-base hover:underline', 'text-on-surface-variant/50')}
                   href={currentPage.editURL || '#no-edit-url'}
                 >
-                  Edit this page
+                  수정하기
                 </a>
               </p>
             )}
@@ -125,7 +125,7 @@ export default async function Layoutt({ params, children }: Props) {
                     'text-on-surface-variant/50',
                   )}
                 >
-                  Previous
+                  이전
                 </label>
                 <div className="text-xl">
                   <Link href={previousPage.url}>{previousPage.title}</Link>
@@ -140,7 +140,7 @@ export default async function Layoutt({ params, children }: Props) {
                     'text-on-surface-variant/50',
                   )}
                 >
-                  Next
+                  다음
                 </label>
                 <div className="text-xl">
                   <Link href={nextPage.url}>{nextPage.title}</Link>
@@ -159,7 +159,7 @@ export default async function Layoutt({ params, children }: Props) {
     <>
       <DocsContext value={{ docs, doc }}>
         <Layout className="[--side-w:theme(spacing.72)]">
-          <LayoutHeader className="z-10 border-b border-outline-variant/50 bg-surface/95 backdrop-blur-xl">
+          <LayoutHeader className="z-10 border-b border-outline-variant/50 bg-white/95 backdrop-blur-xl">
             {header}
           </LayoutHeader>
           <LayoutContent className="lg:mr-[--rgrid-m] xl:mr-0">

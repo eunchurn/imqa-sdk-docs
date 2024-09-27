@@ -3,12 +3,13 @@ import { svg } from '@/utils/icon'
 import resolveMdxUrl from '@/utils/resolveMdxUrl'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
-import { Inconsolata, Inter } from 'next/font/google'
+// import { Inconsolata, Inter } from 'next/font/google'
+import { pretendard } from '@/fonts'
 import './globals.css'
 import { SandpackCSS } from './sandpack-styles'
 
-const inter = Inter({ subsets: ['latin'] })
-const inconsolata = Inconsolata({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
+// const inconsolata = Inconsolata({ subsets: ['latin'] })
 
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL
 const NEXT_PUBLIC_LIBNAME = process.env.NEXT_PUBLIC_LIBNAME
@@ -60,7 +61,14 @@ export default function RootLayout({
       <head>
         <SandpackCSS />
       </head>
-      <body className={cn(inter.className, 'bg-surface break-words')}>
+      <body
+        className={cn(
+          // inter.className,
+          pretendard.className,
+          // 'bg-surface break-words'
+          'bg-zinc-50 break-words',
+        )}
+      >
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
