@@ -74,7 +74,7 @@ const config2 = withMaterialColors(
     // Your base colors as HEX values. 'primary' is required.
     primary,
     // Secondary and/or tertiary are optional, if not set they will be derived from the primary color.
-    // secondary: '#ffff00',
+    // secondary: '#ffffff',
     // tertiary: '#0000ff',
 
     // Add any named colors you need:

@@ -163,7 +163,7 @@ export default function Page() {
           <header className="text-center text-3xl lg:text-left">
             <Link
               href="/getting-started/introduction"
-              aria-label="Poimandres Docs"
+              aria-label="IMQA SDK Docs"
               className="font-bold"
             >
               <span className="sm:hidden">docs</span>
