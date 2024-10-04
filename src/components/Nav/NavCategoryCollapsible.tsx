@@ -91,10 +91,8 @@ function NavItem({
       {...props}
       className={cn(
         'block cursor-pointer rounded-r-xl p-[--NavItem-pad] pl-[--rgrid-m] pr-[calc(2*var(--NavItem-pad)+var(--arrow-size))]',
-        active
-          ? 'interactive-bg-primary-container'
-          : // 'interactive-bg-surface',
-            'bg-white',
+        active ? 'interactive-bg-primary-container' : 'interactive-bg-surface',
+        // 'bg-white',
         className,
       )}
     >

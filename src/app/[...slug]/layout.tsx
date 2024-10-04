@@ -159,7 +159,7 @@ export default async function Layoutt({ params, children }: Props) {
     <>
       <DocsContext value={{ docs, doc }}>
         <Layout className="[--side-w:theme(spacing.72)]">
-          <LayoutHeader className="z-10 border-b border-outline-variant/50 bg-white/95 backdrop-blur-xl">
+          <LayoutHeader className="bg-sruface/95 z-10 border-b border-outline-variant/50 backdrop-blur-xl">
             {header}
           </LayoutHeader>
           <LayoutContent className="lg:mr-[--rgrid-m] xl:mr-0">
