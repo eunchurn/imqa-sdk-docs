@@ -41,7 +41,7 @@ Proxy (VM#1)만 public 네트워크에 노출 다른 모든 VM은 private 네트
 | Internet -> 외부망              | FROM Any Source (port ANY), TO VM (External), Dest. port 80(TCP), 443(TCP)           | \-                                                       |
 | 외부망 \-> 내부망                 | FROM VM#1 (External), TO VM#1 (Internal), Dest. port 4318(TCP)                       | \-                                                       |
 | 내부망 -> 내부망 (VM간)           | FROM VMs (Internal), TO VMs (Internal), Dest. port all (TCP/UDP)                      | \-                                                       |
-| PC -> 내부망 (VM)               | FROM User (Internal), TO VM#5 (Internal), Dest. port all (TCP)               | 내부 접속에도 포트 접근 제한이 필요한 경우 기술 협의 필요 (구성에 따라 port가 변할 수 있음), 단, 기본 구성의 경우 80(TCP), 443(TCP), 3000(TCP), 3080(TCP), 4000(TCP), 4080(TCP) 포트의 개방이 필요  |
+| PC -> 내부망 (VM)               | FROM User (Internal), TO VM#5 (Internal), Dest. port all (TCP)               | 내부 접속에도 포트 접근 제한이 필요한 경우 기술 협의 필요 (구성에 따라 port가 변할 수 있음), 단, 기본 구성의 경우 80(TCP), 443(TCP), DataStore:8123(TCP), DataStore:9000(TCP), DataProcessor:4317(TCP), DataProcessor:4318(TCP), DataProcessorInternalMetric:8888(TCP), DataProcessorSpanMetrics:8889(TCP), DataProcessorZPages:55679(TCP), RDBMS:5432(TCP), WebAuth:3567(TCP), WebApp:3301(TCP), WebApi:8080(TCP), WebApi:8085(TCP) 포트의 개방이 필요  |
 
 ### 방화벽 정책 구성
 
