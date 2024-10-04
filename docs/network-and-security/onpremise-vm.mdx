@@ -3,7 +3,7 @@ title: On-premise VM Infrastructure
 nav: 4
 ---
 
-![Infrastructure on VM](./imqa-onpremise-vm.png)
+![Infrastructure on VM](/imqa-onpremise-vm.png)
 
 ## 서버 요구 표준 사양
 
@@ -30,6 +30,10 @@ nav: 4
 
 ## 네트워크 보안 정책
 
+### 네트워크 분리
+
+Proxy (VM#1)만 public 네트워크에 노출 다른 모든 VM은 private 네트워크에 위치
+
 사용자 요구에 따라 네트워크 보안 정책을 변경 및 수정할 수 있습니다.
 
 | 구간                           | 방화벽 정책                                                                                | 비고                                                       |
@@ -38,3 +42,53 @@ nav: 4
 | 외부망 \-> 내부망                 | FROM VM#1 (External), TO VM#1 (Internal), Dest. port 4318(TCP)                       | \-                                                       |
 | 내부망 -> 내부망 (VM간)           | FROM VMs (Internal), TO VMs (Internal), Dest. port all (TCP/UDP)                      | \-                                                       |
 | PC -> 내부망 (VM)               | FROM User (Internal), TO VM#5 (Internal), Dest. port all (TCP)               | 내부 접속에도 포트 접근 제한이 필요한 경우 기술 협의 필요 (구성에 따라 port가 변할 수 있음), 단, 기본 구성의 경우 80(TCP), 443(TCP), 3000(TCP), 3080(TCP), 4000(TCP), 4080(TCP) 포트의 개방이 필요  |
+
+### 방화벽 정책 구성
+
+- Proxy (VM\#1 private):
+  - 인바운드: HTTP(80), HTTPS(443) 포트만 허용
+  - 아웃바운드: 내부 서버와의 통신에 필요한 포트만 허용
+- Data Processor (VM\#1):
+  - 인바운드: Proxy와의 통신 포트만 허용
+  - 아웃바운드: Data Store, RDBMS와의 통신 포트 허용
+- Data Store (VM\#2):
+  - 인바운드: Data Processor, Stack Engine과의 통신 포트만 허용
+  - 아웃바운드: 제한적 허용 (업데이트 등 필수적인 경우만)
+- RDBMS (VM\#3):
+  - 인바운드: Data Processor, Stack Engine, Web Server와의 통신 포트만 허용
+  - 아웃바운드: 제한적 허용
+- Stack Engine (VM\#4):
+  - 인바운드: Data Processor, Web Server와의 통신 포트만 허용
+  - 아웃바운드: Data Store, RDBMS와의 통신 포트 허용
+- Web Server (VM\#5):
+  - 인바운드: Proxy로부터의 통신 포트만 허용
+  - 아웃바운드: Stack Engine, RDBMS와의 통신 포트 허용
+
+## 로그 수집 및 모니터링
+
+IMQA 서비스로 설치 인프라의 로그 수집 및 모니터링 기능을 제공합니다.
+
+### 모니터링 대상
+
+- 각 VM의 시스템 리소스 (CPU, 메모리, 스토리지, 네트워크)
+- 애플리케이션 로그 및 성능 메트릭
+- 네트워크 트래픽 및 연결 상태
+
+{/* ## 데이터 관리 및 백업 */}
+
+### 데이터 저장
+
+- Data Store (VM#2): 주요 지표, 스팬 데이터 저장 (30일 보관 기준)
+- RDBMS (VM#3): 구조화된 데이터 저장 (사용자, 서비스 및 메타데이터 등)
+
+{/* ### 백업 정책
+
+- 증분 백업: 일일
+- 백업 데이터는 별도의 스토리지에 저장 */}
+
+## 인증 및 권한 관리
+
+- 인증 및 권한 관리는 사용자 요구에 따라 구성 가능
+- SAML, OAuth, 기타 인증 방식 등 다양한 인증 방식 지원
+- 멀티테넌시 지원
+- RBAC 최소 권한 원칙 적용
