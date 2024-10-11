@@ -15,10 +15,27 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 가장 최상의 리소스 속성으로 앱과 에이전트의 메타 데이터를 가지고 있습니다.
 
 - `service.name`: 서비스 이름
+- `service.version`: 서비스 버전
+- `os.name`: 운영체제 이름
+- `os.version`: 운영체제 버전
+- `telemetry.sdk.name`: SDK 이름
+- `telemetry.sdk.version`: SDK 버전
+- `telemetry.sdk.language`: SDK 언어
 - `imqa.rum.version`: RUM 에이전트 버전 (`@imqa/web-agent` 의 버전이 자동으로 추가됩니다. 에이전트를 사용하지 않는 경우 버전 정보를 추가해야 합니다)
 - `application`: 애플리케이션 이름 (설정된 경우, 서비스 이름과는 다릅니다.)
 - `deployment.environment`: 배포 환경 (설정된 경우, production 혹은 staging을 나타냅니다.)
 - `sampling.probability`: 샘플링 확률 (0 ~ 1사이의 샘플링 값을 가집니다.)
+- `imqa.telemetry.sdk.export_timestamp`: 데이터 내보내기 타임스탬프
+- `host.ip`: IP 주소
+- `host.ip.geolocation`: IP 주소의 지리적 위치 정보 (콜렉터에서 추가)
+- `device.model.name`: 디바이스 모델 이름 (nullable)
+- `user_agent.original`: User Agent 문자열
+- `service.key`: 서비스 키
+- `network.carrier.name`: 통신사 이름 (nullable)
+- `network.connection.subtype`: 네트워크 연결 유형, 통신 방식 (nullable)
+- `device.battery.status`: 배터리 상태 (nullable)
+- `device.cpu.util`: CPU 사용률 (nullable)
+- `device.memory.util`: 메모리 사용률 (nullable)
 
 ### 2. 스팬 속성
 
@@ -29,6 +46,9 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 - `location.href`: 현재 페이지의 URL
 - `document.visibilityState`: 문서의 가시성 상태 ("visible" 또는 "hidden")
 - `session.id`: 세션 ID (사용자 접속시 생성됩니다. 포함하지 않을 경우 세션 항목으로 그룹화 할 수 없습니다.)
+- `screen.name`: 현 스팬의 화면 이름
+- `screen.type`: 화면 타입 (e.g., "route", "modal", "dialog")
+- `action.type`: 스팬의 액션 타입 ("document_loads", "xhr_requests", 또는 "route_changes")
 
 #### 2.2. 루트 스팬 특정 속성
 
