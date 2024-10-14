@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IMQA Agent Test Example</title>
+    <script src="./js/web-agent-v0.0.2.min.js" type="text/javascript"></script>
+    <script>
+      window.imqa &&
+        window.imqa.initialize({
+          collectorUrl: 'https://collector.imqa.io',
+          serviceName: 'tester-service',
+          collectErrors: true,
+        })
+    </script>
+  </head>
+  <body>
+    <h1>IMQA Agent Test Example</h1>
+    <button id="work-btn">Do Work</button>
+    <button id="error-btn">Throw Error</button>
+    <p>Click the buttons to test IMQA tracing and error reporting.</p>
+  </body>
+  <script>
+    // 수동 계측을 위한 예제 함수: 스팬 생성
+    function doWork() {
+      const span = imqa.tracer.startSpan('doWork')
+      // 수동 계측 종료 시점
+      setTimeout(() => {
+        span.end()
+        console.log('Work is done and span is ended')
+      }, 1000)
+    }
+
+    // 수동 계측을 위한 예제 함수: 에러 발생
+    function throwError() {
+      throw new Error('Test Error')
+    }
+
+    // Attach event handlers
+    window.onload = () => {
+      document.getElementById('work-btn').addEventListener('click', () => {
+        const span = imqa.tracer.startSpan('buttonClick')
+        doWork()
+        span.end()
+      })
+
+      document.getElementById('error-btn').addEventListener('click', () => {
+        const span = imqa.tracer.startSpan('buttonClickError')
+        throwError()
+        span.end()
+      })
+    }
+  </script>
+</html>
