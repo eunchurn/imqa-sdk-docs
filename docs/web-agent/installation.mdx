@@ -17,6 +17,8 @@ nav: 2
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
       propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
       collectErrors: true,
+      isWebVitals:'{{IS_WEB_VITALS}}',
+      exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
     });
 </script>
 ```
@@ -43,6 +45,8 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
       propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
       collectErrors: true,
+      isWebVitals:'{{IS_WEB_VITALS}}',
+      exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
     });
   });
 </script>
@@ -69,6 +73,8 @@ initialize({
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
   propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
   collectErrors: true,
+  isWebVitals:'{{IS_WEB_VITALS}}',
+  exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
 });
 ```
 
@@ -95,6 +101,8 @@ initialize({
 | collectErrors              | `boolean`                                                                                                                                                 | `true`       | 처리되지 않은 예외, 처리되지 않은 거부, 문서 오류 및 콘솔 오류를 자동으로 수집 및 전송       |
 | userInteractionElementNameLimit | `number`                                                                                                                                               | `20`         | 사용자 상호작용 요소 이름의 제한, 후에는 `...`로 생략됨                                     |
 | getOverriddenServiceName    | <code>(span: [Span](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Span.ts#L61)) => string</code> |              | 스팬 생성 시 서비스 이름을 재정의하는 데 사용되는 함수                                      |
+| isWebVitals | `boolean`                                                                                                                                               | `false`         |         웹 바이탈 메트릭 수집 유무                        |
+| exportIntervalMillis | `number`                                                                                                                                               | `10000`         | 메트릭 리더의 데이터 수집 주기 (밀리초)                                         |
 
 ## 추적 컨텍스트 전파
 
