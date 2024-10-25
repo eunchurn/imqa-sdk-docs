@@ -15,10 +15,7 @@ nav: 2
     window.imqa.initialize({
       collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
-      collectErrors: true,
-      isWebVitals:'{{IS_WEB_VITALS}}',
-      exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
+      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
     });
 </script>
 ```
@@ -43,10 +40,7 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
     window.imqa.initialize({
       collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
-      collectErrors: true,
-      isWebVitals:'{{IS_WEB_VITALS}}',
-      exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
+      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
     });
   });
 </script>
@@ -64,45 +58,53 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
 
 다른 옵션은 프로젝트 내에서 이 라이브러리를 번들로 묶고 초기화하는 것입니다. 프로젝트 디렉토리 내에서 `npm install @imqa/web-agent`를 실행하세요.
 
-에이전트는 다른 기능보다 우선적으로 초기화되어야 합니다:
+에이전트는 다른 기능보다 우선적으로 초기화되어야 관련 정보들을 수집할 수 있습니다.
 
 ```javascript
 import { initialize } from '@imqa/web-agent';
 initialize({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-  propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}'],
-  collectErrors: true,
-  isWebVitals:'{{IS_WEB_VITALS}}',
-  exportIntervalMillis: '{{EXPORT_INTERVAL_MILLIS}}',
+  propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
 });
 ```
 
 ## 설정
 
-설정 옵션은 다음 매개변수를 사용하여 구성할 수 있습니다:
+IMQA Web Agent의 초기화 옵션은 다음 매개변수를 사용하여 구성할 수 있습니다:
 
-| 매개변수                    | 유형                                                                                                                                                      | 기본값       | 설명                                                                                         |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------- |
-| collectorUrl        | `string`                                                                                                                                                  | _필수_       | IMQA 수집기 소스 URL, `@imqa/web-agent` 를 초기화하려면 반드시 정의해야 합니다.                                                                         |
-| authorizationToken         | `string`                                                                                                                                                  |              | IMQA 수집기 인증 토큰                                                                        |
-| serviceName                | `string`                                                                                                                                                  | `"unknown"` | 웹 서비스의 이름                                                                            |
-| applicationName            | `string`                                                                                                                                                  |              | 애플리케이션의 이름                                                                         |
-| deploymentEnvironment      | `string`                                                                                                                                                  |              | 소프트웨어 배포 환경 (예: `staging`, `production`)                                           |
-| defaultAttributes          | `object`                                                                                                                                                  | `{}`         | 각 스팬에 추가되는 속성                                                                     |
-| samplingProbability        | `number`                                                                                                                                                  | `1`          | `1`은 모든 추적이 전송됨을, `0`은 추적이 전송되지 않음을, `0.5`는 50%의 확률로 추적이 전송됨을 의미 |
-| bufferMaxSpans             | `number`                                                                                                                                                  | `2048`       | 전송 대기 중인 최대 스팬 수                                                                 |
-| maxExportBatchSize         | `number`                                                                                                                                                  | `50`         | 한 번의 요청에 포함될 최대 스팬 수                                                          |
-| bufferTimeout              | `number`                                                                                                                                                  | `2000`ms     | 전송 대기 중인 스팬의 시간 (밀리초)                                                         |
-| ignoreUrls                 | `(string\|RegExp)[]`                                                                                                                                      | `[]`         | 무시할 XHR URL 목록 (예: 분석)                                                              |
-| propagateTraceHeaderCorsUrls | `(string\|RegExp)[]`                                                                                                                                      | `[]`         | [W3C Trace Context](https://www.w3.org/TR/trace-context/) HTTP 헤더가 주입될 URL 목록        |
-| collectSessionId           | `boolean`                                                                                                                                                 | `true`       | `session.id` 속성 수집 활성화                                                           |
-| dropSingleUserInteractionTraces | `boolean`                                                                                                                                             | `true`       | 사용자 상호작용 계측 (클릭 등)에서 단일 스팬만 있는 추적을 자동으로 삭제                      |
-| collectErrors              | `boolean`                                                                                                                                                 | `true`       | 처리되지 않은 예외, 처리되지 않은 거부, 문서 오류 및 콘솔 오류를 자동으로 수집 및 전송       |
-| userInteractionElementNameLimit | `number`                                                                                                                                               | `20`         | 사용자 상호작용 요소 이름의 제한, 후에는 `...`로 생략됨                                     |
-| getOverriddenServiceName    | <code>(span: [Span](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Span.ts#L61)) => string</code> |              | 스팬 생성 시 서비스 이름을 재정의하는 데 사용되는 함수                                      |
-| isWebVitals | `boolean`                                                                                                                                               | `false`         |         웹 바이탈 메트릭 수집 유무                        |
-| exportIntervalMillis | `number`                                                                                                                                               | `10000`         | 메트릭 리더의 데이터 수집 주기 (밀리초)                                         |
+| 매개변수 | 타입 | 기본값 | 설명 |
+|---------|------|--------|------|
+| collectorUrl | `string` | _필수_ | IMQA 수집기 소스 URL. `@imqa/web-agent`를 초기화하려면 반드시 정의해야 합니다. |
+| authorizationToken | `string` | - | IMQA 수집기 인증 토큰 |
+| serviceName | `string` | `"unknown"` | 웹 서비스의 이름 |
+| applicationName | `string` | - | 애플리케이션의 이름 |
+| deploymentEnvironment | `string` | - | 소프트웨어 배포 환경 (예: `staging`, `production`) |
+| defaultAttributes | `object` | `{}` | 각 스팬에 추가되는 속성 |
+| samplingProbability | `number \| string` | `1` | `1`은 모든 추적이 전송됨을, `0`은 추적이 전송되지 않음을, `0.5`는 50%의 확률로 추적이 전송됨을 의미 |
+| bufferMaxSpans | `number` | `2048` | 전송 대기 중인 최대 스팬 수 |
+| maxExportBatchSize | `number` | `50` | 한 번의 요청에 포함될 최대 스팬 수 |
+| bufferTimeout | `number` | `2000` | 전송 대기 중인 스팬의 시간 (밀리초) |
+| ignoreUrls | `(string \| RegExp)[]` | `[]` | 무시할 XHR URL 목록 (예: 분석) |
+| propagateTraceHeaderCorsUrls | `(string \| RegExp)[]` | `[]` | [W3C Trace Context](https://www.w3.org/TR/trace-context/) HTTP 헤더가 주입될 URL 목록 |
+| collectSessionId | `boolean` | `true` | `session.id` 속성 수집 활성화 |
+| dropSingleUserInteractionTraces | `boolean` | `true` | 사용자 상호작용 계측 (클릭 등)에서 단일 스팬만 있는 추적을 자동으로 삭제 |
+| collectErrors | `object \| undefined` | `{ error: true, typeError: true, syntaxError: true, referenceError: true }` | 에러 수집 설정 (설정하지 않은 경우 모두 수집) |
+| collectErrors.error | `boolean \| undefined` | `true` | 일반 에러 수집 여부 |
+| collectErrors.typeError | `boolean \| undefined` | `true` | TypeError 수집 여부 |
+| collectErrors.syntaxError | `boolean \| undefined` | `true` | SyntaxError 수집 여부 |
+| collectErrors.referenceError | `boolean \| undefined` | `true` | ReferenceError 수집 여부 |
+| collectLogs | `object \| undefined` | `{ log: true, info: true, debug: true, warn: true, error: true }` | 로그 수집 설정 (설정하지 않은 경우 모두 수집) |
+| collectLogs.log | `boolean \| undefined` | `true` | console.log 수집 여부 |
+| collectLogs.info | `boolean \| undefined` | `true` | console.info 수집 여부 |
+| collectLogs.debug | `boolean \| undefined` | `true` | console.debug 수집 여부 |
+| collectLogs.warn | `boolean \| undefined` | `true` | console.warn 수집 여부 |
+| collectLogs.error | `boolean \| undefined` | `true` | console.error 수집 여부 |
+| userInteractionElementNameLimit | `number` | `20` | 사용자 상호작용 요소 이름의 제한, 후에는 `...`로 생략됨 |
+| getOverriddenServiceName | <code>(span: [Span](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Span.ts#L61)) => string</code> | - | 스팬 생성 시 서비스 이름을 재정의하는 데 사용되는 함수 |
+| collectWebVitals | `boolean` | `false` | 웹 바이탈 메트릭 수집 유무 |
+| webVitalsExportIntervalMillis | `number` | `10000` | 웹 바이탈 메트릭의 데이터 수집 주기 (밀리초) |
+
 
 ## 추적 컨텍스트 전파
 
@@ -215,7 +217,7 @@ imqa.registerInstrumentations();
 
 `index.html`을 열고 아래 코드를 추가합니다. collector 주소가 설정되어 있지 않은 경우 오류가 발생하지만 브라우저 inspection 도구를 통해 network 탭에서 Trace와 Log 데이터를 직접 확인할 수 있습니다.
 
-```html {7, 8-15, 26, 29, 42-44, 48-50} showLineNumbers filename="index.html"
+```html {7, 8-27, 38, 41, 54-56, 60-62} showLineNumbers filename="index.html"
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -228,7 +230,19 @@ imqa.registerInstrumentations();
         window.imqa.initialize({
           collectorUrl: "https://collector.imqa.io",
           serviceName: "tester-service",
-          collectErrors: true,
+          collectErrors: {
+            error: true,
+            typeError: true,
+            syntaxError: true,
+            referenceError: true,
+          },
+          collectLogs: {
+            log: true,
+            info: true,
+            debug: true,
+            warn: true,
+            error: true,
+          }
         });
     </script>
   </head>
