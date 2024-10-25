@@ -1,0 +1,113 @@
+---
+title: API
+description: IMQA Web Agent는 브라우저의 `window.imqa` 객체를 통해 다양한 메서드와 속성을 제공합니다.
+nav: 3
+---
+
+## Methods
+
+### `initialize(options: InitializeOptions): void`
+IMQA Web Agent를 초기화합니다. [초기화 매개변수](./installation.mdx) 문서를 참조하세요.
+
+```javascript
+window.imqa.initialize({
+  collectorUrl: 'https://collector.imqa.io',
+  serviceName: 'my-service',
+  // ... other options
+});
+```
+
+### `onReady(callback: () => void): void`
+IMQA Web Agent가 초기화되고 준비되었을 때 실행될 콜백 함수를 등록합니다.
+
+```javascript
+window.imqa.onReady(() => {
+  console.log('IMQA is ready');
+});
+```
+
+### `registerInstrumentations(): void`
+모든 계측(instrumentation)을 활성화합니다. 이는 다음을 포함합니다:
+- Long Task 계측
+- Document Load 계측
+- User Interaction 계측
+- XMLHttpRequest 계측
+- Fetch API 계측
+
+```javascript
+window.imqa.registerInstrumentations();
+```
+
+### `disableInstrumentations(): void`
+모든 활성화된 계측을 비활성화합니다.
+
+```javascript
+window.imqa.disableInstrumentations();
+```
+
+### `setDefaultAttribute(key: string, value: AttributeValue | undefined): void`
+모든 텔레메트리 데이터에 적용될 기본 속성을 설정합니다.
+
+```javascript
+window.imqa.setDefaultAttribute('environment', 'production');
+```
+
+### `getCurrentSessionId(): string`
+현재 세션의 ID를 반환합니다.
+
+```javascript
+const sessionId = window.imqa.getCurrentSessionId();
+```
+
+### `recordError(message: string, attributes?: Record<string, any>): void`
+사용자 정의 에러를 기록합니다.
+
+```javascript
+window.imqa.recordError('Payment failed', { 
+  orderId: '12345',
+  amount: 50.00
+});
+```
+
+## Properties
+
+### `api: typeof OpenTelemetryAPI`
+OpenTelemetry API에 대한 참조를 제공합니다.
+
+### `tracer: Tracer`
+OpenTelemetry 추적기 인스턴스에 대한 참조를 제공합니다.
+
+### `options: InitializeOptions`
+현재 적용된 초기화 옵션을 포함합니다.
+
+### `readyListeners: Array<() => void>`
+등록된 ready 이벤트 리스너들의 배열입니다.
+
+## 사용 예시
+
+```javascript
+// 초기화
+window.imqa.initialize({
+  collectorUrl: 'https://collector.imqa.io',
+  serviceName: 'frontend-app',
+  collectWebVitals: true
+});
+
+// Ready 이벤트 리스너 등록
+window.imqa.onReady(() => {
+  // 기본 속성 설정
+  window.imqa.setDefaultAttribute('version', '1.0.0');
+  
+  // 커스텀 에러 기록
+  window.imqa.recordError('Custom Error', {
+    component: 'checkout',
+    severity: 'high'
+  });
+  
+  // 현재 세션 ID 획득
+  const sessionId = window.imqa.getCurrentSessionId();
+  console.log('Current session:', sessionId);
+});
+```
+
+> 참고: 이 API는 IMQA Web Agent가 초기화된 후에만 사용할 수 있습니다. 항상 `onReady` 콜백 내부나 초기화 완료 후에 API를 사용하는 것을 권장합니다.
