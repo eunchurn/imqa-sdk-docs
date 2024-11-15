@@ -30,6 +30,8 @@ export default async function Layoutt({ params, children }: Props) {
 
   const NEXT_PUBLIC_LIBNAME = process.env.NEXT_PUBLIC_LIBNAME
   const NEXT_PUBLIC_LIBNAME_SHORT = process.env.NEXT_PUBLIC_LIBNAME_SHORT
+  const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL
+  const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF
 
   const nav = <Nav docs={docs} asPath={asPath} collapsible />
   const header = (
@@ -45,9 +47,16 @@ export default async function Layoutt({ params, children }: Props) {
             </span>
           </span>
         </Link>
-        <span className="font-normal">
-          .<a href="/getting-started/introduction">docs</a>
-        </span>
+        {NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL ? (
+          <span className="font-normal">
+            .
+            {NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF ? (
+              <a href={NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF}>{NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL}</a>
+            ) : (
+              NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL
+            )}
+          </span>
+        ) : null}
       </div>
 
       <Search className="grow" />
