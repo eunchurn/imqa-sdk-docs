@@ -11,11 +11,11 @@ nav: 2
 ```html
 <script src="./js/web-agent-v0.0.1.min.js" type="text/javascript"></script>
 <script>
-  window.imqa &&
-    window.imqa.initialize({
+    window.IMQA.init({
       collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
+      serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+      serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
     });
 </script>
 ```
@@ -34,13 +34,14 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
       ((e = d.createElement('script')).async = 1),
       (e.src = r),
       (n = d.getElementsByTagName('script')[0]).parentNode.insertBefore(e, n);
-  })(window, 'imqa', document, './js/web-agent-v0.0.1.min.js');
+  })(window, 'IMQA', document, './js/web-agent-v0.0.1.min.js');
 
   window.imqa.onReady(function () {
-    window.imqa.initialize({
+    window.IMQA.init({
       collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
+      serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+      serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
     });
   });
 </script>
@@ -61,49 +62,157 @@ IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `col
 에이전트는 다른 기능보다 우선적으로 초기화되어야 관련 정보들을 수집할 수 있습니다.
 
 ```javascript
-import { initialize } from '@imqa/web-agent';
-initialize({
+import IMQA from '@imqa/browser';
+
+IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-  propagateTraceHeaderCorsUrls: ['{{LIST_OF_DOMAINS_TO_RECEIVE_TRACE_CONTEXT}}']
+  serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
 });
 ```
 
-## 설정
+## 옵션 목록
 
-IMQA Web Agent의 초기화 옵션은 다음 매개변수를 사용하여 구성할 수 있습니다:
+| 옵션 이름                    | 타입                                            | 필수 여부 | 설명                                                                                                                                                                 |
+|-----------------------------|-------------------------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `collectorUrl`              | `string`                                        | 선택      | 콜렉터 주소를 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다.                                                                                                |
+| `authorizationToken`        | `string`                                        | 선택      | 인증 토큰을 설정합니다.                                                                                                                                               |
+| `serviceName`               | `string`                                        | 필수      | 서비스 이름을 지정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                      |
+| `serviceKey`                | `string`                                        | 필수      | 서비스 키를 설정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                        |
+| `serviceVersion`            | `string`                                        | 필수      | 서비스 버전을 지정합니다. 텔레메트리 데이터 저장에 필수적이며, 빈 문자열이나 비문자열일 경우 경고가 발생합니다.                                                        |
+| `deploymentEnvironment`     | `string`                                        | 선택      | 배포 환경을 설정합니다. `setGlobalAttributes()`를 통해 지속되는 `environment` 속성의 값을 설정할 수 있습니다.                                                      |
+| `defaultAttributes`         | `Attributes`                                    | 선택      | 기본 리소스 속성을 설정합니다. 모든 Span에 추가되는 전역 속성으로 사용됩니다.                                                                                        |
+| `samplingProbability`       | `number \| string`                              | 선택      | 샘플링 확률을 설정합니다. 0에서 1 사이의 값으로 지정하며, 기본값은 `1`입니다.                                                                                         |
+| `advancedNetworkCapture`    | `boolean`                                       | 선택      | 네트워크 요청 및 응답의 상세 추적을 활성화합니다. 기본값은 `false`입니다.                                                                                               |
+| `blockClass`                | `string`                                        | 선택      | 세션 리플레이에서 가려야 할 요소의 CSS 클래스를 지정합니다.                                                                                                           |
+| `consoleCapture`            | `boolean`                                       | 선택      | 콘솔 캡처 기능을 활성화합니다. 기본값은 `false`입니다.                                                                                                                |
+| `debug`                     | `boolean`                                       | 선택      | 디버깅 모드를 활성화합니다. 기본값은 `false`입니다.                                                                                                                   |
+| `disableIntercom`           | `boolean`                                       | 선택      | Intercom 연동을 비활성화합니다. 기본값은 `false`입니다.                                                                                                               |
+| `disableReplay`             | `boolean`                                       | 선택      | 세션 리플레이 기능을 비활성화합니다. 기본값은 `false`입니다.                                                                                                           |
+| `ignoreClass`               | `string`                                        | 선택      | 세션 리플레이에서 무시할 요소의 CSS 클래스를 지정합니다.                                                                                                             |
+| `ignoreUrls`                | `Array<string \| RegExp>`                       | 선택      | 추적하지 않을 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 부분 일치 또는 정확히 일치하는 URL은 추적되지 않습니다.                                 |
+| `instrumentations`          | `Instrumentations`                              | 선택      | 사용자 지정 Instrumentations 설정을 지정합니다. 기본값은 빈 객체 `{}`입니다.                                                                                           |
+| `maskAllInputs`             | `boolean`                                       | 선택      | 모든 입력 요소를 마스킹합니다. 기본값은 `true`입니다.                                                                                                                 |
+| `maskAllText`               | `boolean`                                       | 선택      | 모든 텍스트를 마스킹합니다. 기본값은 `false`입니다.                                                                                                                 |
+| `maskClass`                 | `string`                                        | 선택      | 텍스트 마스킹에 사용할 CSS 클래스를 지정합니다.                                                                                                                       |
+| `recordCanvas`              | `boolean`                                       | 선택      | 캔버스 요소 기록 여부를 설정합니다. 기본값은 `false`입니다.                                                                                                           |
+| `sampling`                  | `RumRecorderConfig['sampling']`                 | 선택      | 세션 레코더 샘플링 설정을 지정합니다.                                                                                                                                    |
+| `tracePropagationTargets`   | `Array<string \| RegExp>`                       | 선택      | Trace Header를 전파할 대상 도메인 또는 정규식 목록을 지정합니다.                                                                                                       |
 
-| 매개변수 | 타입 | 기본값 | 설명 |
-|---------|------|--------|------|
-| collectorUrl | `string` | _필수_ | IMQA 수집기 소스 URL. `@imqa/web-agent`를 초기화하려면 반드시 정의해야 합니다. |
-| authorizationToken | `string` | - | IMQA 수집기 인증 토큰 |
-| serviceName | `string` | `"unknown"` | 웹 서비스의 이름 |
-| applicationName | `string` | - | 애플리케이션의 이름 |
-| deploymentEnvironment | `string` | - | 소프트웨어 배포 환경 (예: `staging`, `production`) |
-| defaultAttributes | `object` | `{}` | 각 스팬에 추가되는 속성 |
-| samplingProbability | `number \| string` | `1` | `1`은 모든 추적이 전송됨을, `0`은 추적이 전송되지 않음을, `0.5`는 50%의 확률로 추적이 전송됨을 의미 |
-| bufferMaxSpans | `number` | `2048` | 전송 대기 중인 최대 스팬 수 |
-| maxExportBatchSize | `number` | `50` | 한 번의 요청에 포함될 최대 스팬 수 |
-| bufferTimeout | `number` | `2000` | 전송 대기 중인 스팬의 시간 (밀리초) |
-| ignoreUrls | `(string \| RegExp)[]` | `[]` | 무시할 XHR URL 목록 (예: 분석) |
-| propagateTraceHeaderCorsUrls | `(string \| RegExp)[]` | `[]` | [W3C Trace Context](https://www.w3.org/TR/trace-context/) HTTP 헤더가 주입될 URL 목록 |
-| collectSessionId | `boolean` | `true` | `session.id` 속성 수집 활성화 |
-| dropSingleUserInteractionTraces | `boolean` | `true` | 사용자 상호작용 계측 (클릭 등)에서 단일 스팬만 있는 추적을 자동으로 삭제 |
-| collectErrors | `object \| undefined` | `{ error: true, typeError: true, syntaxError: true, referenceError: true }` | 에러 수집 설정 (설정하지 않은 경우 모두 수집) |
-| collectErrors.error | `boolean \| undefined` | `true` | 일반 에러 수집 여부 |
-| collectErrors.typeError | `boolean \| undefined` | `true` | TypeError 수집 여부 |
-| collectErrors.syntaxError | `boolean \| undefined` | `true` | SyntaxError 수집 여부 |
-| collectErrors.referenceError | `boolean \| undefined` | `true` | ReferenceError 수집 여부 |
-| collectLogs | `object \| undefined` | `{ log: true, info: true, debug: true, warn: true, error: true }` | 로그 수집 설정 (설정하지 않은 경우 모두 수집) |
-| collectLogs.log | `boolean \| undefined` | `true` | console.log 수집 여부 |
-| collectLogs.info | `boolean \| undefined` | `true` | console.info 수집 여부 |
-| collectLogs.debug | `boolean \| undefined` | `true` | console.debug 수집 여부 |
-| collectLogs.warn | `boolean \| undefined` | `true` | console.warn 수집 여부 |
-| collectLogs.error | `boolean \| undefined` | `true` | console.error 수집 여부 |
-| userInteractionElementNameLimit | `number` | `20` | 사용자 상호작용 요소 이름의 제한, 후에는 `...`로 생략됨 |
-| getOverriddenServiceName | <code>(span: [Span](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Span.ts#L61)) => string</code> | - | 스팬 생성 시 서비스 이름을 재정의하는 데 사용되는 함수 |
-| collectWebVitals | `boolean` | `false` | 웹 바이탈 메트릭 수집 유무 |
-| webVitalsExportIntervalMillis | `number` | `10000` | 웹 바이탈 메트릭의 데이터 수집 주기 (밀리초) |
+## 옵션 상세 설명
+
+### `collectorUrl` (`string`, 선택)
+텔레메트리 데이터를 전송할 콜렉터의 URL을 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다. 필요에 따라 커스터마이즈할 수 있습니다.
+
+### `authorizationToken` (`string`, 선택)
+콜렉터에 인증할 때 사용할 토큰을 설정합니다. 보안이 필요한 경우 사용합니다.
+
+### `serviceName` (`string`, 필수)
+서비스의 이름을 지정합니다. 이 값은 텔레메트리 데이터 저장 및 분석에 사용됩니다. 필수 옵션으로 설정하지 않으면 텔레메트리 데이터가 저장되지 않습니다.
+
+### `serviceKey` (`string`, 필수)
+서비스의 키를 설정합니다. 이 값 역시 텔레메트리 데이터 저장에 필수적입니다.
+
+### `serviceVersion` (`string`, 필수)
+서비스의 버전을 지정합니다. 빈 문자열이거나 문자열이 아닌 경우 경고가 발생하며, 텔레메트리 데이터가 저장되지 않습니다.
+
+### `deploymentEnvironment` (`string`, 선택)
+배포 환경을 설정합니다. 예를 들어, `production`, `staging` 등으로 설정하여 환경별로 데이터를 구분할 수 있습니다.
+
+### `defaultAttributes` (`Attributes`, 선택)
+모든 Span에 추가되는 전역 속성을 설정합니다. 사용자 정의 속성을 추가하여 텔레메트리 데이터를 보강할 수 있습니다.
+
+### `samplingProbability` (`number | string`, 선택)
+샘플링 확률을 설정합니다. 0에서 1 사이의 값으로 지정하며, 기본값은 `1`로 모든 트랜잭션을 샘플링합니다.
+
+### `advancedNetworkCapture` (`boolean`, 선택)
+네트워크 요청 및 응답의 상세한 추적을 활성화합니다. 기본값은 `false`이며, 활성화 시 네트워크 관련 데이터를 더 상세히 수집할 수 있습니다.
+
+### `blockClass` (`string`, 선택)
+세션 리플레이에서 가려야 할 요소의 CSS 클래스를 지정합니다. 민감한 정보가 포함된 요소를 가릴 때 사용합니다.
+
+### `consoleCapture` (`boolean`, 선택)
+콘솔 로그를 캡처할지 여부를 설정합니다. 기본값은 `false`이며, 활성화 시 콘솔에서 발생하는 로그도 텔레메트리 데이터로 수집됩니다.
+
+### `debug` (`boolean`, 선택)
+디버깅 모드를 활성화합니다. 기본값은 `false`이며, 활성화 시 추가적인 로그가 출력되어 문제 해결에 도움이 됩니다.
+
+### `disableIntercom` (`boolean`, 선택)
+Intercom과의 연동을 비활성화합니다. 기본값은 `false`이며, 활성화 시 Intercom과의 통합 기능이 비활성화됩니다.
+
+### `disableReplay` (`boolean`, 선택)
+세션 리플레이 기능을 비활성화합니다. 기본값은 `false`이며, 활성화 시 사용자 세션의 리플레이 기능이 동작하지 않습니다.
+
+### `ignoreClass` (`string`, 선택)
+세션 리플레이에서 무시할 요소의 CSS 클래스를 지정합니다. 특정 요소를 기록하지 않으려는 경우 사용합니다.
+
+### `ignoreUrls` (`Array<string | RegExp>`, 선택)
+추적하지 않을 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 부분 일치하거나 정확히 일치하는 URL은 텔레메트리 데이터에 포함되지 않습니다.
+
+### `instrumentations` (`Instrumentations`, 선택)
+사용자 지정 Instrumentations 설정을 지정합니다. 기본값은 빈 객체 `{}`이며, 필요에 따라 특정 트래픽 또는 기능만을 추적하도록 설정할 수 있습니다.
+
+`IMQAOtelWebOptionsInstrumentations` 인터페이스는 다양한 계측 모듈의 활성화 여부 및 설정을 정의합니다. 각 속성은 특정 계측 기능을 활성화하거나 비활성화할 수 있으며, 추가적인 설정을 제공할 수 있습니다.
+
+#### 속성 목록
+
+| 속성 이름         | 타입                                               | 필수 여부 | 설명                                                                                                       |
+|------------------|----------------------------------------------------|-----------|------------------------------------------------------------------------------------------------------------|
+| `console`        | `boolean` 또는 `IMQAConsoleInstrumentation`          | 선택      | 콘솔 계측을 활성화하거나 비활성화합니다. `IMQAConsoleInstrumentation` 객체를 통해 추가 설정이 가능합니다.   |
+| `document`       | `boolean` 또는 `InstrumentationConfig`              | 선택      | 문서 로드 계측을 활성화하거나 비활성화합니다. `InstrumentationConfig`을 사용하여 계측 세부 설정을 지정할 수 있습니다. |
+| `errors`         | `boolean`                                          | 선택      | 오류 계측을 활성화하거나 비활성화합니다.                                                                  |
+| `fetch`          | `boolean` 또는 `IMQAFetchInstrumentationConfig`     | 선택      | Fetch API 계측을 활성화하거나 비활성화합니다. `IMQAFetchInstrumentationConfig`을 통해 추가 설정이 가능합니다. |
+| `interactions`   | `boolean` 또는 `IMQAUserInteractionInstrumentationConfig` | 선택      | 사용자 상호작용 계측을 활성화하거나 비활성화합니다. `IMQAUserInteractionInstrumentationConfig`을 통해 세부 설정을 지정할 수 있습니다. |
+| `longtask`       | `boolean` 또는 `InstrumentationConfig`              | 선택      | 장시간 작업 계측을 활성화하거나 비활성화합니다. `InstrumentationConfig`을 사용하여 계측 세부 설정을 지정할 수 있습니다. |
+| `visibility`     | `boolean` 또는 `InstrumentationConfig`              | 선택      | 페이지 가시성 계측을 활성화하거나 비활성화합니다. `InstrumentationConfig`을 통해 추가 설정이 가능합니다.      |
+| `connectivity`   | `boolean` 또는 `InstrumentationConfig`              | 선택      | 네트워크 연결 상태 계측을 활성화하거나 비활성화합니다. `InstrumentationConfig`을 사용하여 계측 세부 설정을 지정할 수 있습니다. |
+| `postload`       | `boolean` 또는 `IMQAPostDocLoadResourceInstrumentationConfig` | 선택      | 문서 로드 후 리소스 계측을 활성화하거나 비활성화합니다. `IMQAPostDocLoadResourceInstrumentationConfig`을 통해 추가 설정이 가능합니다. |
+| `socketio`       | `boolean` 또는 `SocketIoClientInstrumentationConfig` | 선택      | Socket.io 클라이언트 계측을 활성화하거나 비활성화합니다. `SocketIoClientInstrumentationConfig`을 통해 세부 설정을 지정할 수 있습니다. |
+| `websocket`      | `boolean` 또는 `InstrumentationConfig`              | 선택      | WebSocket 계측을 활성화하거나 비활성화합니다. `InstrumentationConfig`을 사용하여 계측 세부 설정을 지정할 수 있습니다. |
+| `webvitals`      | `boolean`                                          | 선택      | Web Vitals 계측을 활성화하거나 비활성화합니다.                                                            |
+| `xhr`            | `boolean` 또는 `IMQAXMLHttpRequestInstrumentationConfig` | 선택      | XMLHttpRequest 계측을 활성화하거나 비활성화합니다. `IMQAXMLHttpRequestInstrumentationConfig`을 통해 추가 설정이 가능합니다. |
+
+#### 속성 상세 설명
+
+##### `console` (`boolean` 또는 `IMQAConsoleInstrumentation`, 선택)
+콘솔 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 기본 콘솔 계측이 활성화됩니다. `IMQAConsoleInstrumentation` 객체를 제공하여 콘솔 계측의 세부 설정을 커스터마이즈할 수 있습니다.
+
+##### `document` (`boolean` 또는 `InstrumentationConfig`, 선택)
+문서 로드 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 문서 로드 이벤트가 계측됩니다. `InstrumentationConfig`을 제공하여 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `errors` (`boolean`, 선택)
+오류 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 전역 오류 핸들러가 활성화되어 애플리케이션에서 발생하는 오류가 자동으로 계측됩니다.
+
+##### `fetch` (`boolean` 또는 `IMQAFetchInstrumentationConfig`, 선택)
+Fetch API 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 Fetch 요청이 자동으로 계측됩니다. `IMQAFetchInstrumentationConfig`을 제공하여 Fetch 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `interactions` (`boolean` 또는 `IMQAUserInteractionInstrumentationConfig`, 선택)
+사용자 상호작용 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클릭, 입력 등 사용자 상호작용 이벤트가 자동으로 계측됩니다. `IMQAUserInteractionInstrumentationConfig`을 통해 상호작용 계측의 세부 설정을 커스터마이즈할 수 있습니다.
+
+##### `longtask` (`boolean` 또는 `InstrumentationConfig`, 선택)
+장시간 작업 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 긴 시간 동안 실행되는 작업이 자동으로 계측됩니다. `InstrumentationConfig`을 제공하여 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `visibility` (`boolean` 또는 `InstrumentationConfig`, 선택)
+페이지 가시성 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 페이지의 가시성 상태(포그라운드/백그라운드 변화)가 자동으로 계측됩니다. `InstrumentationConfig`을 통해 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `connectivity` (`boolean` 또는 `InstrumentationConfig`, 선택)
+네트워크 연결 상태 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 네트워크 상태(온라인/오프라인 변화)가 자동으로 계측됩니다. `InstrumentationConfig`을 제공하여 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `postload` (`boolean` 또는 `IMQAPostDocLoadResourceInstrumentationConfig`, 선택)
+문서 로드 후 리소스 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 문서가 완전히 로드된 후 리소스 로딩 이벤트가 자동으로 계측됩니다. `IMQAPostDocLoadResourceInstrumentationConfig`을 통해 계측의 세부 설정을 커스터마이즈할 수 있습니다.
+
+##### `socketio` (`boolean` 또는 `SocketIoClientInstrumentationConfig`, 선택)
+Socket.io 클라이언트 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 Socket.io 클라이언트의 이벤트가 자동으로 계측됩니다. `SocketIoClientInstrumentationConfig`을 제공하여 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `websocket` (`boolean` 또는 `InstrumentationConfig`, 선택)
+WebSocket 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 WebSocket 연결 이벤트가 자동으로 계측됩니다. `InstrumentationConfig`을 통해 계측의 세부 설정을 조정할 수 있습니다.
+
+##### `webvitals` (`boolean`, 선택)
+Web Vitals 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 Core Web Vitals 지표가 자동으로 계측됩니다.
+
+##### `xhr` (`boolean` 또는 `IMQAXMLHttpRequestInstrumentationConfig`, 선택)
+XMLHttpRequest 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 XMLHttpRequest 요청이 자동으로 계측됩니다. `IMQAXMLHttpRequestInstrumentationConfig`을 통해 계측의 세부 설정을 조정할 수 있습니다.
 
 
 ## 추적 컨텍스트 전파
