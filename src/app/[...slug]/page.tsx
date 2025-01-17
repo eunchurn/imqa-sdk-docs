@@ -54,26 +54,16 @@ export async function generateStaticParams() {
   // console.log('generateStaticParams')
 
   // return [
+  //   { slug: ['getting-started', 'authoring'] },
+  //   { slug: ['getting-started', 'github-actions'] },
   //   { slug: ['getting-started', 'introduction'] },
-  //   { slug: ['getting-started', 'installation'] },
-  //   { slug: ['getting-started', 'your-first-scene'] },
-  //   { slug: [ 'getting-started', 'examples' ] },
-  //   { slug: [ 'api', 'canvas' ] },
-  //   { slug: [ 'api', 'objects' ] },
-  //   { slug: [ 'api', 'hooks' ] },
-  //   { slug: [ 'api', 'events' ] },
-  //   { slug: [ 'api', 'additional-exports' ] },
-  //   { slug: [ 'advanced', 'scaling-performance' ] },
-  //   { slug: [ 'advanced', 'pitfalls' ] },
-  //   { slug: [ 'tutorials', 'v8-migration-guide' ] },
-  //   { slug: [ 'tutorials', 'events-and-interaction' ] },
-  //   { slug: [ 'tutorials', 'loading-models' ] },
-  //   { slug: [ 'tutorials', 'loading-textures' ] },
-  //   { slug: [ 'tutorials', 'basic-animations' ] },
-  //   { slug: [ 'tutorials', 'using-with-react-spring' ] },
-  //   { slug: [ 'tutorials', 'typescript' ] },
-  //   { slug: [ 'tutorials', 'testing' ] },
-  //   { slug: [ 'tutorials', 'how-it-works' ] }
+  //   { slug: ['getting-started', 'real-user-monitoring'] },
+  //   { slug: ['licenses', 'opensources'] },
+  //   { slug: ['network-and-security', 'onpremise-vm'] },
+  //   { slug: ['opentelemetry', 'glossary'] },
+  //   { slug: ['web-agent', 'api'] },
+  //   { slug: ['web-agent', 'installation'] },
+  //   { slug: ['web-agent', 'web-agent'] },
   // ]
 
   const MDX = process.env.MDX
@@ -84,6 +74,5 @@ export async function generateStaticParams() {
 
   const docs = await getDocs(MDX, null, true)
   const paths = docs.map(({ slug }) => ({ slug }))
-  // console.log('paths', paths)
   return paths
 }
