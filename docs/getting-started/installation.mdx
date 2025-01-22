@@ -51,47 +51,14 @@ IMQA에서 제공하는 최신의 기능을 사용하려면 아래 코드를 사
 
 IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `collectorUrl`, `serviceName`, `serviceKey`, `serviceVersion`을 올바르게 제공하면 웹사이트가 준비되며 다른 필수 작업은 필요하지 않습니다. 수집된 추적 정보를 지정된 IMQA 수집기로 전송합니다.
 
-```html
-<script>
-  (function (w, s, d, r, e, n) {
-    (w[s] = w[s] || {
-      readyListeners: [],
-      onReady: function (e) {
-        w[s].readyListeners.push(e);
-      },
-    }),
-      ((e = d.createElement('script')).async = 1),
-      (e.src = r),
-      (n = d.getElementsByTagName('script')[0]).parentNode.insertBefore(e, n);
-  })(window, 'IMQA', document, 'https://cdn.imqa.io/release/npm/@web-agent/latest/index.js');
-
-  window.imqa.onReady(function () {
-    window.IMQA.init({
-      collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
-      serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
-      serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
-    });
-  });
-</script>
-```
-> [!NOTE]
-> **현재 미지원** 자동 업데이트를 위해 CDN을 사용할 수 있습니다. https://cdn.imqa.io/web-agent.min.js
-
-> [!NOTE]
-> 위 예제는 `src` 속성의 스크립트 버전을 생략하고 가장 최신 버전을 자동으로 사용합니다. 스크립트의 버전을 수동으로 제어하려면:
-> - `web-agent-vX.min.js` (예: `web-agent-v1.min.js`)을 사용하여 주요 버전을 제어 (호환되지 않는 변경 없음),
-> - `web-agent-vX.Y.js` (예: `web-agent-v1.0.min.js`)으로 주요 버전 제어 (버그 수정만 자동 포함),
-> - `web-agent-vX.Y.Z.js` (예: `web-agent-v1.0.0.min.js`)로 주요 버전 제어 (엄격한 버전 제어).
-
-## 수동 설치 (현재 지원되지 않음)
+## npm 설치
 
 다른 옵션은 프로젝트 내에서 이 라이브러리를 번들로 묶고 초기화하는 것입니다. 프로젝트 디렉토리 내에서 `npm install @imqa/web-agent`를 실행하세요.
 
 에이전트는 다른 기능보다 우선적으로 초기화되어야 관련 정보들을 수집할 수 있습니다.
 
 ```javascript
-import IMQA from '@imqa/browser';
+import IMQA from '@imqa/web-agent';
 
 IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
@@ -333,181 +300,84 @@ Web Vitals 계측을 활성화하거나 비활성화합니다. `true`로 설정�
 
 XMLHttpRequest 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 XMLHttpRequest 요청이 자동으로 계측됩니다. `IMQAXMLHttpRequestInstrumentationConfig`을 통해 계측의 세부 설정을 조정할 수 있습니다.
 
-
-## 추적 컨텍스트 전파
-
-기본적으로, 교차 출처 요청에 대한 전체 및 앞 끝에서부터 뒷 부분으로의 추적을 생성하는 추적 컨텍스트 전파는 브라우저 CORS 보안 제한 때문에 활성화되지 않습니다.
-
-여러 출처 서비스의 유효한 구성을 IMQA는 수행할 수 없으므로, 이 설정을 할 때는 주의해 주세요. 프로덕션 설정 전에 테스트 환경에서 CORS를 활성화하는 것이 좋습니다.
-
-예를 들어:
-
-```javascript
-// https://api.imqa.io 또는 http://localhost:3000/api URL로 만든 요청에 추적 컨텍스트 전파
-propagateTraceHeaderCorsUrls: [
-  /^https:\/\/api\.imqa.io\/.*/,
-  /^http:\/\/localhost:3000\/api\/.*/,
-],
-```
-
-### Baggage
-
-Baggage는 스팬 간에 전달되는 컨텍스트 정보입니다. 이는 트레이스의 스팬 컨텍스트와 함께 존재하는 key-value 저장소로, 해당 트레이스 내에서 생성된 모든 스팬에서 값을 사용할 수 있게 합니다.
-
-예를 들어, 여러 서비스에 걸쳐 있는 모든 스팬에 `customerId` 속성을 추가하고 싶다고 가정해 보겠습니다. 하지만 `customerId`는 특정 서비스에서만 제공됩니다. 이 목표를 달성하려면 Baggage를 사용하여 이 값을 시스템 전반에 전파할 수 있습니다. 따라서 Baggage는 동적으로 데이터를 추가할 수 있는 `defaultAttributes`와는 다릅니다. `setDefaultAttribute()`는 유사한 기능을수행할 수 있지만, 이는 후행적인 속성을 추가하는 기능이 없습니다 (한번 전송된 스팬에는 속성을 추가할 수 없습니다).
-
-IMQA는 컨텍스트 전파를 사용하여 Baggage를 전달하며, 각기 다른 라이브러리 구현들은 Baggage를 해석하고 제공하는데 필요한 전파자(propagator)를 가지고 있으므로 별도의 구현이 필요 없습니다. Baggage는 IMQA에서 가져온 메서드를 사용하여 접근할 수 있습니다:
-
-```javascript
-const baggage = window.imqa.api.propagation.getBaggage(
-  window.imqa.api.context.active(),
-) || window.imqa.api.propagation.createBaggage();
-
-baggage.setEntry('customerId', { value: 'customer-id-value' });
-
-window.imqa.api.propagation.setBaggage(
-  window.imqa.api.context.active(),
-  baggage,
-);
-```
-> [!NOTE]
-> [OpenTelemetry Baggage](https://opentelemetry.io/docs/concepts/signals/baggage/) 참조해주세요.
-
-## 수동 계측
-
-`<script />` 태그로 초기화되면, `window` 속성에 `imqa`가 노출됩니다. 이는 수동으로 스팬을 생성할 수 있는 기능을 제공합니다.
-
-글로벌 `imqa` 객체는 다음을 포함합니다:
-- `api` - [@opentelemetry/api](https://github.com/open-telemetry/opentelemetry-js/tree/main/api) 모듈 노출
-- `tracer` - [@opentelemetry/sdk-trace-base
-](https://github.com/open-telemetry/opentelemetry-js/blob/2a4919c1cf99d3403d387d7589836fd9e3018896/packages/opentelemetry-sdk-trace-base/src/Tracer.ts#L36)에서 가져온 `Tracer`의 인스턴스
-- `recordError` - 주어진 메시지와 선택적 속성으로 오류를 생성하는 함수
-
-예시:
-
-```javascript
-const { tracer, api, recordError } = imqa;
-
-const span = tracer.startSpan('fetchUserData', {
-  attributes: {
-    organization: 'client-a',
-  },
-});
-
-api.context.with(api.trace.setSpan(api.context.active(), span), () => {
-  // long running operation
-});
-
-recordError('Cannot load data', { organization: 'test' });
-```
-
-프로덕션 사용 시, `imqa`가 정의되지 않은 경우에도 웹사이트가 정상 작동하는지 확인해야 합니다. (예: 브라우저 확장 프로그램에 의해 차단된 경우).
-
-## 계측 비활성화
-
-계측은 런타임 동안 `registerInstrumentations()` 및 `disableInstrumentations()` 메서드를 사용하여 비활성화하고 다시 활성화할 수 있습니다.
-
-```javascript
-imqa.disableInstrumentations();
-// 계측이 비활성화된 상태로 일부 코드 실행
-imqa.registerInstrumentations();
-```
-
-## 공개 API
-
-모든 메서드는 `window.imqa` 객체에서 사용할 수 있습니다.
-
-### setDefaultAttribute(key, value)
-
-초기화 동안 지정된 기본 속성 목록을 확장합니다. 예시: `window.imqa.setDefaultAttribute('user_id', userId)`
-
-### getCurrentSessionId()
-
-현재 `session.id` 속성의 값을 반환합니다. 반환된 값은 시간에 따라 변할 수 있으므로 캐싱하지 않아야 합니다. 예시: `window.imqa.getCurrentSessionId()`
-
-### recordError()
-
-주어진 메시지와 선택적 속성으로 오류를 전송합니다. 예시: `window.imqa.recordError('Cannot load data', { organization: 'test' })`
-
 ## 예제 프로그램
-
-아래와 같이 예제 파일을 설정합니다.
-
-[예제 다운로드 ES6](/example.zip)
-[예제 다운로드 CommonJS](/example-es5.zip)
-
-```bash
-├── index.html
-└── js
-    └── web-agent-v0.0.1.min.js
-```
-
 
 `index.html`을 열고 아래 코드를 추가합니다. collector 주소가 설정되어 있지 않은 경우 오류가 발생하지만 브라우저 inspection 도구를 통해 network 탭에서 Trace와 Log 데이터를 직접 확인할 수 있습니다.
 
-```html {7, 8-27, 38, 41, 54-56, 60-62} showLineNumbers filename="index.html"
+```html {7-19} showLineNumbers filename="index.html"
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IMQA Agent Test Example</title>
-    <script src="./js/web-agent-v0.0.1.min.js" type="text/javascript"></script>
+    <script
+      src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js"
+      integrity="sha384-CltSiI9ODVFqJyko2ysuTgrAribJGWdMdhtoPOZyrbaiLyGDBxRFs1P1UfLxRYfN"
+      crossorigin="anonymous">
+    </script>
     <script>
-      window.imqa &&
-        window.imqa.initialize({
-          collectorUrl: "https://collector.imqa.io",
-          serviceName: "tester-service",
-          collectErrors: {
-            error: true,
-            typeError: true,
-            syntaxError: true,
-            referenceError: true,
-          },
-          collectLogs: {
-            log: true,
-            info: true,
-            debug: true,
-            warn: true,
-            error: true,
-          }
-        });
+      IMQA.initialize({
+        collectorUrl: "https://in-otel.imqa.io",
+        serviceName: "your-service-name",
+        serviceKey: "YOUR_SERVICE_KEY",
+        serviceVersion: "1.0.0"
+      });
     </script>
   </head>
   <body>
     <h1>IMQA Agent Test Example</h1>
     <button id="work-btn">Do Work</button>
     <button id="error-btn">Throw Error</button>
+    <button id="fetch-btn">Fetch Data</button>
+    <button id="xhr-btn">XHR</button>
     <p>Click the buttons to test IMQA tracing and error reporting.</p>
   </body>
   <script>
-    // 수동 계측을 위한 예제 함수: 스팬 생성
+    // console instrumentation
     function doWork() {
-      const span = imqa.tracer.startSpan("doWork");
-      // 수동 계측 종료 시점
-      setTimeout(() => {
-        span.end();
-        console.log("Work is done and span is ended");
-      }, 1000);
+      console.log("Work is done and span is ended");
     }
-
-    // 수동 계측을 위한 예제 함수: 에러 발생
+    // error instrumentation
     function throwError() {
       throw new Error("Test Error");
     }
-
+    // xhr instrumentation
+    function xhrBtn() {
+      console.log("xhrBtn");
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", "https://jsonplaceholder.typicode.com/todos/1");
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          console.log(xhr.response);
+        }
+      };
+      xhr.send();
+    }
+    // fetch instrumentation
+    function fetchBtn() {
+      console.log("fetchBtn");
+      fetch("https://jsonplaceholder.typicode.com/todos/1")
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (json) {
+          console.log(json);
+        });
+    }
     // Attach event handlers
     window.onload = () => {
       document.getElementById("work-btn").addEventListener("click", () => {
-        const span = imqa.tracer.startSpan("buttonClick");
         doWork();
-        span.end();
       });
-
       document.getElementById("error-btn").addEventListener("click", () => {
-        const span = imqa.tracer.startSpan("buttonClickError");
         throwError();
-        span.end();
+      });
+      document.getElementById("xhr-btn").addEventListener("click", () => {
+        xhrBtn();
+      });
+      document.getElementById("fetch-btn").addEventListener("click", () => {
+        fetchBtn();
       });
     };
   </script>
