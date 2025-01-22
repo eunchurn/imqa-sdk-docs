@@ -1,0 +1,610 @@
+---
+title: Web Agent Guide
+description: IMQA Web Agent는 Opentelemetry Native 기반으로 동작합니다. 이 문서는 웹프론트엔드 (VanillaJS, React, Nextjs등) 프레임워크에서 동작하며 웹성능 지표를 수집하기 위한 데이터 구조를 설명합니다.
+nav: 1
+---
+
+## 프론트엔드 모니터링
+
+웹 프론트엔드 성능 모니터링은 사용자 경험을 개선하고 웹 애플리케이션의 성능을 최적화하는 데 중요한 역할을 합니다. IMQA를 사용하면 표준화된 방식으로 성능 데이터를 수집하고 분석할 수 있습니다.
+
+수집된 데이터를 바탕으로 다음과 같은 최적화를 수행할 수 있습니다:
+
+- 느린 API 호출 식별 및 최적화
+- 클라이언트 사이드 렌더링 성능 개선
+- 자주 발생하는 오류 해결
+
+계측 항목
+
+- XMLHttpRequest 및 Fetch API 자동 계측
+- 사용자 상호작용 (클릭, submit, 드래그 등)
+- Document load, Fetched resources
+- History API 및 해시 변경 지원
+- 웹 바이탈(Web Vitals)
+- 세션 ID
+- 자동 컨텍스트 연결을 통한 longtasks
+- uncaught exceptions, unhandled rejections, document errors, console errors
+- 수동 계측 지원
+- Timer, Promise, Native async-await, 이벤트, 옵저버 등을 통한 자동 컨텍스트 유지
+
+## Web Agent 설치 및 사용
+
+IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기 위해서는 [설치 방법](./installation.mdx)을 참조하여 `@imqa/web-agent`를 설치하여 자동 계측 방법으로 사용하거나 아래에 설명된 속성 필드와 스키마를 참조하여 사용자가 직접 성능 데이터를 수집하여 컬렉터로 HTTP혹은 gRPC로 전송하여 사용할 수 있습니다.
+
+## 속성 필드 설명
+
+### 1. 리소스 속성
+
+가장 최상의 리소스 속성으로 앱과 에이전트의 메타 데이터를 가지고 있습니다.
+
+- `service.name`: 서비스 이름
+- `imqa.rum.version`: RUM 에이전트 버전 (`@imqa/web-agent` 의 버전이 자동으로 추가됩니다. 에이전트를 사용하지 않는 경우 버전 정보를 추가해야 합니다)
+- `application`: 애플리케이션 이름 (설정된 경우, 서비스 이름과는 다릅니다.)
+- `deployment.environment`: 배포 환경 (설정된 경우, production 혹은 staging을 나타냅니다.)
+- `sampling.probability`: 샘플링 확률 (0 ~ 1사이의 샘플링 값을 가집니다.)
+### 2. 스팬 속성
+
+#### 2.1. 기본 스팬 속성
+
+모든 스팬에 공통적으로 포함되는 속성들입니다.
+
+- `location.href`: 현재 페이지의 URL
+- `document.visibilityState`: 문서의 가시성 상태 ("visible" 또는 "hidden")
+- `session.id`: 세션 ID (사용자 접속시 생성됩니다. 포함하지 않을 경우 세션 항목으로 그룹화 할 수 없습니다.)
+
+#### 2.2. 루트 스팬 특정 속성
+
+- `xhr.is_root_span`: XHR 요청을 포함하는 루트 스팬인 경우 true
+- `http.longtasks_sum`: Long task의 총 지속 시간 (나노초)
+- `http.time_to_first_xhr`: 루트 스팬 시작부터 첫 번째 XHR 요청까지의 시간 (나노초)
+- `http.time_in_xhr_calls`: 총 XHR 요청 시간 (중복 제외, 나노초)
+- `http.time_to_last_xhr`: 루트 스팬 시작부터 마지막 XHR 요청 종료까지의 시간 (나노초)
+- `http.time_to_xhr_processing_end`: 트레이스의 전체 지속 시간 (나노초)
+
+#### 2.3. XHR 스팬 속성
+
+- `root_span.operation`: 루트 스팬의 이름
+- `root_span.http.url`: 루트 스팬의 URL
+
+#### 2.4. Long Task 스팬 속성
+
+- `root_span.operation`: 루트 스팬의 이름
+- `root_span.http.url`: 루트 스팬의 URL
+- `http.action_type`: 트레이스의 HTTP 액션 타입 ("document_loads", "xhr_requests", 또는 "route_changes")
+
+#### 2.5. 이벤트
+
+이벤트는 스팬 내에서 발생하는 중요한 시점이나 상태 변화를 나타냅니다. 각 이벤트는 이름, 타임스탬프, 그리고 선택적으로 속성을 가질 수 있습니다.
+
+##### 2.5.1. 페이지 가시성 이벤트
+
+- `pageshow`: 페이지가 표시될 때 발생하는 이벤트
+   - 타임스탬프: 이벤트 발생 시간
+   - 속성: 없음
+- `pagehide`: 페이지가 숨겨질 때 발생하는 이벤트
+   - 타임스탬프: 이벤트 발생 시간
+   - 속성: 없음
+
+##### 2.5.2. 사용자 상호작용 이벤트
+
+`@opentelemetry/instrumentation-user-interaction`에 의해 수집되는 이벤트:
+
+- `click`: 사용자가 요소를 클릭할 때 발생
+- `dblclick`: 사용자가 요소를 더블 클릭할 때 발생
+- `submit`: 폼이 제출될 때 발생
+- `reset`: 폼이 리셋될 때 발생
+- `pause`, `play`: 미디어 요소(비디오, 오디오)의 재생 상태가 변경될 때 발생
+- `dragstart`, `dragend`: 드래그 동작이 시작되거나 끝날 때 발생
+- `drop`: 드래그된 요소가 드롭될 때 발생
+
+각 이벤트는 다음과 같은 정보를 포함할 수 있습니다:
+
+- 타임스탬프: 이벤트 발생 시간
+- 대상 요소: 이벤트가 발생한 HTML 요소의 정보 (예: 요소 유형, ID, 클래스 등)
+- 추가 컨텍스트: 이벤트와 관련된 추가 정보 (예: 클릭된 좌표, 제출된 폼 데이터 등)
+
+##### 2.5.3 성능 관련 이벤트
+
+- `longtask`: 브라우저의 메인 스레드를 50ms 이상 차단하는 작업이 발생할 때 기록
+   - 타임스탬프: Long task 시작 시간
+   - 지속 시간: Long task의 지속 시간
+
+#### 2.6. 성능 지표 데이터
+
+웹 애플리케이션의 성능과 사용자 경험에 대한 정보입니다. 이 데이터를 분석함으로써 페이지 로드 시간, API 호출 성능, 사용자 상호작용 패턴, 성능 병목 현상, 그리고 오류 발생 상황 등을 종합적으로 파악할 수 있습니다.
+
+`@imqa/web-agent` 는 추가 설정 없이 자동으로 여러 웹 애플리케이션 성능 지표를 수집합니다. 아래의 6가지 주요 자동 계측 항목은 에이전트를 사용하지 않고 커스텀 에이전트를 만들어 데이터를 컬렉터로 보내는 경우 아래의 문서들을 참고하여 데이터를 생성해야 합니다:
+
+- [PerformanceObserver](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver)
+- [PerformanceNavigationTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceNavigationTiming)
+- [PerformanceResourceTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming)
+- [PerformanceEntry](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEntry)
+- [PerformanceEventTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEventTiming)
+- [Performance](https://developer.mozilla.org/en-US/docs/Web/API/Performance)
+
+주요 자동 계측 항목은 다음과 같습니다.
+
+##### 2.6.1 Document Load
+
+> [!NOTE]
+> 오픈텔레메트리의 Doucment Load 항목을 참고하려면 [`@opentelemetry/instrumentation-document-load`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load)을 확인해주세요.
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[document-load.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/F5830DE2-74B0-4F81-9B1E-DEB8F270519E_2/ekOj9SQgJrOuaFcgL1TdcAFGvjgdBC3HoOxryzkc6LQz/document-load.json)</KeypointsItem>
+</Keypoints>
+
+
+- `name`: "documentLoad"
+- `startTime`: 네비게이션 시작 시간
+- `endTime`: `loadEventEnd` 시간
+- 속성:
+   - `document.location`: 문서의 URL
+   - `document.timing.domInteractive`: DOM이 파싱되어 상호작용 가능한 시점까지의 시간
+   - `document.timing.domContentLoadedEventStart`: DOMContentLoaded 이벤트 시작 시간
+   - `document.timing.domContentLoadedEventEnd`: DOMContentLoaded 이벤트 종료 시간
+   - `document.timing.loadEventStart`: load 이벤트 시작 시간
+   - `document.timing.loadEventEnd`: load 이벤트 종료 시간
+   - `document.timing.domComplete`: DOM 구성 완료 시간
+
+##### 2.6.2 XML HTTP Request 
+
+> [!NOTE]
+> 오픈텔레메트리의 XML HTTP Request 항목을 참고하려면 [`@opentelemetry/instrumentation-xml-http-request`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)을 확인해주세요.
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[xhr.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/7B9F3AFC-1142-433F-9B87-98163FEC9A3E_2/Jy9SGxAIJ2yVwSO66lyxmnv0im7xb8rMfRyfywyBDx0z/xhr.json)</KeypointsItem>
+</Keypoints>
+
+`name`: "HTTP "
+
+- 속성:
+   - `http.method`: HTTP 메소드 (GET, POST 등)
+   - `http.url`: 요청 URL
+   - `http.status_code`: HTTP 상태 코드
+   - `http.status_text`: HTTP 상태 텍스트
+   - `http.host`: 호스트 이름
+   - `http.scheme`: URL 스키마 (http, https)
+   - `http.user_agent`: User Agent 문자열
+
+##### 2.6.3 Fetch 
+
+> [!NOTE]
+> 오픈텔레메트리의 Fetch 항목을 참고하려면 [`@opentelemetry/instrumentation-fetch`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)을 확인해주세요.
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[fetch.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/333635CF-1987-4DFB-B0B5-007CEA737C32_2/23knRtpJ0Z7EM7eCSQoibBxQ6yktfU0zKQgTqAHx52oz/fetch.json)</KeypointsItem>
+</Keypoints>
+
+`name`: "HTTP "
+
+- 속성:
+   - `http.method`: HTTP 메소드 (GET, POST 등)
+   - `http.url`: 요청 URL
+   - `http.status_code`: HTTP 상태 코드
+   - `http.status_text`: HTTP 상태 텍스트
+   - `http.host`: 호스트 이름
+   - `http.scheme`: URL 스키마 (http, https)
+
+##### 2.6.4 User Interaction 
+
+> [!NOTE]
+> 오픈텔레메트리의 User Interaction 항목을 참고하려면 [`@opentelemetry/instrumentation-user-interaction`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-user-interaction)을 확인해주세요.
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[user-interaction.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/72178159-5BC3-4D9A-AA3E-9669F3CE473D_2/E5YwWyXnrvOTGyFX354V2KTcMY9XXrSsNpy3GjSXzTkz/user-interaction.json)</KeypointsItem>
+</Keypoints>
+
+`name`: " on "
+
+- 속성:
+   - `event.type`: 이벤트 타입 (click, dblclick 등)
+   - `target.element`: 대상 요소 유형
+   - `target.id`: 대상 요소 ID (있는 경우)
+   - `target.classList`: 대상 요소의 클래스 목록
+
+##### 2.6.5 Long Task 
+
+> [!NOTE]
+> 오픈텔레메트리의 Longtask 항목을 참고하려면 [`@opentelemetry/instrumentation-long-task`](https://github.com/open-telemetry/opentelemetry-js-contrib/blob/main/plugins/web/opentelemetry-instrumentation-long-task)을 확인해주세요.
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[long-task.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/5FDEB849-4835-403A-B75D-7F8AA5ADFE36_2/pmqYCwoGz20YixwP4ciP3QyYaQT3ELEIW3ceGixmdxsz/long-task.json)</KeypointsItem>
+</Keypoints>
+
+- `name`: "longtask"
+- `startTime`: Long task 시작 시간
+- `endTime`: Long task 종료 시간
+- 속성:
+   - `longtask.name`: Long task의 유형
+   - `longtask.duration`: Long task의 지속 시간 (ms)
+   - `longtask.startTime`: Long task의 시작 시간
+
+##### 2.6.6. Web Vital
+
+웹 바이탈은 웹사이트의 사용자 경험을 측정하는 데 필수적인 지표입니다. IMQA를 사용하면 OpenTelemetry를 통해 이러한 바이탈을 원활하게 모니터링할 수 있습니다. 주요 웹 바이탈은 다음과 같습니다:
+
+- Largest Contentful Paint (LCP)
+- First Input Delay (FID)
+- Cumulative Layout Shift (CLS)
+- Time to First Byte (TTFB)
+- Total Blocking Time (TBT)
+
+### 3. 로그 속성
+
+오류 및 예외에 대한 로그 데이터도 아래와 같이 수집됩니다:
+
+- `type`: 로그 타입 ("uncaughtException", "unhandledRejection", "consoleError", "documentError", "customError")
+- `http.url`: 오류 발생 시 페이지 URL
+- `root_span.operation`: 관련된 루트 스팬의 이름
+- `root_span.http.url`: 관련된 루트 스팬의 URL
+- `http.action_type`: 관련된 HTTP 액션 타입
+- `element.xpath`: 오류가 발생한 DOM 요소의 XPath (해당하는 경우)
+- `error.name`: 오류 이름
+- `error.message`: 오류 메시지
+- `error.stack`: 스택 트레이스 (가능한 경우)
+- `arguments`: 콘솔 오류의 인자 (해당하는 경우)
+
+### 4. 추가 메타데이터
+
+- `imqa.telemetry.sdk.export_timestamp`: 데이터 내보내기 타임스탬프
+
+이 데이터 필드들은 웹 애플리케이션의 성능, 오류, 사용자 상호작용 등을 모니터링하고 분석하는 데 사용됩니다. 실제 데이터에는 위의 필드들 중 일부만 포함될 수 있으며, 설정과 상황에 따라 달라질 수 있습니다.
+
+## IMQA Schema (Opentelemetry Native)
+
+IMQA Agent는 OpenTelemetry 스키마 구조를 따르며 다른 어떤 Opentelemetry 계측과 호환성을 제공합니다. 이 스키마는 트레이스, 로그, 메트릭을 포함한 원격 측정 데이터의 수집과 표현을 표준화합니다. 스키마의 구조는 최상의 resource를 기반으로 scopeTraces, scopeLogs, scopeMetrics 를 페이로드로 IMQA 컬렉터(Collector)에 전달합니다.
+
+### 리소스
+
+`resource` 객체는 원격 측정 데이터를 생성하는 메타데이터 Entity를 나타냅니다. 이는 모든 트레이스, 로그, 메트릭에 공통적으로 사용됩니다.
+
+```json
+{
+  "resource": {
+    "attributes": [
+      {
+        "key": "service.name",
+        "value": {
+          "stringValue": "example-service"
+        }
+      },
+      {
+        "key": "telemetry.sdk.language",
+        "value": {
+          "stringValue": "webjs"
+        }
+      },
+      {
+        "key": "telemetry.sdk.name",
+        "value": {
+          "stringValue": "opentelemetry"
+        }
+      },
+      {
+        "key": "telemetry.sdk.version",
+        "value": {
+          "stringValue": "1.25.1"
+        }
+      },
+      {
+        "key": "imqa.rum.version",
+        "value": {
+          "stringValue": "0.0.1"
+        }
+      },
+      {
+        "key": "sampling.probability",
+        "value": {
+          "intValue": 1
+        }
+      },
+      {
+        "key": "imqa.telemetry.sdk.export_timestamp",
+        "value": {
+          "doubleValue": 1725951502887.2
+        }
+      }
+    ],
+    "droppedAttributesCount": 0
+  }
+}
+```
+
+### 트레이스
+
+트레이스는 분산 시스템을 통한 요청의 흐름을 나타냅니다. 이는 트레이스 내의 개별 작업을 설명하는 **스팬**으로 구성됩니다.
+
+> [!TIP]
+> `scope` 에는 스팬 계측에 대한 메타정보, `spans` 은 여러 스팬이 담겨있습니다. 개별 스팬에는 `traceId` , `spanId` , `parentSpanId` 등이 담겨 있습니다. 커스텀 `attributes` 에는 메타데이터들이 담겨있습니다.(아래 예시 참조). 특별히 `attributes` 에는 `session.id` 이 담겨있습니다.
+
+
+```json
+{
+  "resource": { /* ... 리소스 객체 ... */ },
+  "scopeSpans": [
+    {
+      "scope": {
+        "name": "@opentelemetry/instrumentation-document-load",
+        "version": "0.39.0"
+      },
+      "spans": [
+        {
+          "traceId": "5b519960b8bf2d8a6cfad88005e96806",
+          "spanId": "3e18a1b40aeecb1d",
+          "parentSpanId": "5c3775573bc2064f",
+          "name": "documentFetch",
+          "kind": 1,
+          "startTimeUnixNano": "1725951497919999902",
+          "endTimeUnixNano": "1725951498195199902",
+          "attributes": [
+            {
+              "key": "document.visibilityState",
+              "value": {
+                "stringValue": "visible"
+              }
+            },
+            {
+              "key": "session.id",
+              "value": {
+                "stringValue": "fa9a23bd3c432ca0aa945e4bc83904dc"
+              }
+            },
+            {
+              "key": "location.href",
+              "value": {
+                "stringValue": "http://localhost:3002/"
+              }
+            },
+            {
+              "key": "http.url",
+              "value": {
+                "stringValue": "http://localhost:3002/"
+              }
+            },
+            {
+              "key": "http.response_content_length",
+              "value": {
+                "intValue": 19723
+              }
+            },
+            {
+              "key": "http.response_content_length_uncompressed",
+              "value": {
+                "intValue": 67009
+              }
+            }
+          ],
+          "droppedAttributesCount": 0,
+          "events": [
+            /* XHR 이벤트 또는 렌더 이벤트는 아래에서 자세히 설명 */
+          ],
+          "droppedEventsCount": 0,
+          "status": {
+            "code": 0
+          },
+          "links": [],
+          "droppedLinksCount": 0
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### XHR 이벤트
+
+XHR (XMLHttpRequest) 이벤트는 HTTP 요청의 생명주기를 캡처합니다. 다음은 8개의 주요 이벤트입니다:
+
+```json
+"events": [
+  {
+    "attributes": [],
+    "name": "fetchStart",
+    "timeUnixNano": "1725951497919999902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domainLookupStart",
+    "timeUnixNano": "1725951497919999902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domainLookupEnd",
+    "timeUnixNano": "1725951497919999902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "connectStart",
+    "timeUnixNano": "1725951497919999902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "connectEnd",
+    "timeUnixNano": "1725951497919999902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "requestStart",
+    "timeUnixNano": "1725951498033599902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "responseStart",
+    "timeUnixNano": "1725951498139599902",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "responseEnd",
+    "timeUnixNano": "1725951498195199902",
+    "droppedAttributesCount": 0
+  }
+]
+```
+
+이 이벤트들은 HTTP 요청 생명주기의 다양한 단계에 대한 상세한 타이밍 정보를 제공합니다.
+
+#### 렌더 이벤트
+
+렌더 이벤트는 문서 로딩 및 렌더링의 생명주기를 캡처합니다. 다음은 주요 이벤트들입니다:
+
+```json
+"events": [
+  {
+    "attributes": [],
+    "name": "fetchStart",
+    "timeUnixNano": "1725951497920400049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "unloadEventStart",
+    "timeUnixNano": "1725951498145900049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "unloadEventEnd",
+    "timeUnixNano": "1725951498145900049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domInteractive",
+    "timeUnixNano": "1725951498731800049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domContentLoadedEventStart",
+    "timeUnixNano": "1725951498731900049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domContentLoadedEventEnd",
+    "timeUnixNano": "1725951498732200049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "domComplete",
+    "timeUnixNano": "1725951500870200049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "loadEventStart",
+    "timeUnixNano": "1725951500870200049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "loadEventEnd",
+    "timeUnixNano": "1725951500870700049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "firstPaint",
+    "timeUnixNano": "1725951498825700049",
+    "droppedAttributesCount": 0
+  },
+  {
+    "attributes": [],
+    "name": "firstContentfulPaint",
+    "timeUnixNano": "1725951498825700049",
+    "droppedAttributesCount": 0
+  }
+]
+```
+
+이 이벤트들은 문서 로딩 및 렌더링 과정의 다양한 단계에 대한 상세한 타이밍 정보를 제공하며, First Paint 및 First Contentful Paint와 같은 주요 성능 메트릭을 포함합니다.
+
+### 로그
+
+<Keypoints title="Sample">  
+  <KeypointsItem>[logs.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/4EA580D8-DF9F-453E-A5D1-E5659D56549A_2/LPrH0B1daGNlp8Wh3hBxe64AV1lU8ehtglMJQt2tRPkz/logs.json)</KeypointsItem>
+</Keypoints>
+
+로그는 트레이스와 유사한 구조를 따릅니다:
+
+```json
+{
+  "resource": { /* ... 리소스 객체 ... */ },
+  "scopeLogs": [
+    {
+      "scope": {
+        "name": "logger-name",
+        "version": "logger-version"
+      },
+      "logRecords": [
+        {
+          "timeUnixNano": "1725951497919999902",
+          "severityNumber": 9,
+          "severityText": "INFO",
+          "body": {
+            "stringValue": "로그 메시지 내용"
+          },
+          "attributes": [
+            /* ... 스팬과 유사한 속성들 ... */
+          ],
+          "droppedAttributesCount": 0,
+          "traceId": "5b519960b8bf2d8a6cfad88005e96806",
+          "spanId": "3e18a1b40aeecb1d"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 메트릭 (미사용)
+
+메트릭도 유사한 구조를 따를 수 있으며, 특정 메트릭 유형을 포함하도록 조정됩니다. 하지만 IMQA에서는 별도의 Metric은 수집하지 않으며, 스팬 데이터를 가지고 메트릭을 생성합니다.
+
+```json
+{
+  "resource": { /* ... 리소스 객체 ... */ },
+  "scopeMetrics": [
+    {
+      "scope": {
+        "name": "metric-instrumention-name",
+        "version": "metric-instrumentation-version"
+      },
+      "metrics": [
+        {
+          "name": "http.server.duration",
+          "description": "HTTP 서버 요청의 지속 시간",
+          "unit": "ms",
+          "histogram": {
+            "dataPoints": [
+              {
+                "startTimeUnixNano": "1725951497919999902",
+                "timeUnixNano": "1725951498195199902",
+                "count": 100,
+                "sum": 1000.0,
+                "bucketCounts": [50, 25, 15, 10],
+                "explicitBounds": [0, 5, 10, 25],
+                "attributes": [
+                  /* ... 스팬과 유사한 속성들 ... */
+                ],
+                "droppedAttributesCount": 0
+              }
+            ],
+            "aggregationTemporality": 2
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+이 스키마는 트레이스, 로그, 메트릭 전반에 걸쳐 원격 측정 데이터를 수집하고 구성하기 위한 포괄적인 구조를 제공합니다. 이를 통해 분산 시스템에서 상세한 성능 모니터링과 문제 해결이 가능해지며, 특히 트레이싱 데이터의 XHR 및 렌더 이벤트를 통해 웹 애플리케이션 성능에 중점을 둡니다.
