@@ -1,4 +1,4 @@
-import cn from '@/lib/cn'
+import { Main } from '@/components/main'
 import { getData, getDocs } from '@/utils/docs'
 
 export type Props = {
@@ -35,19 +35,7 @@ export default async function Page({ params }: Props) {
 
   const { doc } = await getData(...slug) // [ 'getting-started', 'introduction' ]
 
-  return (
-    <>
-      <header className={cn('mb-6 mt-8 border-b', 'border-outline-variant/50')}>
-        <h1 className="mb-2 text-5xl tracking-tighter">{doc.title}</h1>
-        {!!doc?.description?.length && (
-          <p className={cn('my-2 text-base leading-5', 'text-on-surface-variant/50')}>
-            {doc.description}
-          </p>
-        )}
-      </header>
-      {doc ? <>{doc.content}</> : 'empty doc'}
-    </>
-  )
+  return <Main doc={doc} />
 }
 
 export async function generateStaticParams() {

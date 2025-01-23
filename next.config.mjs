@@ -12,6 +12,9 @@ const nextConfig = {
   basePath,
   distDir,
   output,
+  experimental: {
+    serverComponentsExternalPackages: ['@react-pdf/renderer'],
+  },
   redirects:
     output === 'export'
       ? undefined
