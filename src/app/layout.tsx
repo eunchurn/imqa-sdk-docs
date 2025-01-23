@@ -67,6 +67,7 @@ export default function RootLayout({
           pretendard.className,
           // 'bg-surface break-words'
           'bg-zinc-50 break-words',
+          'scrollbar-thin',
         )}
       >
         <ThemeProvider>{children}</ThemeProvider>

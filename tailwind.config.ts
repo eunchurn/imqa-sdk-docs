@@ -9,6 +9,7 @@ const config: Config = {
     require('@tailwindcss/typography'),
     require('@tailwindcss/aspect-ratio'),
     require('@savvywombat/tailwindcss-grid-areas'),
+    require('tailwind-scrollbar'),
   ],
   theme: {
     extend: {

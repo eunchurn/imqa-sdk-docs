@@ -1,113 +1,184 @@
 ---
 title: API
 description: IMQA Web Agent는 브라우저의 `window.IMQA` 객체를 통해 다양한 메서드와 속성을 제공합니다.
-nav: 3
+nav: 12
 ---
+<Intro>
+`IMQA`객체는 웹 애플리케이션에서 RUM(Real User Monitoring)과 OpenTelemetry 기능을 초기화하고 관리하는 역할을 담당합니다. 이 객체는 세션 기록, 사용자 행동 추적, 예외 기록 등 다양한 기능을 제공합니다. 
+</Intro>
 
-## Methods
+아래 내용은 IMQA 객체에 대한 API를 설명합니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 합니다.
 
-### `initialize(options: InitializeOptions): void`
-IMQA Web Agent를 초기화합니다. [초기화 매개변수](./installation.mdx) 문서를 참조하세요.
+### `init`
 
-```javascript
-window.imqa.initialize({
-  collectorUrl: 'https://collector.imqa.io',
-  serviceName: 'my-service',
-  // ... other options
+```ts
+IMQA.init(config: IMQASDKConfig): void
+```
+
+초기 설정을 통해 `IMQA` 인스턴스를 초기화합니다. 초기화 설정은 [IMQA init](./installation.mdx#설정)을 참고하세요.
+
+- **매개변수:**
+  - `config` (`IMQASDKConfig`): 초기화 설정을 담은 객체입니다.
+    - `collectorUrl` (`string`): 콜렉터 주소 (필수)
+    - `serviceName` (`string`): 서비스 이름 (필수)
+    - `serviceKey` (`string`): 서비스 키 (필수)
+    - `serviceVersion` (`string`): 서비스 버전 (필수)
+    - 기타 선택적 설정들...
+
+### `stopSessionRecorder`
+
+```ts
+IMQA.stopSessionRecorder(): void
+```
+
+세션 기록기를 중지합니다.
+
+### `resumeSessionRecorder`
+
+```ts
+IMQA.resumeSessionRecorder(): void
+```
+
+중지된 세션 기록기를 재개합니다.
+
+### `addAction`
+
+```ts
+IMQA.addAction(name: string, attributes?: Attributes): void
+```
+
+사용자 행동을 기록합니다.
+
+- **매개변수:**
+  - `name` (`string`): 행동의 이름
+  - `attributes` (`Attributes`, 선택 사항): 추가 속성
+- 예시
+
+```tsx
+IMQA.addAction('Form-Completed', {
+  formId: 'signup-form',
+  formName: 'Signup Form',
+  formType: 'signup',
 });
 ```
 
-### `onReady(callback: () => void): void`
-IMQA Web Agent가 초기화되고 준비되었을 때 실행될 콜백 함수를 등록합니다.
+### `recordException`
 
-```javascript
-window.imqa.onReady(() => {
-  console.log('IMQA is ready');
+```ts
+IMQA.recordException(error: any, attributes?: Attributes): void
+```
+
+예외를 기록합니다.
+
+- **매개변수:**
+    - `error` (`any`): 기록할 예외 객체
+    - `attributes` (`Attributes`, 선택 사항): 추가 속성
+
+### `enableAdvancedNetworkCapture`
+
+```ts
+IMQA.enableAdvancedNetworkCapture(): void
+```
+
+고급 네트워크 캡처 기능을 활성화합니다.
+
+### `disableAdvancedNetworkCapture`
+
+```ts
+IMQA.disableAdvancedNetworkCapture(): void
+```
+
+고급 네트워크 캡처 기능을 비활성화합니다.
+
+### `setUserAttributes`
+
+```ts
+IMQA.setGlobalAttributes(attributes: Record<string, string>): void
+```
+
+전역 속성을 설정합니다.
+
+- **매개변수:**
+    - `attributes` (`Record<string, string>`): 설정할 전역 속성 객체
+- 예시
+
+```tsx
+IMQA.setGlobalAttributes({
+  teamName: "your-team-name",
+  groupName: "your-group-name",
+  // 기타 사용자 지정 속성...
 });
 ```
 
-### `registerInstrumentations(): void`
-모든 계측(instrumentation)을 활성화합니다. 이는 다음을 포함합니다:
-- Long Task 계측
-- Document Load 계측
-- User Interaction 계측
-- XMLHttpRequest 계측
-- Fetch API 계측
+### `setUserAttributes`
 
-```javascript
-window.imqa.registerInstrumentations();
+```ts
+setUserIdAttribute(userId: string): void
 ```
 
-### `disableInstrumentations(): void`
-모든 활성화된 계측을 비활성화합니다.
+> `(userId: string) => void`
+> 
 
-```javascript
-window.imqa.disableInstrumentations();
+사용자 ID 속성을 설정합니다.
+
+- **매개변수:**
+    - `userId` (`string`): 사용자 ID
+
+```tsx
+window.IMQA.setUserIdAttribute("_imqa_user_0001");
 ```
 
-### `setDefaultAttribute(key: string, value: AttributeValue | undefined): void`
-모든 텔레메트리 데이터에 적용될 기본 속성을 설정합니다.
+커스텀 사용자 ID를 지정하여 특정 사용자의 세션 분석 시 활용할 수 있습니다.
 
-```javascript
-window.imqa.setDefaultAttribute('environment', 'production');
+![image.png](./image.png)
+
+### `setUserAttributes`
+
+```ts
+setAreaCodeAttribute(areaCode: string): void
 ```
 
-### `getCurrentSessionId(): string`
+지역 코드 속성을 설정합니다.
+
+- **매개변수:**
+    - `areaCode` (`string`): 지역 코드
+
+### `getSessionId`
+
+```ts
+getSessionId(): string | undefined
+```
+
 현재 세션의 ID를 반환합니다.
 
-```javascript
-const sessionId = window.imqa.getCurrentSessionId();
+- **반환값:** (`string | undefined`): 세션 ID 또는 정의되지 않음
+
+### `getSessionUrl`
+
+```ts
+getSessionUrl(): string | undefined
 ```
 
-### `recordError(message: string, attributes?: Record<string, any>): void`
-사용자 정의 에러를 기록합니다.
+세션 URL을 생성하여 반환합니다.
 
-```javascript
-window.imqa.recordError('Payment failed', { 
-  orderId: '12345',
-  amount: 50.00
-});
+- **반환값:** (`string | undefined`): 세션 URL 또는 정의되지 않음
+
+### `attachToReactErrorBoundary
+
+```ts
+attachToReactErrorBoundary(errorBoundary: ErrorBoundaryComponent): void
 ```
 
-## Properties
+React의 Error Boundary에 예외 기록 기능을 연결합니다.
 
-### `api: typeof OpenTelemetryAPI`
-OpenTelemetry API에 대한 참조를 제공합니다.
+- **매개변수:**
+    - `errorBoundary` (`ErrorBoundaryComponent`): 연결할 Error Boundary 컴포넌트
+- 예시
 
-### `tracer: Tracer`
-OpenTelemetry 추적기 인스턴스에 대한 참조를 제공합니다.
+```tsx
+// ErrorBoundary 가져오기 (예시로 react-error-boundary를 사용)
+import { ErrorBoundary } from 'react-error-boundary';
 
-### `options: InitializeOptions`
-현재 적용된 초기화 옵션을 포함합니다.
-
-### `readyListeners: Array<() => void>`
-등록된 ready 이벤트 리스너들의 배열입니다.
-
-## 사용 예시
-
-```javascript
-// 초기화
-window.imqa.initialize({
-  collectorUrl: 'https://collector.imqa.io',
-  serviceName: 'frontend-app',
-  collectWebVitals: true
-});
-
-// Ready 이벤트 리스너 등록
-window.imqa.onReady(() => {
-  // 기본 속성 설정
-  window.imqa.setDefaultAttribute('version', '1.0.0');
-  
-  // 커스텀 에러 기록
-  window.imqa.recordError('Custom Error', {
-    component: 'checkout',
-    severity: 'high'
-  });
-  
-  // 현재 세션 ID 획득
-  const sessionId = window.imqa.getCurrentSessionId();
-  console.log('Current session:', sessionId);
-});
+// ErrorBoundary 컴포넌트에 연결하여 모든 인스턴스에서 발생하는 오류를 캡처합니다.
+IMQA.attachToReactErrorBoundary(ErrorBoundary);
 ```
-
-> 참고: 이 API는 IMQA Web Agent가 초기화된 후에만 사용할 수 있습니다. 항상 `onReady` 콜백 내부나 초기화 완료 후에 API를 사용하는 것을 권장합니다.

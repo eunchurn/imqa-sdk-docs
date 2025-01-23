@@ -64,7 +64,7 @@ export function LayoutAside({ className, ...props }: ComponentProps<'aside'>) {
   return (
     <aside
       className={cn(
-        'hidden overflow-auto xl:[display:initial]',
+        'hidden overflow-auto scrollbar-none xl:[display:initial]',
         'sticky top-[--header-height] h-[calc(100dvh-var(--header-height))] grid-in-t',
         className,
       )}

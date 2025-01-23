@@ -1,31 +1,8 @@
 ---
-title: Web Agent Guide
+title: Payload properties
 description: IMQA Web Agent는 Opentelemetry Native 기반으로 동작합니다. 이 문서는 웹프론트엔드 (VanillaJS, React, Nextjs등) 프레임워크에서 동작하며 웹성능 지표를 수집하기 위한 데이터 구조를 설명합니다.
-nav: 1
+nav: 13
 ---
-
-## 프론트엔드 모니터링
-
-웹 프론트엔드 성능 모니터링은 사용자 경험을 개선하고 웹 애플리케이션의 성능을 최적화하는 데 중요한 역할을 합니다. IMQA를 사용하면 표준화된 방식으로 성능 데이터를 수집하고 분석할 수 있습니다.
-
-수집된 데이터를 바탕으로 다음과 같은 최적화를 수행할 수 있습니다:
-
-- 느린 API 호출 식별 및 최적화
-- 클라이언트 사이드 렌더링 성능 개선
-- 자주 발생하는 오류 해결
-
-계측 항목
-
-- XMLHttpRequest 및 Fetch API 자동 계측
-- 사용자 상호작용 (클릭, submit, 드래그 등)
-- Document load, Fetched resources
-- History API 및 해시 변경 지원
-- 웹 바이탈(Web Vitals)
-- 세션 ID
-- 자동 컨텍스트 연결을 통한 longtasks
-- uncaught exceptions, unhandled rejections, document errors, console errors
-- 수동 계측 지원
-- Timer, Promise, Native async-await, 이벤트, 옵저버 등을 통한 자동 컨텍스트 유지
 
 ## Web Agent 설치 및 사용
 
@@ -38,10 +15,28 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 가장 최상의 리소스 속성으로 앱과 에이전트의 메타 데이터를 가지고 있습니다.
 
 - `service.name`: 서비스 이름
+- `service.version`: 서비스 버전
+- `os.name`: 운영체제 이름
+- `os.version`: 운영체제 버전
+- `telemetry.sdk.name`: SDK 이름
+- `telemetry.sdk.version`: SDK 버전
+- `telemetry.sdk.language`: SDK 언어
 - `imqa.rum.version`: RUM 에이전트 버전 (`@imqa/web-agent` 의 버전이 자동으로 추가됩니다. 에이전트를 사용하지 않는 경우 버전 정보를 추가해야 합니다)
 - `application`: 애플리케이션 이름 (설정된 경우, 서비스 이름과는 다릅니다.)
 - `deployment.environment`: 배포 환경 (설정된 경우, production 혹은 staging을 나타냅니다.)
 - `sampling.probability`: 샘플링 확률 (0 ~ 1사이의 샘플링 값을 가집니다.)
+- `imqa.telemetry.sdk.export_timestamp`: 데이터 내보내기 타임스탬프
+- `host.ip`: IP 주소
+- `host.ip.geolocation`: IP 주소의 지리적 위치 정보 (콜렉터에서 추가)
+- `device.model.name`: 디바이스 모델 이름 (nullable)
+- `user_agent.original`: User Agent 문자열
+- `service.key`: 서비스 키
+- `network.carrier.name`: 통신사 이름 (nullable)
+- `network.connection.subtype`: 네트워크 연결 유형, 통신 방식 (nullable)
+- `device.battery.status`: 배터리 상태 (nullable)
+- `device.cpu.util`: CPU 사용률 (nullable)
+- `device.memory.util`: 메모리 사용률 (nullable)
+
 ### 2. 스팬 속성
 
 #### 2.1. 기본 스팬 속성
@@ -51,6 +46,9 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 - `location.href`: 현재 페이지의 URL
 - `document.visibilityState`: 문서의 가시성 상태 ("visible" 또는 "hidden")
 - `session.id`: 세션 ID (사용자 접속시 생성됩니다. 포함하지 않을 경우 세션 항목으로 그룹화 할 수 없습니다.)
+- `screen.name`: 현 스팬의 화면 이름
+- `screen.type`: 화면 타입 (e.g., "route", "modal", "dialog")
+- `action.type`: 스팬의 액션 타입 ("document_loads", "xhr_requests", 또는 "route_changes")
 
 #### 2.2. 루트 스팬 특정 속성
 
@@ -127,10 +125,10 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 ##### 2.6.1 Document Load
 
 > [!NOTE]
-> 오픈텔레메트리의 Doucment Load 항목을 참고하려면 [`@opentelemetry/instrumentation-document-load`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load)을 확인해주세요.
+> 오픈텔레메트리의 Document Load 항목을 참고하려면 [`@opentelemetry/instrumentation-document-load`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load)을 확인해주세요.
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[document-load.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/F5830DE2-74B0-4F81-9B1E-DEB8F270519E_2/ekOj9SQgJrOuaFcgL1TdcAFGvjgdBC3HoOxryzkc6LQz/document-load.json)</KeypointsItem>
+  <KeypointsItem>[document-load.json](/samples/document-load.json)</KeypointsItem>
 </Keypoints>
 
 
@@ -152,7 +150,7 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 > 오픈텔레메트리의 XML HTTP Request 항목을 참고하려면 [`@opentelemetry/instrumentation-xml-http-request`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)을 확인해주세요.
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[xhr.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/7B9F3AFC-1142-433F-9B87-98163FEC9A3E_2/Jy9SGxAIJ2yVwSO66lyxmnv0im7xb8rMfRyfywyBDx0z/xhr.json)</KeypointsItem>
+  <KeypointsItem>[xhr.json](/samples/xhr.json)</KeypointsItem>
 </Keypoints>
 
 `name`: "HTTP "
@@ -172,7 +170,7 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 > 오픈텔레메트리의 Fetch 항목을 참고하려면 [`@opentelemetry/instrumentation-fetch`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)을 확인해주세요.
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[fetch.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/333635CF-1987-4DFB-B0B5-007CEA737C32_2/23knRtpJ0Z7EM7eCSQoibBxQ6yktfU0zKQgTqAHx52oz/fetch.json)</KeypointsItem>
+  <KeypointsItem>[fetch.json](/samples/fetch.json)</KeypointsItem>
 </Keypoints>
 
 `name`: "HTTP "
@@ -191,7 +189,7 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 > 오픈텔레메트리의 User Interaction 항목을 참고하려면 [`@opentelemetry/instrumentation-user-interaction`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-user-interaction)을 확인해주세요.
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[user-interaction.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/72178159-5BC3-4D9A-AA3E-9669F3CE473D_2/E5YwWyXnrvOTGyFX354V2KTcMY9XXrSsNpy3GjSXzTkz/user-interaction.json)</KeypointsItem>
+  <KeypointsItem>[user-interaction.json](/samples/user-interaction.json)</KeypointsItem>
 </Keypoints>
 
 `name`: " on "
@@ -208,7 +206,7 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 > 오픈텔레메트리의 Longtask 항목을 참고하려면 [`@opentelemetry/instrumentation-long-task`](https://github.com/open-telemetry/opentelemetry-js-contrib/blob/main/plugins/web/opentelemetry-instrumentation-long-task)을 확인해주세요.
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[long-task.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/5FDEB849-4835-403A-B75D-7F8AA5ADFE36_2/pmqYCwoGz20YixwP4ciP3QyYaQT3ELEIW3ceGixmdxsz/long-task.json)</KeypointsItem>
+  <KeypointsItem>[long-task.json](/samples/long-task.json)</KeypointsItem>
 </Keypoints>
 
 - `name`: "longtask"
@@ -530,7 +528,7 @@ XHR (XMLHttpRequest) 이벤트는 HTTP 요청의 생명주기를 캡처합니다
 ### 로그
 
 <Keypoints title="Sample">  
-  <KeypointsItem>[logs.json](https://res.craft.do/user/full/43c4ba34-53c0-16ca-bdd9-b476e856df51/doc/68190618-0661-4D92-82A9-7DC7AB6BE878/4EA580D8-DF9F-453E-A5D1-E5659D56549A_2/LPrH0B1daGNlp8Wh3hBxe64AV1lU8ehtglMJQt2tRPkz/logs.json)</KeypointsItem>
+  <KeypointsItem>[logs.json](/samples/logs.json)</KeypointsItem>
 </Keypoints>
 
 로그는 트레이스와 유사한 구조를 따릅니다:
