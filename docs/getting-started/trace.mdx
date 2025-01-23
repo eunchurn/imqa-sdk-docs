@@ -1,0 +1,311 @@
+---
+title: Trace
+description: 트레이스
+nav: 3
+---
+
+Trace
+==
+
+<Intro>
+Trace는 애플리케이션을 통한 요청 경로입니다.
+</Intro>
+
+<Keypoints title="">
+이 문서는 IMQA SDK의 이해를 돕기 위해 OpenTelemetry 공식문서의 Trace에 대한 개념을 설명합니다. OpenTelemetry 공식문서를 번역하였습니다.
+</Keypoints>
+
+
+
+Trace는 애플리케이션에 요청이 이루어질 때 발생하는 일의 전반적인 그림을 제공합니다. 애플리케이션이 단일 데이터베이스가 있는 모놀리스이든 정교한 서비스 메시이든 Trace는 애플리케이션에서 요청이 거치는 전체 "경로"를 이해하는 데 필수적입니다.
+
+[Span](https://opentelemetry.io/docs/concepts/signals/traces/#spans) 으로 표현된 세 개의 작업 단위를 통해 이를 살펴보겠습니다 .
+
+> [!NOTE]
+> 다음 JSON 예제는 특정 형식을 나타내지 않으며, 특히 더 장황한 [OTLP/JSON](https://opentelemetry.io/docs/specs/otlp/#json-protobuf-encoding) 형식을 의미하지 않습니다.
+
+`hello` 스팬:
+
+```json
+{
+  "name": "hello",
+  "context": {
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "051581bf3cb55c13"
+  },
+  "parent_id": null,
+  "start_time": "2022-04-29T18:52:58.114201Z",
+  "end_time": "2022-04-29T18:52:58.114687Z",
+  "attributes": {
+    "http.route": "some_route1"
+  },
+  "events": [
+    {
+      "name": "Guten Tag!",
+      "timestamp": "2022-04-29T18:52:58.114561Z",
+      "attributes": {
+        "event_attributes": 1
+      }
+    }
+  ]
+}
+```
+
+이것은 전체 작업의 시작과 끝을 나타내는 루트 스팬입니다. `trace_id`Trace를 나타내는 필드가 있지만 `parent_id`.가 없다는 점에 유의하세요. 이것이 루트 스팬이라는 것을 아는 방법입니다.
+
+`hello-greetings`스팬:
+
+```json
+{
+  "name": "hello-greetings",
+  "context": {
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "5fb397be34d26b51"
+  },
+  "parent_id": "051581bf3cb55c13",
+  "start_time": "2022-04-29T18:52:58.114304Z",
+  "end_time": "2022-04-29T22:52:58.114561Z",
+  "attributes": {
+    "http.route": "some_route2"
+  },
+  "events": [
+    {
+      "name": "hey there!",
+      "timestamp": "2022-04-29T18:52:58.114561Z",
+      "attributes": {
+        "event_attributes": 1
+      }
+    },
+    {
+      "name": "bye now!",
+      "timestamp": "2022-04-29T18:52:58.114585Z",
+      "attributes": {
+        "event_attributes": 1
+      }
+    }
+  ]
+}
+```
+
+이 스팬은 인사하기와 같은 특정 작업을 캡슐화하고, 부모는 스팬입니다 `hello`. 루트 스팬과 동일한 것을 공유한다는 점에 유의하세요. 이는 `trace_id`동일한 Trace의 일부임을 나타냅니다. 또한 스팬 의 `parent_id` 와 일치하는 가 있습니다 .`span_id``hello`
+
+`hello-salutations`스팬:
+
+```json
+{
+  "name": "hello-salutations",
+  "context": {
+    "trace_id": "5b8aa5a2d2c872e8321cf37308d69df2",
+    "span_id": "93564f51e1abe1c2"
+  },
+  "parent_id": "051581bf3cb55c13",
+  "start_time": "2022-04-29T18:52:58.114492Z",
+  "end_time": "2022-04-29T18:52:58.114631Z",
+  "attributes": {
+    "http.route": "some_route3"
+  },
+  "events": [
+    {
+      "name": "hey there!",
+      "timestamp": "2022-04-29T18:52:58.114561Z",
+      "attributes": {
+        "event_attributes": 1
+      }
+    }
+  ]
+}
+```
+
+이 span은 이 Trace에서 세 번째 작업을 나타내며, 이전 작업과 마찬가지로 `hello`span의 자식입니다. 또한 `hello-greetings`span의 형제가 됩니다.
+
+이 세 개의 JSON 블록은 모두 동일한 를 공유하고 `trace_id`, `parent_id` 필드는 계층 구조를 나타냅니다. 그래서 Trace가 됩니다!
+
+또 다른 주목할 점은 각 Span이 구조화된 로그처럼 보인다는 것입니다. 왜냐하면 그것이 일종의 구조화된 로그이기 때문입니다! Trace를 생각하는 한 가지 방법은 컨텍스트, 상관 관계, 계층 구조 등이 내장된 구조화된 로그의 모음이라는 것입니다. 그러나 이러한 "구조화된 로그"는 다양한 프로세스, 서비스, VM, 데이터 센터 등에서 나올 수 있습니다. 이를 통해 Trace는 모든 시스템의 엔드투엔드 뷰를 나타낼 수 있습니다.
+
+OpenTelemetry에서 Trace가 어떻게 작동하는지 이해하기 위해 코드 구현에 중요한 역할을 하는 구성 요소 목록을 살펴보겠습니다.
+
+Trace Provider[](https://opentelemetry.io/docs/concepts/signals/traces/#tracer-provider)
+--------------------------------------------------------------------------------
+
+Tracer Provider(때때로 `TracerProvider`라고도 함)는 `Tracer`들의 팩토리입니다. 대부분의 애플리케이션에서 Tracer Provider는 한 번 초기화되고 해당 수명 주기는 애플리케이션의 수명 주기와 매치합니다. Tracer Provider 초기화에는 Resource 및 Exporter 초기화도 포함됩니다. 이는 일반적으로 OpenTelemetry를 사용한 Trace의 첫 번째 단계입니다. 일부 언어 SDK에서는 글로벌 Tracer Provider가 이미 초기화되어 있습니다.
+
+Tracer[](https://opentelemetry.io/docs/concepts/signals/traces/#tracer)
+---------------------------------------------------------------------
+
+Tracer는 서비스 요청과 같은 주어진 작업에 대해 발생하는 일에 대한 추가 정보를 포함하는 스팬을 만듭니다. Tracer는 Tracer 제공자에서 생성됩니다.
+
+Trace Exporter[](https://opentelemetry.io/docs/concepts/signals/traces/#trace-exporters)
+-----------------------------------------------------------------------------------
+
+Trace Exporters는 소비자에게 Trace를 보냅니다. 이 소비자는 디버깅 및 개발 시간, OpenTelemetry Collector 또는 선택한 오픈 소스 또는 공급업체 백엔드를 위한 표준 출력이 될 수 있습니다.
+
+컨텍스트 전파(Context propagation)
+-------------------------------------------------------------------------------------
+
+Context Propagation은 Distributed Tracing을 가능하게 하는 핵심 개념입니다. Context Propagation을 사용하면 Span이 생성된 위치에 관계없이 Span을 서로 연관시키고 Trace로 조립할 수 있습니다. 이 주제에 대해 자세히 알아보려면 [Context Propagation](https://opentelemetry.io/docs/concepts/context-propagation) 의 개념 페이지를 참조하세요 .
+
+스팬[](https://opentelemetry.io/docs/concepts/signals/traces/#spans)
+------------------------------------------------------------------
+
+span 은 작업 또는 운영 단위를 나타냅니다. span은 Traces의 구성 요소입니다. OpenTelemetry에서 span은 다음 정보를 포함합니다.
+
+-   이름
+-   부모 스팬 ID(루트 스팬의 경우 비어 있음)
+-   시작 및 종료 타임스탬프
+-   [스팬 컨텍스트](https://opentelemetry.io/docs/concepts/signals/traces/#span-context)
+-   [속성](https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
+-   [스팬 이벤트](https://opentelemetry.io/docs/concepts/signals/traces/#span-events)
+-   [스팬 링크](https://opentelemetry.io/docs/concepts/signals/traces/#span-links)
+-   [스팬 상태](https://opentelemetry.io/docs/concepts/signals/traces/#span-status)
+
+샘플 스팬:
+
+```json
+{
+  "name": "/v1/sys/health",
+  "context": {
+    "trace_id": "7bba9f33312b3dbb8b2c2c62bb7abe2d",
+    "span_id": "086e83747d0e381e"
+  },
+  "parent_id": "",
+  "start_time": "2021-10-22 16:04:01.209458162 +0000 UTC",
+  "end_time": "2021-10-22 16:04:01.209514132 +0000 UTC",
+  "status_code": "STATUS_CODE_OK",
+  "status_message": "",
+  "attributes": {
+    "net.transport": "IP.TCP",
+    "net.peer.ip": "172.17.0.1",
+    "net.peer.port": "51820",
+    "net.host.ip": "10.177.2.152",
+    "net.host.port": "26040",
+    "http.method": "GET",
+    "http.target": "/v1/sys/health",
+    "http.server_name": "mortar-gateway",
+    "http.route": "/v1/sys/health",
+    "http.user_agent": "Consul Health Check",
+    "http.scheme": "http",
+    "http.host": "10.177.2.152:26040",
+    "http.flavor": "1.1"
+  },
+  "events": [
+    {
+      "name": "",
+      "message": "OK",
+      "timestamp": "2021-10-22 16:04:01.209512872 +0000 UTC"
+    }
+  ]
+}
+```
+
+부모 스팬 ID가 존재함에 따라 스팬은 중첩될 수 있습니다. 자식 스팬은 하위 작업을 나타냅니다. 이를 통해 스팬은 애플리케이션에서 수행된 작업을 보다 정확하게 캡처할 수 있습니다.
+
+### 스팬 컨텍스트[](https://opentelemetry.io/docs/concepts/signals/traces/#span-context)
+
+Span 컨텍스트는 다음을 포함하는 모든 span의 변경 불가능한 개체입니다.
+
+-   span이 속한 Trace를 나타내는 Trace ID
+-   span의 Span ID
+-   Trace 플래그는 Trace에 대한 정보를 포함하는 바이너리 인코딩입니다.
+-   공급업체별 Trace 정보를 전달할 수 있는 키-값 쌍 목록인 Trace 상태
+
+[Span 컨텍스트는 Distributed Context](https://opentelemetry.io/docs/concepts/signals/traces/#context-propagation) 와 [Baggage와](https://opentelemetry.io/docs/concepts/signals/baggage) 함께 직렬화되고 전파되는 span의 일부입니다 .
+
+[Span Context에는 Trace ID가 포함되어 있으므로 Span 링크를](https://opentelemetry.io/docs/concepts/signals/traces/#span-links) 생성할 때 사용됩니다 .
+
+### 속성[](https://opentelemetry.io/docs/concepts/signals/traces/#attributes)
+
+속성은 Span에 주석을 달아 추적하는 작업에 대한 정보를 전달하는 메타데이터가 포함된 키-값 쌍입니다.
+
+예를 들어, 스팬이 전자상거래 시스템에서 사용자의 쇼핑 카트에 품목을 추가하는 작업을 추적하는 경우 사용자 ID, 카트에 추가할 품목의 ID, 카트 ID를 캡처할 수 있습니다.
+
+스팬 생성 중 또는 생성 후에 스팬에 속성을 추가할 수 있습니다. SDK 샘플링에서 속성을 사용할 수 있도록 스팬 생성 시 속성을 추가하는 것을 선호합니다. 스팬 생성 후에 값을 추가해야 하는 경우 값으로 스팬을 업데이트합니다.
+
+속성에는 각 언어 SDK가 구현하는 다음과 같은 규칙이 있습니다.
+
+-   키는 null이 아닌 문자열 값이어야 합니다.
+-   값은 null이 아닌 문자열, 부울, 부동 소수점 값, 정수 또는 이러한 값의 배열이어야 합니다.
+
+[또한, 일반적인 작업에 일반적으로 존재하는 메타데이터에 대한 알려진 명명 규칙인 의미적 속성이](https://opentelemetry.io/docs/specs/semconv/general/trace/) 있습니다 . 가능한 한 의미적 속성 명명을 사용하면 일반적인 종류의 메타데이터가 시스템 전체에서 표준화되도록 하는 데 도움이 됩니다.
+
+### 스팬 이벤트[](https://opentelemetry.io/docs/concepts/signals/traces/#span-events)
+
+스팬 이벤트는 스팬의 구조화된 로그 메시지(또는 주석)로 생각할 수 있으며, 일반적으로 스팬 기간 동안 의미 있고 단일한 시점을 나타내는 데 사용됩니다.
+
+예를 들어, 웹 브라우저에서 두 가지 시나리오를 생각해 보겠습니다.
+
+1.  페이지 로드 추적
+2.  페이지가 대화형이 되는 시점을 나타냄
+
+Span은 시작과 끝이 있는 연산이기 때문에 첫 번째 시나리오에 가장 적합합니다.
+
+스팬 이벤트는 의미 있는 단일 시점을 나타내므로 두 번째 시나리오를 추적하는 데 가장 적합합니다.
+
+#### span 이벤트와 span 속성을 사용하는 경우[](https://opentelemetry.io/docs/concepts/signals/traces/#when-to-use-span-events-versus-span-attributes)
+
+span 이벤트에도 속성이 포함되어 있으므로 속성 대신 이벤트를 언제 사용해야 하는지에 대한 질문은 항상 명확한 답이 있는 것은 아닙니다. 결정을 내리려면 특정 타임스탬프가 의미 있는지 고려하세요.
+
+예를 들어, 특정 기간 동안 작업을 추적하고 작업이 완료되면 해당 작업의 데이터를 원격 측정 데이터에 추가할 수 있습니다.
+
+-   작업이 완료된 타임스탬프에 의미가 있거나 관련성이 있는 경우 해당 데이터를 span 이벤트에 첨부합니다.
+-   타임스탬프가 의미가 없으면 데이터를 span 속성으로 첨부합니다.
+
+### 스팬 링크[](https://opentelemetry.io/docs/concepts/signals/traces/#span-links)
+
+링크는 한 스팬을 하나 이상의 스팬과 연관시킬 수 있도록 존재하며, 이는 인과 관계를 의미합니다. 예를 들어, 일부 작업이 Trace에 의해 추적되는 분산 시스템이 있다고 가정해 보겠습니다.
+
+이러한 작업 중 일부에 대한 응답으로 추가 작업이 실행되도록 대기하지만 실행은 비동기적입니다. Trace를 사용하여 후속 작업을 추적할 수도 있습니다.
+
+우리는 후속 작업에 대한 Trace를 첫 번째 Trace과 연관시키고 싶지만 후속 작업이 언제 시작될지 예측할 수 없습니다. 이 두 Trace를 연관시켜야 하므로 span 링크를 사용합니다.
+
+첫 번째 Trace의 마지막 스팬을 두 번째 Trace의 첫 번째 스팬에 연결할 수 있습니다. 이제 그들은 서로 인과적으로 연관됩니다.
+
+링크는 선택 사항이지만 Trace 스팬을 서로 연관시키는 좋은 방법으로 사용됩니다.
+
+Span 링크에 대한 자세한 내용은 [링크를](https://opentelemetry.io/docs/specs/otel/trace/api/#link) 참조하세요 .
+
+### 스팬 상태[](https://opentelemetry.io/docs/concepts/signals/traces/#span-status)
+
+각 span에는 상태가 있습니다. 가능한 세 가지 값은 다음과 같습니다.
+
+-   `Unset`
+-   `Error`
+-   `Ok`
+
+기본값은 `Unset`. 스팬 상태는 `Unset`추적한 작업이 오류 없이 성공적으로 완료되었음을 의미합니다.
+
+span 상태가 이면 `Error`추적하는 작업에서 오류가 발생했음을 의미합니다. 예를 들어, 요청을 처리하는 서버에서 HTTP 500 오류가 발생했을 수 있습니다.
+
+span 상태가 이면 `Ok`애플리케이션 개발자가 span을 오류 없음으로 명시적으로 표시했음을 의미합니다. 직관적이지 않지만 `Ok`span이 오류 없이 완료된 것으로 알려진 경우 span 상태를 설정할 필요는 없습니다. 이는 에서 다루기 때문입니다 `Unset`. 이는 `Ok`사용자가 명시적으로 설정한 span의 상태에 대한 명확한 "최종 호출"을 나타냅니다. 이는 개발자가 span에 대해 "성공" 이외의 다른 해석이 없기를 원하는 모든 상황에서 유용합니다.
+
+다시 말해서: `Unset`오류 없이 완료된 스팬을 나타냅니다. `Ok` 개발자가 스팬을 명시적으로 성공으로 표시한 경우를 나타냅니다. 대부분의 경우 스팬을 명시적으로 .으로 표시할 필요는 없습니다 `Ok`.
+
+### 스팬 종류[](https://opentelemetry.io/docs/concepts/signals/traces/#span-kind)
+
+span이 생성되면 `Client`, `Server`, `Internal`, `Producer`, 또는 중 하나입니다 `Consumer`. 이 span 종류는 Trace 백엔드에 Trace를 어떻게 조립해야 하는지에 대한 힌트를 제공합니다. OpenTelemetry 사양에 따르면 서버 span의 부모는 종종 원격 클라이언트 span이고 클라이언트 span의 자식은 일반적으로 서버 span입니다. 마찬가지로 소비자 span의 부모는 항상 생산자이고 생산자 span의 자식은 항상 소비자입니다. 제공되지 않으면 span 종류는 내부로 간주됩니다.
+
+SpanKind에 대한 자세한 내용은 [SpanKind를](https://opentelemetry.io/docs/specs/otel/trace/api/#spankind) 참조하세요 .
+
+#### Client[](https://opentelemetry.io/docs/concepts/signals/traces/#client)
+
+클라이언트 스팬은 나가는 HTTP 요청이나 데이터베이스 호출과 같은 동기 나가는 원격 호출을 나타냅니다. 이 맥락에서 "동기"는 를 의미하지 않고 `async/await`나중에 처리하기 위해 큐에 들어가지 않는다는 사실을 의미합니다.
+
+#### Server[](https://opentelemetry.io/docs/concepts/signals/traces/#server)
+
+서버 스팬은 들어오는 HTTP 요청이나 원격 프로시저 호출과 같은 동기식 들어오는 원격 호출을 나타냅니다.
+
+#### Internal[](https://opentelemetry.io/docs/concepts/signals/traces/#internal)
+
+내부 스팬은 프로세스 경계를 ​​넘지 않는 작업을 나타냅니다. 함수 호출이나 Express 미들웨어를 계측하는 것과 같은 것은 내부 스팬을 사용할 수 있습니다.
+
+#### Producer[](https://opentelemetry.io/docs/concepts/signals/traces/#producer)
+
+프로듀서 스팬은 나중에 비동기적으로 처리될 수 있는 작업 생성을 나타냅니다. 작업 큐에 삽입된 것과 같은 원격 작업 또는 이벤트 리스너가 처리하는 로컬 작업일 수 있습니다.
+
+#### Consumer[](https://opentelemetry.io/docs/concepts/signals/traces/#consumer)
+
+소비자 스팬은 생산자가 만든 작업의 ​​처리를 나타내며 생산자 스팬이 끝난 후 훨씬 뒤에 시작될 수 있습니다.
+
+Specification[](https://opentelemetry.io/docs/concepts/signals/traces/#specification)
+--------------------------------------------------------------------------
+
+자세한 내용은 [Trace Specification](https://opentelemetry.io/docs/specs/otel/overview/#tracing-signal)을 참조하세요 .
