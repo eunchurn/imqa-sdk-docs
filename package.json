@@ -62,6 +62,7 @@
     "dev": "NODE_OPTIONS='--inspect' MDX=docs next",
     "start": "next start",
     "build": "MDX=docs next build",
+    "github:build": "MDX=docs OUTPUT=export BASE_PATH=imqa-sdk-docs next build",
     "format": "prettier -w src/",
     "lint": "eslint src/**/*.{ts,tsx} && prettier . --check",
     "prepare": "husky"
