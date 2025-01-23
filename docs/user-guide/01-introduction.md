@@ -10,12 +10,12 @@ v1.0.0 `2025-01-24`
 
 ---
 
-[[1. Introduction]]
-[[2. Services]]
-[[3. Performance dashboard]]
-[[4. Analytics]]
-[[5. Data]]
-[[6. Global management]]
+- [Introduction](./01-introduction.md)
+- [Services](./02-services.md)
+- [Performance dashboard](./03-performance-dashboard.md)
+- [Analytics](./04-analytics.md)
+- [Data](./05-data.md)
+- [Global management](./06-global-management.md)
 
 ---
 
