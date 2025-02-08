@@ -23,7 +23,7 @@ IMQA에서 제공하는 최신의 기능을 사용하려면 아래 코드를 사
 ```html
 <script
   src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js"
-  integrity="sha384-CltSiI9ODVFqJyko2ysuTgrAribJGWdMdhtoPOZyrbaiLyGDBxRFs1P1UfLxRYfN"
+  integrity="{{SRI_HASH_INTEGRITY}}"
   crossorigin="anonymous">
 </script>
 <script>
@@ -42,7 +42,7 @@ IMQA에서 제공하는 최신의 기능을 사용하려면 아래 코드를 사
 
 ```html
 <script
-  src="https://cdn.imqa.io/release/npm/@web-agent/{{VERSION}}/index.js" integrity="sha384-CltSiI9ODVFqJyko2ysuTgrAribJGWdMdhtoPOZyrbaiLyGDBxRFs1P1UfLxRYfN"
+  src="https://cdn.imqa.io/release/npm/@web-agent/{{VERSION}}/index.js"
   crossorigin="anonymous">
 </script>
 <script>
@@ -410,7 +410,7 @@ const sessionId = IMQA.getSessionId();
     <title>IMQA Agent Test Example</title>
     <script
       src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js"
-      integrity="sha384-CltSiI9ODVFqJyko2ysuTgrAribJGWdMdhtoPOZyrbaiLyGDBxRFs1P1UfLxRYfN"
+      integrity="{{SRI_HASH_INTEGRITY}}"
       crossorigin="anonymous">
     </script>
     <script>

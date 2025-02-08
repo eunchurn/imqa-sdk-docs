@@ -18,6 +18,7 @@ import { dirname } from 'node:path'
 import { cache } from 'react'
 import rehypePrismPlus from 'rehype-prism-plus'
 import remarkGFM from 'remark-gfm'
+import { getSRIHashIntegrity } from './sri-hash'
 
 /**
  * Checks for .md(x) file extension
@@ -61,6 +62,20 @@ export async function crawl(dir: string, filter?: (dir: string) => boolean, file
 
 const MDX_BASEURL = process.env.MDX_BASEURL
 // console.log('MDX_BASEURL', MDX_BASEURL)
+
+// TODO Fix this recursive type
+async function getWebAgentSRIHash(content: string) {
+  const regex = /<script[^>]+src=["']([^"']+)["'][^>]*>/
+  const match = content.match(regex)
+  const url = match ? match[1] : null
+  if (!url) return content
+  const sriHash = await getSRIHashIntegrity(url)
+  const updated = content.replace(
+    /integrity=\"\{\{SRI_HASH_INTEGRITY\}\}\"/,
+    `integrity=\"${sriHash}\"`,
+  )
+  return updated.replace(/integrity=\"\{\{SRI_HASH_INTEGRITY\}\}\"/, `integrity=\"${sriHash}\"`)
+}
 
 async function _getDocs(
   root: string,
@@ -117,7 +132,7 @@ async function _getDocs(
           },
         },
       })
-
+      const newContent = await getWebAgentSRIHash(content)
       return {
         slug,
         url,
@@ -125,7 +140,7 @@ async function _getDocs(
         boxes,
         //
         file,
-        content,
+        content: newContent,
         frontmatter,
       }
     }),
