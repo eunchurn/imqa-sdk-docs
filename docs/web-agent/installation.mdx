@@ -21,28 +21,26 @@ IMQA에서 제공하는 최신의 기능을 사용하려면 아래 코드를 사
 
 
 ```html
-<script
-  src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js"
-  integrity="{{SRI_HASH_INTEGRITY}}"
-  crossorigin="anonymous">
+<script src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js">
 </script>
 <script>
-    window.IMQA.init({
-      collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
-      serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
-      serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
-      serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
-    });
+  window.IMQA.init({
+    collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+    serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
+    serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+    serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+  });
 </script>
 ```
 
 #### 특정 버전
 
-특정 버전을 사용하기 위한 설치 코드는 아래와 같습니다. `{{VERSION}}` 부분을 사용하려는 버전으로 대체하세요. 사용가능한 버전과 릴리즈 노트는 [릴리즈 페이지]()에서 확인할 수 있습니다.
+특정 버전을 사용하기 위한 설치 코드는 아래와 같습니다. `{{VERSION}}` 부분을 사용하려는 버전으로 대체하세요. 사용가능한 버전과 릴리즈 노트는 [릴리즈 페이지](./release.mdx)에서 확인할 수 있습니다.
 
 ```html
 <script
   src="https://cdn.imqa.io/release/npm/@web-agent/{{VERSION}}/index.js"
+  integrity="{{VERSION_SRI_HASH_INTEGRITY}}"
   crossorigin="anonymous">
 </script>
 <script>
@@ -409,7 +407,7 @@ const sessionId = IMQA.getSessionId();
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IMQA Agent Test Example</title>
     <script
-      src="https://cdn.imqa.io/release/npm/@web-agent/latest/index.js"
+      src="https://cdn.imqa.io/release/npm/@web-agent/0.0.23/index.js"
       integrity="{{SRI_HASH_INTEGRITY}}"
       crossorigin="anonymous">
     </script>
