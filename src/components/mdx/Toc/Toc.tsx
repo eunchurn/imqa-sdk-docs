@@ -59,7 +59,7 @@ export function Toc({ className, toc }: ComponentProps<'div'> & { toc: DocToC[] 
           <a
             aria-label={title}
             className={cn(
-              'block text-balance py-2 text-on-surface-variant/50 hover:underline',
+              'block text-balance py-2 leading-relaxed text-on-surface-variant/50 hover:underline',
               index === activeIndex && 'text-on-surface',
             )}
             style={{ marginLeft: `${(level - 1) * 1}rem` }}
