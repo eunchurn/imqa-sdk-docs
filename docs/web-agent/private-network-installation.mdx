@@ -1,0 +1,131 @@
+---
+title: Private Network Installation
+description: IMQA OpenTelemetry 자동 계측 JavaScript 라이브러리는 폐쇄망 설치 가이드 입니다.
+nav: 12
+---
+
+> [!NOTE]
+> Web앱과 WebView 에 적용 가능한 IMQA Web Agent 폐쇄망 설치 가이드입니다. **아래 2개의 설치 방법 중 설치하기 쉬운 방법 하나를 선택**하여 설치합니다.
+
+## 1안: 폐쇄망 기준 IMQA Web Agent 설치하고 초기화 하기
+
+1. 폐쇄망에서는 CDN을 통해 직접 실행할 수 없으므로 인터넷이 연결된 환경에서 미리 번들링된 자바스크립트 [**파일을 다운로드**](https://cdn.imqa.io/release/npm/@web-agent/latest/index.js)를 받습니다.
+
+> [!NOTE]
+> [**다운로드 링크**](https://cdn.imqa.io/release/npm/@web-agent/latest/index.js)
+
+2. 다운로드된 `index.js` 파일을 적절한 이름 `imqa-agent.js` 로 변경하여 프로젝트 내부에 포함 시킵니다. 아래 예시는 프로젝트내 `public` 폴더 내에 위치하고 있다고 가정합니다.
+3. 아래 코드와 같이 `<head>` 태그 안에 추가합니다.
+
+```html
+<script src="./public/imqa-agent.js">
+</script>
+<script>
+  window.IMQA.init({
+    collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+    serviceName: '{{NAME_OF_YOUR_SERVICE}}',
+    serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
+    serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+  });
+</script>
+```
+
+> [!TIP]
+> **서비스 키 발급**
+> IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 새로운 서비스를 등록하고 발급된 `서비스 키`를 사용하여 설치하세요.
+
+[IMQA_관리자_가이드 v1.0.0_c.pdf](https://res.craft.do/user/full/441bfb17-6516-c700-2f58-a4aaa6a4f2ee/doc/ACD32122-ECCD-4216-B211-A87AA58C00DC/EC73DF48-36F4-4FA3-B43C-B21919B18895_2/7Jw6a46yDLAet76pi1TK2crJRsyCx6fy3XTNwvbYe0Iz/IMQA__%20v1.0.0_c.pdf)
+
+4. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다.
+- `serviceName` 서비스 이름은 필수값입니다. Web 앱 전용의 경우 사용하고자 하는 서비스이름을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 이름과 동일한 이름을 사용해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
+- `serviceVersion` 서비스 버전은 필수값입니다. Web 앱 전용의 경우 Web 앱의 버전을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 버전과 동일한 버전을 입력해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
+- `serviceKey` 서비스 키는 IMQA에서 생성한 서비스에 발급된 키를 입력해주세요.
+- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
+
+[Installation - IMQA SDK](https://doc.imqa.io/web-agent/installation#%EC%84%A4%EC%A0%95)
+
+5. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 아래 IMQA Web Agent API 문서를 참조해주세요.
+
+[API - IMQA SDK](https://doc.imqa.io/web-agent/api)
+
+## 2안: 폐쇄망 기준 IMQA Web Agent `npm` 으로 설치하고 초기화 하기
+
+1. Web App 프로젝트에 `@imqa/web-agent` 패키지를 설치합니다. 이 문서를 작성한 시점의 버전은 `0.0.29` 입니다.
+- **`npm`**
+
+```shell
+npm install @imqa/web-agent
+```
+
+- **`yarn`**
+
+```shell
+yarn add @imqa/web-agent
+```
+
+2. Web App 프로젝트 entry point 에 `@imqa/web-agent` 를 import 하고, init으로 IMQA를 초기화 합니다. 여기서는 React와 Vuejs 2의 예시를 들었습니다.
+- **React**
+
+```typescript
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { App } from "./my-app";
+import IMQA from "@imqa/web-agent";
+
+IMQA.init({
+  collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+  serviceName: '{{NAME_OF_YOUR_SERVICE}}',
+  serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
+  serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+});
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+```
+
+- **Vuejs 2**
+
+```typescript
+import Vue from "vue";
+import App from "./app.vue"; // get root module
+import router from "./router";
+import store from "./store"; // get vuex -> store
+import IMQA from "@imqa/web-agent"; // IMQA agent
+
+IMQA.init({
+  collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+  serviceName: '{{NAME_OF_YOUR_SERVICE}}',
+  serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
+  serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+});
+
+const app = new Vue({
+  router,
+  store,
+  render: (h) => h(App),
+}).$mount("#app");
+```
+
+> [!TIP]
+> **서비스 키 발급**
+> IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 새로운 서비스를 등록하고 발급된 `서비스 키`를 사용하여 설치하세요.
+
+[IMQA_관리자_가이드 v1.0.0_c.pdf](https://res.craft.do/user/full/441bfb17-6516-c700-2f58-a4aaa6a4f2ee/doc/ACD32122-ECCD-4216-B211-A87AA58C00DC/33F0D8C7-38F0-4A00-8FE3-2D1079121E55_2/LtoWX6qCfHtheIlyn7JnRkCuCYg59SORPG4ICLjCP8sz/IMQA__%20v1.0.0_c.pdf)
+
+3. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다.
+- `serviceName` 서비스 이름은 필수값입니다. Web 앱 전용의 경우 사용하고자 하는 서비스이름을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 이름과 동일한 이름을 사용해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
+- `serviceVersion` 서비스 버전은 필수값입니다. Web 앱 전용의 경우 Web 앱의 버전을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 버전과 동일한 버전을 입력해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
+- `serviceKey` 서비스 키는 IMQA에서 생성한 서비스에 발급된 키를 입력해주세요.
+- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 [IMQA 설정 문서](https://doc.imqa.io/web-agent/installation#%EC%84%A4%EC%A0%95)를 참조해주세요.
+
+[Installation - IMQA SDK](https://doc.imqa.io/web-agent/installation#%EC%84%A4%EC%A0%95)
+
+4. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 아래 [IMQA Web Agent API 문서](https://doc.imqa.io/web-agent/api)를 참조해주세요.
+
+[API - IMQA SDK](https://doc.imqa.io/web-agent/api)
+

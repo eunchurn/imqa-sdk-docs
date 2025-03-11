@@ -132,7 +132,7 @@ async function _getDocs(
           },
         },
       })
-      const newContent = await getWebAgentSRIHash(content)
+      // const newContent = await getWebAgentSRIHash(content)
       return {
         slug,
         url,
@@ -140,7 +140,8 @@ async function _getDocs(
         boxes,
         //
         file,
-        content: newContent,
+        // content: newContent,
+        content,
         frontmatter,
       }
     }),
