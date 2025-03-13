@@ -1,0 +1,4523 @@
+{
+  "$schema": "./lina-dashboard.schema.json",
+  "name": "lina-dashboard",
+  "centers": [
+    {
+      "name": "LINAONE-BEST 센터",
+      "alias": "",
+      "description": "",
+      "order": 0,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-DG 센터",
+      "alias": "",
+      "description": "",
+      "order": 1,
+      "data.count.criteria": {
+        "unit": "ms",
+        "delay.time": 30000
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "order": 0,
+          "description": "청약 화면",
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "order": 1,
+          "description": "상담 화면",
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-Direct 센터",
+      "alias": "",
+      "description": "",
+      "order": 2,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 3,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-ONE 센터",
+      "alias": "",
+      "description": "",
+      "order": 4,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-Prime 센터",
+      "alias": "",
+      "description": "",
+      "order": 5,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-Pro 센터",
+      "alias": "",
+      "description": "",
+      "order": 6,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-TOP 센터",
+      "alias": "",
+      "description": "",
+      "order": 7,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-VIP 센터",
+      "alias": "",
+      "description": "",
+      "order": 8,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-SYNERGY-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 9,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-SYNERGY 센터",
+      "alias": "",
+      "description": "",
+      "order": 10,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-HIGH 센터",
+      "alias": "",
+      "description": "",
+      "order": 11,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-GOLD 센터",
+      "alias": "",
+      "description": "",
+      "order": 12,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LINAONE-WNB 센터",
+      "alias": "",
+      "description": "",
+      "order": 13,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DRTV 센터",
+      "alias": "",
+      "description": "",
+      "order": 14,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "DRTV-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 15,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "BC-N 센터",
+      "alias": "",
+      "description": "",
+      "order": 16,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HDHS-OB-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 17,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HDHS-OB-DG 센터",
+      "alias": "",
+      "description": "",
+      "order": 18,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "LHS-OB-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 19,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "GSH-OB-BS 센터",
+      "alias": "",
+      "description": "",
+      "order": 20,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CJOS-OB-DG 센터",
+      "alias": "",
+      "description": "",
+      "order": 21,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CJOS-OB-BS 센터",
+      "alias": "",
+      "description": "",
+      "order": 22,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CJOS-OB-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 23,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CJOS-OB-GJ-2 센터",
+      "alias": "",
+      "description": "",
+      "order": 24,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CJOS-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 25,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HCC-N 센터",
+      "alias": "",
+      "description": "",
+      "order": 26,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HCC-DJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 27,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HCC-DJ-2 센터",
+      "alias": "",
+      "description": "",
+      "order": 28,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MNS-DG 센터",
+      "alias": "",
+      "description": "",
+      "order": 29,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MNS-GJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 30,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MNS-S 센터",
+      "alias": "",
+      "description": "",
+      "order": 31,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "MNS-CJ 센터",
+      "alias": "",
+      "description": "",
+      "order": 32,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SHC 센터",
+      "alias": "",
+      "description": "",
+      "order": 33,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SHC-N-2 센터",
+      "alias": "",
+      "description": "",
+      "order": 34,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "HDHS 센터",
+      "alias": "",
+      "description": "",
+      "order": 35,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SCA-N 센터",
+      "alias": "",
+      "description": "",
+      "order": 36,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SCA-SW 센터",
+      "alias": "",
+      "description": "",
+      "order": 37,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KBC-BP 센터",
+      "alias": "",
+      "description": "",
+      "order": 38,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KBC-DG-2 센터",
+      "alias": "",
+      "description": "",
+      "order": 39,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KBC-UJB 센터",
+      "alias": "",
+      "description": "",
+      "order": 40,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IMC-S 센터",
+      "alias": "",
+      "description": "",
+      "order": 41,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-IB-2 센터",
+      "alias": "",
+      "description": "",
+      "order": 42,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-IB-3 센터",
+      "alias": "",
+      "description": "",
+      "order": 43,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-OB 센터",
+      "alias": "",
+      "description": "",
+      "order": 44,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-OB-BS 센터",
+      "alias": "",
+      "description": "",
+      "order": 45,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-OB-DG 센터",
+      "alias": "",
+      "description": "",
+      "order": 46,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "INT-OB-H 센터",
+      "alias": "",
+      "description": "",
+      "order": 47,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ONE-INT-N 센터",
+      "alias": "",
+      "description": "",
+      "order": 48,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ONE-INT-L 센터",
+      "alias": "",
+      "description": "",
+      "order": 49,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ONE-INT-STAR 센터",
+      "alias": "",
+      "description": "",
+      "order": 50,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "KT-STAR 센터",
+      "alias": "",
+      "description": "",
+      "order": 51,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ONE-Power 센터",
+      "alias": "",
+      "description": "",
+      "order": 52,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "clusters": [
+    {
+      "name": "CLUSTER 1",
+      "alias": "클러스터 1",
+      "order": 0,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CLUSTER 2",
+      "alias": "클러스터 2",
+      "order": 1,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CLUSTER 3",
+      "alias": "클러스터 3",
+      "order": 2,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CLUSTER 4",
+      "alias": "클러스터 4",
+      "order": 3,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "CLUSTER 5",
+      "alias": "클러스터 5",
+      "order": 4,
+      "criteria": {
+        "count": {
+          "timeout": {
+            "unit": "ms",
+            "value": 30000
+          }
+        }
+      },
+      "screens": [
+        {
+          "name": "subscription",
+          "alias": "청약",
+          "description": "청약 화면",
+          "order": 0,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        },
+        {
+          "name": "counsel",
+          "alias": "상담",
+          "description": "상담 화면",
+          "order": 1,
+          "criteria.levels": ["green", "yellow", "red"],
+          "criteria.unit": "ms",
+          "criteria": [
+            {
+              "name": "green",
+              "description": "정상",
+              "color": "#00FF00",
+              "min": 0,
+              "max": 15000
+            },
+            {
+              "name": "yellow",
+              "description": "주의",
+              "color": "#FFFF00",
+              "min": 15001,
+              "max": 60000
+            },
+            {
+              "name": "red",
+              "description": "심각",
+              "color": "#FF0000",
+              "min": 60001,
+              "max": 120000
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

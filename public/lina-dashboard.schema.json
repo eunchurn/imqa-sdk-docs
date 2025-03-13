@@ -1,0 +1,197 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LINA Dashboard Meta Schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "대시보드 이름"
+    },
+    "centers": {
+      "type": "array",
+      "description": "센터 목록",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "센터 이름"
+          },
+          "alias": {
+            "type": "string",
+            "description": "센터 별칭"
+          },
+          "order": {
+            "type": "number"
+          },
+          "screens": {
+            "type": "array",
+            "description": "화면 목록",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "화면 이름 (데이터로 보낸 이름이어야 함)"
+                },
+                "alias": {
+                  "type": "string",
+                  "description": "화면 별칭"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "화면 설명"
+                },
+                "criteria.levels": {
+                  "type": "array",
+                  "description": "기준 레벨 목록",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "criteria.unit": {
+                  "type": "string",
+                  "description": "단위"
+                },
+                "criteria": {
+                  "type": "array",
+                  "description": "기준",
+                  "items": {
+                    "type": "object",
+                    "description": "기준 항목",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "기준 이름"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "기준 설명"
+                      },
+                      "color": {
+                        "type": "string",
+                        "description": "색상"
+                      },
+                      "min": {
+                        "type": "number",
+                        "description": "최소값"
+                      },
+                      "max": {
+                        "type": "number",
+                        "description": "최대값"
+                      }
+                    },
+                    "required": ["name", "description", "color", "min", "max"]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "alias",
+                "description",
+                "criteria.levels",
+                "criteria.unit",
+                "criteria"
+              ]
+            }
+          }
+        },
+        "required": ["name", "alias", "order", "screens"]
+      }
+    },
+    "clusters": {
+      "type": "array",
+      "description": "클러스터 목록",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "클러스터 이름"
+          },
+          "alias": {
+            "type": "string",
+            "description": "클러스터 별칭"
+          },
+          "order": {
+            "type": "number",
+            "description": "순서"
+          },
+          "screens": {
+            "type": "array",
+            "description": "화면 목록",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "화면 이름 (데이터로 보낸 이름이어야 함)"
+                },
+                "alias": {
+                  "type": "string",
+                  "description": "화면 별칭"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "화면 설명"
+                },
+                "criteria.levels": {
+                  "type": "array",
+                  "description": "기준 레벨 목록",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "criteria.unit": {
+                  "type": "string",
+                  "description": "단위"
+                },
+                "criteria": {
+                  "type": "array",
+                  "description": "기준",
+                  "items": {
+                    "type": "object",
+                    "description": "기준 항목",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "기준 이름"
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "기준 설명"
+                      },
+                      "color": {
+                        "type": "string",
+                        "description": "색상"
+                      },
+                      "min": {
+                        "type": "number",
+                        "description": "최소값"
+                      },
+                      "max": {
+                        "type": "number",
+                        "description": "최대값"
+                      }
+                    },
+                    "required": ["name", "description", "color", "min", "max"]
+                  }
+                }
+              },
+              "required": [
+                "name",
+                "alias",
+                "description",
+                "criteria.levels",
+                "criteria.unit",
+                "criteria"
+              ]
+            }
+          }
+        },
+        "required": ["name", "alias", "order", "screens"]
+      }
+    }
+  },
+  "required": ["name", "centers", "clusters"]
+}
