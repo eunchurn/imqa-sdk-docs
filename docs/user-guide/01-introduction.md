@@ -1,7 +1,7 @@
 ---
 title: Introduction
 description: IMQA 사용자 가이드 v1.0.0
-nav: 21
+nav: 200
 ---
 
 ## IMQA 사용자 가이드

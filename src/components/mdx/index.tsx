@@ -10,6 +10,8 @@ export * from './Intro'
 export * from './Keypoints'
 export * from './People'
 export * from './Sandpack'
+export * from './sdk-card'
+export * from './sdk-cards'
 export * from './Summary'
 export * from './Toc'
 

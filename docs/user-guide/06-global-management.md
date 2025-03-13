@@ -1,7 +1,7 @@
 ---
 title: 글로벌 관리
 description: IMQA는 서비스 관리, 사용자 관리 등 IMQA 사용을 위한 기본적인 관리자 기능을 제공합니다.
-nav: 26
+nav: 206
 ---
 
 <Gha keyword="NOTE" title="글로벌 관리 메뉴 접근 권한">

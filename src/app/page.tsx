@@ -162,7 +162,7 @@ export default function Page() {
         <div className="px-4 py-8 pb-12 lg:px-28 lg:py-12 lg:pb-20">
           <header className="text-center text-3xl lg:text-left">
             <Link
-              href="/introduction/introduction"
+              href="/introduction/01-introduction"
               aria-label="IMQA SDK Docs"
               className="font-bold"
             >
