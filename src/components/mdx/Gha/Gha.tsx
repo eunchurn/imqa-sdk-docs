@@ -41,7 +41,15 @@ const styles: Record<string, Style> = {
   },
 }
 
-export function Gha({ children, keyword }: { children: ReactNode; keyword?: string }) {
+export function Gha({
+  children,
+  keyword,
+  title,
+}: {
+  children: ReactNode
+  keyword?: string
+  title?: string
+}) {
   if (!keyword || !(keyword in styles)) keyword = 'NOTE' // default to "NOTE"
 
   const { icon, label, bg } = styles[keyword]
@@ -56,7 +64,7 @@ export function Gha({ children, keyword }: { children: ReactNode; keyword?: stri
     <div className={cn('my-6 overflow-clip rounded-lg px-6 py-2', bg)}>
       <div className="my-4 flex items-center gap-2 text-lg font-semibold">
         <Icon />
-        {label}
+        {title ?? label}
       </div>
       {children}
     </div>
