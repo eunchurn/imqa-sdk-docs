@@ -1,6 +1,6 @@
 'use client'
 
-import { CuboidIcon as AndroidIcon, Apple, Globe } from 'lucide-react'
+import { AndroidIcon, AppleIcon, BrowserIcon } from '@/components/ui/icons'
 import { SDKCard } from './sdk-card'
 
 const sdks = [
@@ -9,29 +9,30 @@ const sdks = [
     description:
       'Android 애플리케이션에 OpenTelemetry Native IMQA Android SDK를 쉽고 빠르게 설치하세요.',
     icon: AndroidIcon,
-    color: 'bg-[#3DDC84]',
+    // color: 'bg-secondary-dark',
+    color: 'bg-secondary-light',
     link: '/sdk/android-sdk',
   },
   {
     title: 'iOS SDK',
     description: 'iOS 애플리케이션에 OpenTelemetry Native IMQA iOS SDK를 쉽고 빠르게 설치하세요.',
-    icon: Apple,
-    color: 'bg-[#000000]',
+    icon: AppleIcon,
+    color: 'bg-surface-container-dark',
     link: '/sdk/ios-sdk',
   },
   {
     title: 'Web Agent',
     description:
       '웹 애플리케이션 전반에서 사용자 행동을 추적하고 분석할 수 있도록 Opentelemetry Native IMQA Web Agent를 배포하세요.',
-    icon: Globe,
-    color: 'bg-[#0070F3]',
+    icon: BrowserIcon,
+    color: 'bg-white',
     link: '/web-agent/installation',
   },
 ]
 
 export const SDKCards = () => (
   <div>
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl px-6">
       <div className="mb-16 text-center">
         <p className="text-muted-foreground mx-auto mt-3 max-w-2xl text-xl sm:mt-4">
           SDK 가이드를 선택하여 시작하세요.

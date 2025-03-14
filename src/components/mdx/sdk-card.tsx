@@ -2,13 +2,15 @@
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { CuboidIcon, DivideIcon as LucideIcon } from 'lucide-react'
+// import { CuboidIcon } from 'lucide-react'
+import { BrowserIcon } from '@/components/ui/icons'
 import { useRouter } from 'next/navigation'
 
 interface SDKCardProps {
   title: string
   description: string
-  icon?: typeof LucideIcon
+  // icon?: typeof LucideIcon
+  icon?: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
   color: string
   link: string
 }
@@ -16,7 +18,7 @@ interface SDKCardProps {
 export function SDKCard({
   title,
   description,
-  icon: Icon = CuboidIcon,
+  icon: Icon = BrowserIcon,
   color,
   link,
 }: SDKCardProps) {
@@ -26,9 +28,7 @@ export function SDKCard({
       <div className="flex h-full flex-col p-6">
         <div className="mb-4 flex items-center gap-4">
           <div className={`rounded-lg p-3 ${color} bg-opacity-10`}>
-            <Icon
-              className={`h-8 w-8 ${color === 'bg-[#000000]' ? 'text-black' : 'text-foreground'}`}
-            />
+            <Icon className={`h-8 w-8 ${color}`} />
           </div>
           <h2 className="text-foreground text-2xl font-semibold">{title}</h2>
         </div>
