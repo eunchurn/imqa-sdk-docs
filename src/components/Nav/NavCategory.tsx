@@ -31,7 +31,7 @@ export function NavCategory({
       <div className="relative">
         <NavItem
           href={categoryHref}
-          className={cn('font-bold capitalize tracking-wide', 'flex items-center gap-3')}
+          className={cn('font-bold tracking-wide', 'flex items-center gap-3')}
           active={docIndexEntry && categoryHref === `/${asPath}`}
         >
           {rootTitle ?? category.replace(/\-/g, ' ')}

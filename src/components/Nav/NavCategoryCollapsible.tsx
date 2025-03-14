@@ -46,7 +46,7 @@ export function NavCategoryCollapsible({
       <div className="relative">
         <NavItem
           href={categoryHref}
-          className={cn('capitalize tracking-wide', 'flex items-center gap-3')}
+          className={cn('tracking-wide', 'flex items-center gap-3')}
           active={docIndexEntry && categoryHref === `/${asPath}`}
         >
           {rootTitle ?? category.replace(/\-/g, ' ')}
