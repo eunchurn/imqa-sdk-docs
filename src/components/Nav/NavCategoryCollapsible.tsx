@@ -33,7 +33,7 @@ export function NavCategoryCollapsible({
   }, [])
 
   const nonIndexItems = docsEntries.filter(([page]) => page !== INDEX_PAGE)
-
+  const rootTitle = docIndexEntry ? docIndexEntry[1].title : null
   return (
     <Collapsible.Root
       className={cn(
@@ -49,7 +49,7 @@ export function NavCategoryCollapsible({
           className={cn('capitalize tracking-wide', 'flex items-center gap-3')}
           active={docIndexEntry && categoryHref === `/${asPath}`}
         >
-          {category.replace(/\-/g, ' ')}
+          {rootTitle ?? category.replace(/\-/g, ' ')}
         </NavItem>
         {nonIndexItems.length > 0 && (
           <Collapsible.Trigger

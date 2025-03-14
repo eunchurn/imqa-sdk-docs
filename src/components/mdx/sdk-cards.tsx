@@ -11,14 +11,14 @@ const sdks = [
     icon: AndroidIcon,
     // color: 'bg-secondary-dark',
     color: 'bg-secondary-light',
-    link: '/sdk/android-sdk',
+    link: '/android-sdk/introduction',
   },
   {
     title: 'iOS SDK',
     description: 'iOS 애플리케이션에 OpenTelemetry Native IMQA iOS SDK를 쉽고 빠르게 설치하세요.',
     icon: AppleIcon,
     color: 'bg-surface-container-dark',
-    link: '/sdk/ios-sdk',
+    link: '/ios-sdk/introduction',
   },
   {
     title: 'Web Agent',

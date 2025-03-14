@@ -29,7 +29,6 @@ export function Nav({
       }, {} as NavList),
     [docs],
   )
-
   return (
     <ul className={cn(className, '')}>
       {Object.entries(nav).map(([category, docs]) => {

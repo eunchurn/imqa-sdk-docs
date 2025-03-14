@@ -161,7 +161,11 @@ export default function Page() {
       <div className="min-h-screen">
         <div className="px-4 py-8 pb-12 lg:px-28 lg:py-12 lg:pb-20">
           <header className="text-center text-3xl lg:text-left">
-            <Link href="/getting-started/sdk" aria-label="IMQA SDK Docs" className="font-bold">
+            <Link
+              href="/getting-started/introduction"
+              aria-label="IMQA SDK Docs"
+              className="font-bold"
+            >
               <span className="sm:hidden">docs</span>
               <span className="hidden sm:inline">documentation</span>
             </Link>

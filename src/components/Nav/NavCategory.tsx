@@ -20,7 +20,7 @@ export function NavCategory({
   const categoryHref = docIndexEntry ? docIndexEntry[1].url : docsEntries[0][1].url
 
   const nonIndexItems = docsEntries.filter(([page]) => page !== INDEX_PAGE)
-
+  const rootTitle = docIndexEntry ? docIndexEntry[1].title : null
   return (
     <div
       className={cn(
@@ -34,18 +34,20 @@ export function NavCategory({
           className={cn('font-bold capitalize tracking-wide', 'flex items-center gap-3')}
           active={docIndexEntry && categoryHref === `/${asPath}`}
         >
-          {category.replace(/\-/g, ' ')}
+          {rootTitle ?? category.replace(/\-/g, ' ')}
         </NavItem>
       </div>
 
       <ul>
-        {nonIndexItems.map(([page, doc]) => (
-          <li key={page}>
-            <NavItem href={doc.url} active={doc.url === `/${asPath}`} className="pl-10 text-xs">
-              {doc.title}
-            </NavItem>
-          </li>
-        ))}
+        {nonIndexItems.map(([page, doc]) => {
+          return (
+            <li key={page}>
+              <NavItem href={doc.url} active={doc.url === `/${asPath}`} className="pl-10 text-xs">
+                {doc.title}
+              </NavItem>
+            </li>
+          )
+        })}
       </ul>
     </div>
   )

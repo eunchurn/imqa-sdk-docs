@@ -20,7 +20,6 @@ export type Props = {
 export default async function Layoutt({ params, children }: Props) {
   const slug = params.slug
   const { docs, doc } = await getData(...slug)
-
   const asPath = slug.join('/')
 
   const currentPageIndex = docs.findIndex(({ url }) => url === `/${asPath}`)
