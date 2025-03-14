@@ -7,23 +7,22 @@ const sdks = [
   {
     title: 'Android SDK',
     description:
-      'Integrate our powerful SDK into your Android applications with ease. Built for performance and reliability.',
+      'Android 애플리케이션에 OpenTelemetry Native IMQA Android SDK를 쉽고 빠르게 설치하세요.',
     icon: AndroidIcon,
     color: 'bg-[#3DDC84]',
-    link: '/docs/android',
+    link: '/sdk/android-sdk',
   },
   {
     title: 'iOS SDK',
-    description:
-      'Seamlessly add our features to your iOS apps. Designed to work flawlessly with Swift and Objective-C.',
+    description: 'iOS 애플리케이션에 OpenTelemetry Native IMQA iOS SDK를 쉽고 빠르게 설치하세요.',
     icon: Apple,
     color: 'bg-[#000000]',
-    link: '/docs/ios',
+    link: '/sdk/ios-sdk',
   },
   {
     title: 'Web Agent',
     description:
-      'Deploy our web agent to track and analyze user behavior across your web applications.',
+      '웹 애플리케이션 전반에서 사용자 행동을 추적하고 분석할 수 있도록 Opentelemetry Native IMQA Web Agent를 배포하세요.',
     icon: Globe,
     color: 'bg-[#0070F3]',
     link: '/web-agent/installation',
@@ -35,7 +34,7 @@ export const SDKCards = () => (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="mb-16 text-center">
         <p className="text-muted-foreground mx-auto mt-3 max-w-2xl text-xl sm:mt-4">
-          Choose your platform and get started with our integration guides
+          SDK 가이드를 선택하여 시작하세요.
         </p>
       </div>
 

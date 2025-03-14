@@ -41,6 +41,41 @@ const styles: Record<string, Style> = {
   },
 }
 
+const emojiStyles: Record<
+  string,
+  {
+    icon: string
+    label: string
+    bg: string
+  }
+> = {
+  NOTE: {
+    icon: '🗒️',
+    label: 'Note',
+    bg: 'bg-note-container',
+  },
+  TIP: {
+    icon: '📍',
+    label: 'Tip',
+    bg: 'bg-tip-container',
+  },
+  IMPORTANT: {
+    icon: '❗',
+    label: 'Important',
+    bg: 'bg-important-container',
+  },
+  WARNING: {
+    icon: '⚠️',
+    label: 'Warning',
+    bg: 'bg-warning-container',
+  },
+  CAUTION: {
+    icon: '⛔️',
+    label: 'Caution',
+    bg: 'bg-caution-container',
+  },
+}
+
 export function Gha({
   children,
   keyword,
@@ -52,9 +87,10 @@ export function Gha({
 }) {
   if (!keyword || !(keyword in styles)) keyword = 'NOTE' // default to "NOTE"
 
-  const { icon, label, bg } = styles[keyword]
-  const Icon = icon
-
+  // const { icon, label, bg } = styles[keyword]
+  // const Icon = icon
+  const { icon, label, bg } = emojiStyles[keyword]
+  const Icon = () => <span className="text-2xl">{icon}</span>
   // test if children is a string
   if (typeof children === 'string') {
     children = <P className="my-4">{children}</P>

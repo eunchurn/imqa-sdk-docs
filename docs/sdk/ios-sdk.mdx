@@ -1,0 +1,84 @@
+---
+title: iOS SDK
+description: IMQA iOS SDK 설치 및 설정 방법을 안내합니다.
+nav: 400
+---
+
+<Gha keyword="TIP" title="서비스 키 발급">
+IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 **새로운 서비스를 등록하고 발급된 `서비스 키`를** 사용하여 설치하세요.
+</Gha>
+
+## IMQA iOS SDK 설치
+
+IMQA iOS SDK는 2가지 방식으로 설치 방법을 제공하고 있습니다. 사용하고 계신 환경에 맞춰서 아래 방법을 따라 SDK를 설치하세요.
+
+## 1. XCFramework 를 통한 설치
+
+### 1-1. Xcode에서 Project 폴더안에 넣어주세요.
+
+![xcframework](./img/ios-sdk-xcframework-01.png)
+
+성공적으로 IMQA iOS SDK가 추가되었습니다.
+
+### 1-2. Code 추가
+
+```jsx
+import IMQACore
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    var window: UIWindow?
+    
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        
+            let endpoint = IMQA.Endpoints(collectorURL: "여기에 url을 입력해주세요.")
+            let serviceKey = "여기에 service key를 입력해주세요."
+            let option = IMQA.Options(serviceKey: serviceKey,
+                                      endpoints: endpoint ,
+                                      sampleRate: 1.0)
+            do{
+                try IMQA
+                    .setup(options: option)
+                    .start()
+            }catch (let error){
+                print("\(error.localizedDescription)")
+            }
+            
+            ...
+ {
+```
+
+- `Endpoints`: collector주소를 입력합니다. baseURL은 release환경주소값입니다. developmentBaseURL은 개발환경입니다.
+- `serviceKey`: 발급받은 서비스 키를 입력합니다.
+- `sampleRate` : 샘플링 비율을 입력합니다.  샘플링 디폴트 값은 1.0(100%) 입니다.
+    
+    0.0~1.0 사이의 값을 입력합니다. (0.0 : 수집 안함, 1.0 : 100% 수집)
+    
+
+---
+
+## 2. Cocoapods 를 통한 설치
+
+### 2-1. Podfile에 IMQA iOS SDK 경로추가
+
+![cocoapods](./img/ios-sdk-cocoapods-01.png)
+
+```swift
+use_frameworks!
+...
+pod ‘IMQACore’  
+...
+```
+
+# IMQA iOS SDK 설정
+
+## 커스텀 사용자 ID 설정
+
+커스텀 사용자 ID를 지정하여 특정 사용자의 세션 분석 시 활용할 수 있습니다.
+
+```jsx
+IMQA.setUserId(id: "oopchoi")
+```
+
+![custom user](./img/ios-sdk-custom-01.png)
