@@ -19,10 +19,6 @@ import { ComponentProps } from 'react'
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from '../../../../tailwind.config'
 const fullConfig = resolveConfig(tailwindConfig)
-// console.log('fullConfig', fullConfig.theme.colors)
-// console.log(fullConfig.theme.fontSize.sm)
-// console.log(fullConfig.theme.fontFamily.mono)
-// console.log(fullConfig.theme.borderRadius.lg)
 
 function getSandpackDependencies(folder: string) {
   const pkgPath = `${folder}/package.json`
@@ -42,7 +38,6 @@ async function getSandpackFiles(
     (dir) =>
       !dir.includes('node_modules') && extensions.map((ext) => dir.endsWith(ext)).some(Boolean),
   )
-  // console.log('filepaths', filepaths)
 
   return filepaths.reduce((acc, filepath) => {
     const relativeFilepath = path.relative(folder, filepath)
@@ -76,8 +71,6 @@ export const Sandpack = async ({
   preview?: ComponentProps<typeof SandpackPreview>
   fileExplorer?: boolean | ComponentProps<typeof SandpackFileExplorer>
 }) => {
-  // console.log('folder', folder)
-
   const _files = folder ? await getSandpackFiles(folder, props.files) : props.files
 
   const pkgDeps = folder ? getSandpackDependencies(folder) : null
@@ -86,7 +79,6 @@ export const Sandpack = async ({
     ...props.customSetup,
     dependencies,
   }
-  // console.log('customSetup', customSetup)
 
   const options = {
     ...props.options,

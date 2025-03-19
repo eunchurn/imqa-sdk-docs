@@ -1,0 +1,122 @@
+[
+  {
+    "resource": {
+      "attributes": [
+        {
+          "key": "service.name",
+          "value": {
+            "stringValue": "real-world-web-rum"
+          }
+        },
+        {
+          "key": "telemetry.sdk.language",
+          "value": {
+            "stringValue": "webjs"
+          }
+        },
+        {
+          "key": "telemetry.sdk.name",
+          "value": {
+            "stringValue": "opentelemetry"
+          }
+        },
+        {
+          "key": "telemetry.sdk.version",
+          "value": {
+            "stringValue": "1.25.1"
+          }
+        },
+        {
+          "key": "imqa.rum.version",
+          "value": {
+            "stringValue": "0.0.1"
+          }
+        },
+        {
+          "key": "sampling.probability",
+          "value": {
+            "intValue": 1
+          }
+        },
+        {
+          "key": "imqa.telemetry.sdk.export_timestamp",
+          "value": {
+            "doubleValue": 1726853120842.3
+          }
+        }
+      ],
+      "droppedAttributesCount": 0
+    },
+    "scopeSpans": [
+      {
+        "scope": {
+          "name": "@opentelemetry/instrumentation-user-interaction",
+          "version": "0.39.0"
+        },
+        "spans": [
+          {
+            "traceId": "81189bef2230b52fbb5dd424a7d0ada3",
+            "spanId": "785bb81d849dfee6",
+            "parentSpanId": "5405ebda10639b85",
+            "name": "click on '150 stars on GitH...'",
+            "kind": 1,
+            "startTimeUnixNano": "1727073257246000000",
+            "endTimeUnixNano": "1727073257246200000",
+            "attributes": [
+              {
+                "key": "event_type",
+                "value": {
+                  "stringValue": "click"
+                }
+              },
+              {
+                "key": "target_element",
+                "value": {
+                  "stringValue": "IMG"
+                }
+              },
+              {
+                "key": "target_xpath",
+                "value": {
+                  "stringValue": "//html/body/div[2]/div/main/section/div/div[2]/img"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/"
+                }
+              },
+              {
+                "key": "document.visibilityState",
+                "value": {
+                  "stringValue": "visible"
+                }
+              },
+              {
+                "key": "session.id",
+                "value": {
+                  "stringValue": "106bd69ca417693113eaf85f6572dd78"
+                }
+              },
+              {
+                "key": "location.href",
+                "value": {
+                  "stringValue": "http://localhost:3002/"
+                }
+              }
+            ],
+            "droppedAttributesCount": 0,
+            "events": [],
+            "droppedEventsCount": 0,
+            "status": {
+              "code": 0
+            },
+            "links": [],
+            "droppedLinksCount": 0
+          }
+        ]
+      }
+    ]
+  }
+]

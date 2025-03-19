@@ -1,0 +1,182 @@
+[
+  {
+    "resource": {
+      "attributes": [
+        {
+          "key": "service.name",
+          "value": {
+            "stringValue": "real-world-web-rum"
+          }
+        },
+        {
+          "key": "telemetry.sdk.language",
+          "value": {
+            "stringValue": "webjs"
+          }
+        },
+        {
+          "key": "telemetry.sdk.name",
+          "value": {
+            "stringValue": "opentelemetry"
+          }
+        },
+        {
+          "key": "telemetry.sdk.version",
+          "value": {
+            "stringValue": "1.25.1"
+          }
+        },
+        {
+          "key": "imqa.rum.version",
+          "value": {
+            "stringValue": "0.0.1"
+          }
+        },
+        {
+          "key": "sampling.probability",
+          "value": {
+            "intValue": 1
+          }
+        },
+        {
+          "key": "imqa.telemetry.sdk.export_timestamp",
+          "value": {
+            "doubleValue": 1727073715385.0999
+          }
+        }
+      ],
+      "droppedAttributesCount": 0
+    },
+    "scopeSpans": [
+      {
+        "scope": {
+          "name": "@opentelemetry/instrumentation-document-load",
+          "version": "0.39.0"
+        },
+        "spans": [
+          {
+            "traceId": "dab705f98a09df1469c4d8ce16000ed3",
+            "spanId": "1bc88938e6be93fd",
+            "name": "documentLoad",
+            "kind": 1,
+            "startTimeUnixNano": "1727073681434400000",
+            "endTimeUnixNano": "1727073682784100000",
+            "attributes": [
+              {
+                "key": "document.visibilityState",
+                "value": {
+                  "stringValue": "visible"
+                }
+              },
+              {
+                "key": "session.id",
+                "value": {
+                  "stringValue": "f5512cc05c8965287e6caf3034a838f8"
+                }
+              },
+              {
+                "key": "location.href",
+                "value": {
+                  "stringValue": "http://localhost:3002/"
+                }
+              },
+              {
+                "key": "http.url",
+                "value": {
+                  "stringValue": "http://localhost:3002/"
+                }
+              },
+              {
+                "key": "http.user_agent",
+                "value": {
+                  "stringValue": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+                }
+              },
+              {
+                "key": "http.longtasks_sum",
+                "value": {
+                  "intValue": 762000000
+                }
+              }
+            ],
+            "droppedAttributesCount": 0,
+            "events": [
+              {
+                "attributes": [],
+                "name": "fetchStart",
+                "timeUnixNano": "1727073681434400000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "unloadEventStart",
+                "timeUnixNano": "1727073681743900000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "unloadEventEnd",
+                "timeUnixNano": "1727073681743900000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domInteractive",
+                "timeUnixNano": "1727073682140600000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domContentLoadedEventStart",
+                "timeUnixNano": "1727073682140600000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domContentLoadedEventEnd",
+                "timeUnixNano": "1727073682141500000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "domComplete",
+                "timeUnixNano": "1727073682783600000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "loadEventStart",
+                "timeUnixNano": "1727073682783700000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "loadEventEnd",
+                "timeUnixNano": "1727073682784100000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "firstPaint",
+                "timeUnixNano": "1727073682017400000",
+                "droppedAttributesCount": 0
+              },
+              {
+                "attributes": [],
+                "name": "firstContentfulPaint",
+                "timeUnixNano": "1727073682017400000",
+                "droppedAttributesCount": 0
+              }
+            ],
+            "droppedEventsCount": 0,
+            "status": {
+              "code": 0
+            },
+            "links": [],
+            "droppedLinksCount": 0
+          }
+        ]
+      }
+    ]
+  }
+]

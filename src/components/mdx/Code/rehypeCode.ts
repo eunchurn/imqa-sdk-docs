@@ -4,8 +4,6 @@ import { visit } from 'unist-util-visit'
 export function rehypeCode() {
   return () => (tree: Root) => {
     visit(tree, null, function (node) {
-      // console.log('node', node)
-
       const isMDPre =
         'tagName' in node &&
         node.tagName === 'pre' &&

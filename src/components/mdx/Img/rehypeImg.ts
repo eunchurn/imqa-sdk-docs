@@ -49,8 +49,6 @@ export function rehypeImg(
 ) {
   return () => (tree: Root) => {
     visit(tree, null, function (node) {
-      // console.log('node', node)
-
       const isMDImage = 'tagName' in node && node.tagName === 'img'
       const isHTMLImage = 'name' in node && node.name === 'img'
 

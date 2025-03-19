@@ -61,7 +61,6 @@ export async function crawl(dir: string, filter?: (dir: string) => boolean, file
  */
 
 const MDX_BASEURL = process.env.MDX_BASEURL
-// console.log('MDX_BASEURL', MDX_BASEURL)
 
 // TODO Fix this recursive type
 async function getWebAgentSRIHash(content: string) {
@@ -86,7 +85,6 @@ async function _getDocs(
     root,
     (dir) => !dir.includes('node_modules') && MARKDOWN_REGEX.test(dir),
   )
-  // console.log('files', files)
 
   //
   // 1st pass for `entries`
@@ -146,124 +144,109 @@ async function _getDocs(
       }
     }),
   )
-  // console.log('entries', entries)
 
   //
   // 2nd pass for `docs`
   //
 
   const docs = await Promise.all(
-    entries.map(
-      async ({
+    entries.map(async ({ slug, url, title, boxes, file, content, frontmatter }) => {
+      const relFilePath = file.substring(root.length) // "/getting-started/tutorials/store.mdx"
+      //
+      // "Lightest" version of the doc (for `generateStaticParams`)
+      //
+
+      if (slugOnly) {
+        return { slug } as Doc
+      }
+
+      //
+      // Common infos (for every `docs`)
+      //
+
+      // editURL
+      const EDIT_BASEURL = process.env.EDIT_BASEURL
+      const editURL = EDIT_BASEURL?.length ? file.replace(root, EDIT_BASEURL) : undefined
+
+      //
+      // frontmatter
+      //
+
+      const description: string = frontmatter.description ?? ''
+
+      const sourcecode: string = frontmatter.sourcecode ?? ''
+      const SOURCECODE_BASEURL = process.env.SOURCECODE_BASEURL
+      const sourcecodeURL = SOURCECODE_BASEURL?.length
+        ? `${SOURCECODE_BASEURL}/${sourcecode}`
+        : undefined
+
+      const nav: number = frontmatter.nav ?? Infinity
+
+      const frontmatterImage: string | undefined = frontmatter.image
+      const srcImage = frontmatterImage || process.env.LOGO
+      const image: string = srcImage ? resolveMdxUrl(srcImage, relFilePath, MDX_BASEURL) : ''
+
+      //
+      // MDX content
+      //
+
+      // Skip docs other than `slugOfInterest` -- better perfs)
+      // if (JSON.stringify(slug) !== JSON.stringify(slugOfInterest)) {
+      //   return {
+      //     slug,
+      //     url,
+      //     editURL,
+      //     title,
+      //     description,
+      //     nav,
+      //   } as Doc
+      // }
+
+      //
+      // inline images
+      //
+
+      const tableOfContents: DocToC[] = []
+
+      const { content: jsx } = await compileMDX({
+        source: `# ${title}\n ${content}`,
+        options: {
+          mdxOptions: {
+            remarkPlugins: [remarkGFM],
+            rehypePlugins: [
+              rehypeImg(relFilePath, MDX_BASEURL),
+              rehypeDetails,
+              rehypeSummary,
+              rehypeGha,
+              rehypePrismPlus,
+              rehypeCode(),
+              rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
+              rehypeSandpack(dirname(file)),
+            ],
+          },
+        },
+        components: {
+          ...components,
+          Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
+          Entries: () => <Entries items={entries} />,
+        },
+      })
+      return {
         slug,
         url,
+        editURL,
+        sourcecode,
+        sourcecodeURL,
         title,
+        image,
+        description,
+        nav,
+        content: jsx,
         boxes,
-        // Passed from the 1st pass
-        file,
-        content,
-        frontmatter,
-      }) => {
-        const relFilePath = file.substring(root.length) // "/getting-started/tutorials/store.mdx"
-
-        //
-        // "Lightest" version of the doc (for `generateStaticParams`)
-        //
-
-        if (slugOnly) {
-          return { slug } as Doc
-        }
-
-        //
-        // Common infos (for every `docs`)
-        //
-
-        // editURL
-        const EDIT_BASEURL = process.env.EDIT_BASEURL
-        const editURL = EDIT_BASEURL?.length ? file.replace(root, EDIT_BASEURL) : undefined
-
-        //
-        // frontmatter
-        //
-
-        const description: string = frontmatter.description ?? ''
-
-        const sourcecode: string = frontmatter.sourcecode ?? ''
-        const SOURCECODE_BASEURL = process.env.SOURCECODE_BASEURL
-        const sourcecodeURL = SOURCECODE_BASEURL?.length
-          ? `${SOURCECODE_BASEURL}/${sourcecode}`
-          : undefined
-
-        const nav: number = frontmatter.nav ?? Infinity
-
-        const frontmatterImage: string | undefined = frontmatter.image
-        const srcImage = frontmatterImage || process.env.LOGO
-        const image: string = srcImage ? resolveMdxUrl(srcImage, relFilePath, MDX_BASEURL) : ''
-
-        //
-        // MDX content
-        //
-
-        // Skip docs other than `slugOfInterest` -- better perfs)
-        // if (JSON.stringify(slug) !== JSON.stringify(slugOfInterest)) {
-        //   return {
-        //     slug,
-        //     url,
-        //     editURL,
-        //     title,
-        //     description,
-        //     nav,
-        //   } as Doc
-        // }
-
-        //
-        // inline images
-        //
-
-        const tableOfContents: DocToC[] = []
-
-        const { content: jsx } = await compileMDX({
-          source: `# ${title}\n ${content}`,
-          options: {
-            mdxOptions: {
-              remarkPlugins: [remarkGFM],
-              rehypePlugins: [
-                rehypeImg(relFilePath, MDX_BASEURL),
-                rehypeDetails,
-                rehypeSummary,
-                rehypeGha,
-                rehypePrismPlus,
-                rehypeCode(),
-                rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
-                rehypeSandpack(dirname(file)),
-              ],
-            },
-          },
-          components: {
-            ...components,
-            Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
-            Entries: () => <Entries items={entries} />,
-          },
-        })
-
-        return {
-          slug,
-          url,
-          editURL,
-          sourcecode,
-          sourcecodeURL,
-          title,
-          image,
-          description,
-          nav,
-          content: jsx,
-          boxes,
-          tableOfContents,
-        }
-      },
-    ),
+        tableOfContents,
+      }
+    }),
   )
-  // console.log('docs', docs)
 
   return docs.sort((a, b) => a.nav - b.nav)
 }
@@ -273,18 +256,13 @@ export const getDocs = cache(_getDocs)
 // export const getDocs = cache(_getDocs)
 
 async function _getData(...slug: string[]) {
-  // console.log('getData', slug)
-
   const { MDX } = process.env
   if (!MDX) throw new Error('MDX env var not set')
 
   const docs = await getDocs(MDX, slug)
-  // console.log('allDocs', docs)
 
   const url = `/${slug.join('/')}`.toLowerCase()
-  // console.log('url', url)
   const doc = docs.find((doc) => doc.url === url)
-  // console.log('doc', doc)
 
   if (!doc) throw new Error(`Doc not found: ${url}`)
 

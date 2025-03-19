@@ -5,7 +5,6 @@ import { visit } from 'unist-util-visit'
 export function rehypeDetails() {
   return (tree: Root) => {
     visit(tree, null, function (node) {
-      // console.log(node)
       if (node.type === 'mdxJsxFlowElement' && node.name === 'details') node.name = 'Details' // map HTML <details> to <Details> React component
     })
   }

@@ -2,8 +2,6 @@ import { cache } from 'react'
 import { CSB } from './Codesandbox'
 
 async function _fetchCSB(...ids: string[]) {
-  // console.log('fetchCSB', ids)
-
   const boxes: Record<string, CSB> = {}
 
   const slimData = await fetch('https://codesandbox.io/api/v1/sandboxes/mslim', {
@@ -29,7 +27,6 @@ async function _fetchCSB(...ids: string[]) {
   //   source_id: '1be3ace1-849d-4ef9-b96f-1becfd99c5a5',
   //   is_sse: false
   // }
-  // console.log('slimData', slimData)
 
   for (const { id, title } of slimData) {
     boxes[id] = {

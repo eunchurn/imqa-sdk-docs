@@ -5,8 +5,6 @@ import cn from '@/lib/cn'
 import { ComponentProps, useCallback, useEffect, useState } from 'react'
 
 export function Toc({ className, toc }: ComponentProps<'div'> & { toc: DocToC[] }) {
-  // console.log('toc', toc)
-
   const [activeIndex, setActiveIndex] = useState<number | undefined>()
 
   const updateActiveIndex = useCallback(

@@ -87,15 +87,12 @@ export function Codesandbox0({
 
 export async function Codesandbox1({ boxes, ...props }: { boxes: string[] } & Codesandbox0Props) {
   const ids = boxes // populated from 1.
-  // console.log('ids', ids)
 
   //
   // Batch fetch all CSBs of the page
   //
   const csbs = await fetchCSB(...ids)
-  // console.log('boxes', boxes)
   const data = csbs[props.id]
-  // console.log('data', data)
 
   // Merge initial props with data
   const merged = { ...data, ...props }

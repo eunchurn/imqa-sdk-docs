@@ -3,9 +3,11 @@ import { getData, getDocs } from '@/utils/docs'
 
 export type Props = {
   params: { slug: string[] }
+  searchParams: { [key: string]: string | undefined }
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata(props: Props) {
+  const { params } = props
   const slug = params.slug
 
   const { doc } = await getData(...slug)
@@ -29,18 +31,12 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function Page({ params }: Props) {
-  // console.log('page', params)
-
   const slug = params.slug
-
   const { doc } = await getData(...slug) // [ 'getting-started', 'introduction' ]
-
   return <Main doc={doc} />
 }
 
 export async function generateStaticParams() {
-  // console.log('generateStaticParams')
-
   // return [
   //   { slug: ['getting-started', 'authoring'] },
   //   { slug: ['getting-started', 'github-actions'] },
