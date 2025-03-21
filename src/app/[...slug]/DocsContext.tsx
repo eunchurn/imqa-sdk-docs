@@ -26,6 +26,7 @@ export type Doc = {
   content: ReactNode
   boxes: string[]
   tableOfContents: DocToC[]
+  pdf?: boolean
 }
 
 export type Ctx = { docs: Doc[]; doc: Doc }

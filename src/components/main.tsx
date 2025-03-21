@@ -8,10 +8,12 @@ import React from 'react'
 
 interface MainProps {
   doc: Doc
+  pdf?: boolean
 }
 
 function Page(props: MainProps) {
-  const { doc } = props
+  const { doc, pdf } = props
+  console.log({ pdf })
   const params = useParams()
   const pathname = usePathname()
   const isPDFPrinting = pathname.startsWith('/mdx-page')
@@ -33,7 +35,7 @@ function Page(props: MainProps) {
               {doc.description}
             </p>
           )}
-          {isPDFPrinting ? null : (
+          {isPDFPrinting ? null : !pdf ? null : (
             <div className="flex items-center gap-4">
               <button
                 className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 bg-tip-container inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
@@ -51,10 +53,10 @@ function Page(props: MainProps) {
 }
 
 export function Main(props: MainProps) {
-  const { doc } = props
+  const { doc, pdf } = props
   return (
     <>
-      <Page doc={doc} />
+      <Page doc={doc} pdf={pdf} />
     </>
   )
 }

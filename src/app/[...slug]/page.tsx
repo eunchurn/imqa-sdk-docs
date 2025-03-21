@@ -33,7 +33,7 @@ export async function generateMetadata(props: Props) {
 export default async function Page({ params }: Props) {
   const slug = params.slug
   const { doc } = await getData(...slug) // [ 'getting-started', 'introduction' ]
-  return <Main doc={doc} />
+  return <Main doc={doc} pdf={doc.pdf} />
 }
 
 export async function generateStaticParams() {
