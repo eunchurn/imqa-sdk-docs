@@ -12,10 +12,7 @@ const nextConfig = {
   basePath,
   distDir,
   output,
-  serverComponentsExternalPackages: ['puppeteer-core', 'puppeteer', '@sparticuz/chromium'],
-  // experimental: {
-  //   serverComponentsExternalPackages: ['@react-pdf/renderer'],
-  // },
+  serverExternalPackages: ['puppeteer-core', 'puppeteer', '@sparticuz/chromium'],
   trailingSlash: false,
 }
 

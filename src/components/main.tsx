@@ -13,7 +13,6 @@ interface MainProps {
 
 function Page(props: MainProps) {
   const { doc, pdf } = props
-  console.log({ pdf })
   const params = useParams()
   const pathname = usePathname()
   const isPDFPrinting = pathname.startsWith('/mdx-page')
