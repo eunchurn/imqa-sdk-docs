@@ -44,6 +44,8 @@ IMQA.resumeSessionRecorder(): void
 
 ### `addAction`
 
+특정 애플리케이션 이벤트(예: 가입, 제출 등)를 명시적으로 추적하려면 addAction이벤트 이름과 선택적 이벤트 메타데이터로 함수를 호출하면 됩니다.
+
 ```ts
 IMQA.addAction(name: string, attributes?: Attributes): void
 ```
@@ -90,19 +92,21 @@ IMQA.recordLog(message: string, attributes?: Attributes): void
 
 ### `enableAdvancedNetworkCapture`
 
+네트워크 캡처를 동적으로 활성화하거나 비활성화하려면 필요에 따라 `enableAdvancedNetworkCapture`또는 `disableAdvancedNetworkCapture`함수를 호출하기만 하면 됩니다.
+
 ```ts
 IMQA.enableAdvancedNetworkCapture(): void
 ```
 
-고급 네트워크 캡처 기능을 활성화합니다.
 
 ### `disableAdvancedNetworkCapture`
+
+네트워크 캡처를 동적으로 활성화하거나 비활성화하려면 필요에 따라 `enableAdvancedNetworkCapture`또는 `disableAdvancedNetworkCapture`함수를 호출하기만 하면 됩니다.
 
 ```ts
 IMQA.disableAdvancedNetworkCapture(): void
 ```
 
-고급 네트워크 캡처 기능을 비활성화합니다.
 
 ### `setGlobalAttributes`
 
@@ -177,13 +181,22 @@ getSessionUrl(): string | undefined
 
 - **반환값:** (`string | undefined`): 세션 URL 또는 정의되지 않음
 
-### `attachToReactErrorBoundary
+### `attachToReactErrorBoundary`
+
+React를 사용하는 경우 오류 경계 구성 요소를 `attachToReactErrorBoundary` 함수에 전달하여 React 오류 경계 내에서 발생하는 오류를 자동으로 캡처할 수 있습니다.
+
+```ts
+// ErrorBoundary를 가져옵니다 (react-error-boundary를 예제로 사용) 
+import { ErrorBoundary } from 'react-error-boundary';
+ 
+// 여기서 ErrorBoundary 컴포넌트에 연결되어
+// 해당 컴포넌트 내에서 발생하는 모든 오류를 감지합니다.
+IMQA.attachToReactErrorBoundary(ErrorBoundary);
+```
 
 ```ts
 attachToReactErrorBoundary(errorBoundary: ErrorBoundaryComponent): void
 ```
-
-React의 Error Boundary에 예외 기록 기능을 연결합니다.
 
 - **매개변수:**
     - `errorBoundary` (`ErrorBoundaryComponent`): 연결할 Error Boundary 컴포넌트
@@ -195,4 +208,28 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 // ErrorBoundary 컴포넌트에 연결하여 모든 인스턴스에서 발생하는 오류를 캡처합니다.
 IMQA.attachToReactErrorBoundary(ErrorBoundary);
+```
+
+### CORS 요청에 대한 리소스 타이밍 활성화
+
+프론트엔드 애플리케이션이 다른 도메인으로 API 요청을 하는 경우, 선택적으로 요청과 함께 `Timing-Allow-Origin` [헤더](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Timing-Allow-Origin)를 보내도록 활성화할 수 있습니다. 이를 통해 IMQA는 [PerformanceResourceTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming)을 통해 DNS 조회, 응답 다운로드 등과 같은 요청에 대한 상세한 리소스 타이밍 정보를 캡처할 수 있습니다.
+
+`express`와 `cors` 패키지를 사용하는 경우, 다음 코드를 사용하여 헤더를 활성화할 수 있습니다:
+
+```js
+var cors = require('cors');
+var onHeaders = require('on-headers');
+
+// ... 기타 코드
+
+app.use(function (req, res, next) {
+  onHeaders(res, function () {
+    var allowOrigin = res.getHeader('Access-Control-Allow-Origin');
+    if (allowOrigin) {
+      res.setHeader('Timing-Allow-Origin', allowOrigin);
+    }
+  });
+  next();
+});
+app.use(cors());
 ```
