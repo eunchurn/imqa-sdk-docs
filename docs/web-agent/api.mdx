@@ -75,6 +75,19 @@ IMQA.recordException(error: any, attributes?: Attributes): void
     - `error` (`any`): 기록할 예외 객체
     - `attributes` (`Attributes`, 선택 사항): 추가 속성
 
+### `recordLog`
+
+사용자 지정 로그를 기록합니다.
+
+- **매개변수:**
+    - `message` (`string`): 사용자 지정 로그 메시지
+    - `attributes` (`Attributes`, 선택 사항): 추가 속성
+
+```ts
+IMQA.recordLog(message: string, attributes?: Attributes): void
+```
+
+
 ### `enableAdvancedNetworkCapture`
 
 ```ts
