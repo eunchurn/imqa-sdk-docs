@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import React from 'react'
 // import { CuboidIcon } from 'lucide-react'
 import { BrowserIcon } from '@/components/ui/icons'
 import { useRouter } from 'next/navigation'
@@ -10,7 +11,7 @@ interface SDKCardProps {
   title: string
   description: string
   // icon?: typeof LucideIcon
-  icon?: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
+  icon?: (props: React.SVGProps<SVGSVGElement>) => React.ReactNode
   color: string
   link: string
 }

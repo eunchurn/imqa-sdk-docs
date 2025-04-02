@@ -1,11 +1,11 @@
 export * from './Code'
 // export * from './Codesandbox'
 export * from './Details'
-export * from './Entries'
+// export * from './Entries'
 export * from './Gha'
 export * from './Grid'
 export * from './Hint'
-export * from './Img'
+// export * from './Img'
 export * from './Intro'
 export * from './Keypoints'
 export * from './People'
@@ -14,6 +14,20 @@ export * from './sdk-card'
 export * from './sdk-cards'
 export * from './Summary'
 export * from './Toc'
+
+import * as Code from './Code'
+import * as Details from './Details'
+import * as Gha from './Gha'
+import * as Grid from './Grid'
+import * as Hint from './Hint'
+import * as Intro from './Intro'
+import * as Keypoints from './Keypoints'
+import * as People from './People'
+import * as Sandpack from './Sandpack'
+import * as SDKCard from './sdk-card'
+import * as SDKCards from './sdk-cards'
+import * as Summary from './Summary'
+import * as Toc from './Toc'
 
 import cn from '@/lib/cn'
 import { MARKDOWN_REGEX } from '@/utils/docs'
@@ -114,3 +128,39 @@ export const code = (props: ComponentProps<'code'>) => (
     {...props}
   />
 )
+
+export default {
+  Code,
+  Details,
+  Gha,
+  Grid,
+  Hint,
+  Intro,
+  Keypoints,
+  People,
+  Sandpack,
+  SDKCard,
+  SDKCards,
+  Summary,
+  Toc,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  ol,
+  li,
+  p,
+  hr,
+  blockquote,
+  table,
+  thead,
+  th,
+  tr,
+  td,
+  a,
+  img: Img,
+  code,
+}

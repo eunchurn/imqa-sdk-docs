@@ -1,10 +1,10 @@
 import type { Doc, DocToC } from '@/app/[...slug]/DocsContext'
-import * as components from '@/components/mdx'
-import { Entries } from '@/components/mdx'
+import components from '@/components/mdx'
 import { rehypeCode } from '@/components/mdx/Code/rehypeCode'
 import { Codesandbox1 } from '@/components/mdx/Codesandbox'
 import { rehypeCodesandbox } from '@/components/mdx/Codesandbox/rehypeCodesandbox'
 import { rehypeDetails } from '@/components/mdx/Details/rehypeDetails'
+import { Entries } from '@/components/mdx/Entries'
 import { rehypeGha } from '@/components/mdx/Gha/rehypeGha'
 import { rehypeImg } from '@/components/mdx/Img/rehypeImg'
 import { rehypeSandpack } from '@/components/mdx/Sandpack/rehypeSandpack'
@@ -19,6 +19,27 @@ import { cache } from 'react'
 import rehypePrismPlus from 'rehype-prism-plus'
 import remarkGFM from 'remark-gfm'
 
+// const keys = ['str', '0']
+
+// const proxy = new Proxy(
+//   components,
+//   {
+//     ownKeys() {
+//       return ['str', '0']
+//     },
+//   },
+// )
+// const actual = Reflect.ownKeys(proxy)
+// console.log(actual)
+// const proxy = new Proxy(components, {
+//   ownKeys(components) {
+//     return Reflect.ownKeys(components); // ✅ Only return valid keys
+//   }
+// });
+// console.log(proxy)
+// const safeComponents = Object.isExtensible(components) ? components : { ...components }
+// const mdxComponents = Object.assign({}, safeComponents)
+// console.log(mdxComponents)
 /**
  * Checks for .md(x) file extension
  */
@@ -224,10 +245,11 @@ async function _getDocs(
             ],
           },
         },
+        // @ts-ignore
         components: {
-          ...components,
           Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
           Entries: () => <Entries items={entries} />,
+          ...components,
         },
       })
       return {

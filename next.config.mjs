@@ -12,8 +12,9 @@ const nextConfig = {
   basePath,
   distDir,
   output,
-  serverExternalPackages: ['puppeteer-core', 'puppeteer', '@sparticuz/chromium'],
+  serverExternalPackages: ['@sparticuz/chromium'],
   trailingSlash: false,
+  transpilePackages: ['next-mdx-remote'],
 }
 
 export default nextConfig
