@@ -1,11 +1,7 @@
-import cn from '@/lib/cn'
-import { ReactNode } from 'react'
-import { BiCommentError } from 'react-icons/bi'
-import { CgInfo } from 'react-icons/cg'
-import { HiOutlineLightBulb } from 'react-icons/hi2'
-import { PiSealWarning, PiWarning } from 'react-icons/pi'
-
 import { p as P } from '@/components/mdx'
+import cn from '@/lib/cn'
+import Image from 'next/image'
+import { ReactNode } from 'react'
 
 type Style = {
   icon: React.ComponentType
@@ -15,27 +11,32 @@ type Style = {
 
 const styles: Record<string, Style> = {
   NOTE: {
-    icon: CgInfo,
+    // icon: CgInfo,
+    icon: () => <Image src="/icons/memo.png" alt="Note" width={30} height={30} />,
     label: 'Note',
     bg: 'bg-note-container',
   },
   TIP: {
-    icon: HiOutlineLightBulb,
+    // icon: HiOutlineLightBulb,
+    icon: () => <Image src="/icons/round-pushpin.png" alt="Tip" width={30} height={30} />,
     label: 'Tip',
     bg: 'bg-tip-container',
   },
   IMPORTANT: {
-    icon: BiCommentError,
+    // icon: BiCommentError,
+    icon: () => <Image src="/icons/exclamation.png" alt="Important" width={30} height={30} />,
     label: 'Important',
     bg: 'bg-important-container',
   },
   WARNING: {
-    icon: PiWarning,
+    // icon: PiWarning,
+    icon: () => <Image src="/icons/construction-sign.png" alt="Important" width={30} height={30} />,
     label: 'Warning',
     bg: 'bg-warning-container',
   },
   CAUTION: {
-    icon: PiSealWarning,
+    // icon: PiSealWarning,
+    icon: () => <Image src="/icons/no-entry-sign.png" alt="Important" width={30} height={30} />,
     label: 'Caution',
     bg: 'bg-caution-container',
   },
@@ -87,10 +88,10 @@ export function Gha({
 }) {
   if (!keyword || !(keyword in styles)) keyword = 'NOTE' // default to "NOTE"
 
-  // const { icon, label, bg } = styles[keyword]
-  // const Icon = icon
-  const { icon, label, bg } = emojiStyles[keyword]
-  const Icon = () => <span className="text-2xl">{icon}</span>
+  const { icon, label, bg } = styles[keyword]
+  const Icon = icon
+  // const { icon, label, bg } = emojiStyles[keyword]
+  // const Icon = () => <span className="text-2xl">{icon}</span>
   // test if children is a string
   if (typeof children === 'string') {
     children = <P className="my-4">{children}</P>

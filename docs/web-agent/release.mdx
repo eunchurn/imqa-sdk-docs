@@ -2,6 +2,7 @@
 title: Releases
 description: IMQA Web Agent의 릴리즈 노트입니다.
 nav: 305
+pdf: true
 ---
 
 ## Stable release
@@ -11,11 +12,17 @@ nav: 305
 
 ### 0.1.1
 
+#### Features
+
 모바일 네이티브 파라미터 WebView 연동 추가 [#webview](api.mdx#webview-연동)
 
-#### Patch Changes
+#### Bug Fixes
 
 - feat(webview): accept parameters from native
+
+#### Installation
+
+##### CDN
 
 ```html
 <script
@@ -25,7 +32,17 @@ nav: 305
 </script>
 ```
 
+##### NPM
+
+```bash
+npm install @imqa/web-agent@0.1.1
+```
+
+
+
 ### 0.1.0
+
+#### Features
 
 `recordLog` 메서드 추가 [#recordLog](api.mdx#recordlog)
 
@@ -43,11 +60,9 @@ nav: 305
 
 ## Pre-release
 
-<details> 
-
 ### 0.0.30
 
-#### Patch Changes
+#### Chore changes
 
 - Updated dependencies
   - @imqa/otel-web@0.0.13
@@ -62,7 +77,7 @@ nav: 305
 
 ### 0.0.29
 
-#### Patch Changes
+#### Chore changes
 
 - chore(refactor): web-agent
 
@@ -76,7 +91,7 @@ nav: 305
 
 ### 0.0.27
 
-#### Patch Changes
+#### Chore changes
 
 - feat(deps): updated opentelemetry apis
 - Updated dependencies
@@ -92,7 +107,7 @@ nav: 305
 
 ### 0.0.25
 
-#### Patch Changes
+#### Chore changes
 
 - chore(semantic conventions): added all otel packages
 
@@ -106,7 +121,7 @@ nav: 305
 
 ### 0.0.24
 
-#### Patch Changes
+#### Chore changes
 
 - fix(session-recorder): removed
 
@@ -120,7 +135,7 @@ nav: 305
 
 ### 0.0.23
 
-#### Patch Changes
+#### Chore changes
 
 - feat(sri-has): generating
 
@@ -134,7 +149,7 @@ nav: 305
 
 ### 0.0.22
 
-#### Patch Changes
+#### Chore changes
 
 - chore(deploy): upload-batch makes overwritable
 
@@ -148,7 +163,7 @@ nav: 305
 
 ### 0.0.21
 
-#### Patch Changes
+#### Chore changes
 
 - chore(deploy): fixed github action
 
@@ -162,7 +177,7 @@ nav: 305
 
 ### 0.0.15
 
-#### Patch Changes
+#### Chore changes
 
 - Updated dependencies
   - @imqa/otel-web-session-recorder@0.0.7
@@ -175,5 +190,5 @@ nav: 305
   crossorigin="anonymous">
 </script>
 ```
-</details>
+
 
