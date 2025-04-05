@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         headless: chromium.headless,
         // headless: 'shell', // headless 모드 사용
       })
-    } else if (process.env.NODE_ENV === 'development') {
+    } else {
       browser = await puppeteer.launch({
         headless: 'shell',
         args: ['--no-sandbox', '--disable-setuid-sandbox'],

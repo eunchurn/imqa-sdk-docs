@@ -44,7 +44,7 @@ export default function MDXPageLayout(props: MDXPageLayoutProps) {
         </header>
 
         <main className="mx-auto max-w-[850px] px-6 py-8">
-          <div className="prose max-w-none print:prose-sm">{children}</div>
+          <div className="max-w-none print:prose-sm">{children}</div>
         </main>
 
         <footer className="w-full border-t print:mt-8">
