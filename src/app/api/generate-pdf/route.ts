@@ -4,7 +4,7 @@ import puppeteerCore, { type Browser as BrowserCore } from 'puppeteer-core'
 
 chromium.setGraphicsMode = false
 
-export const maxDuration = 300
+export const maxDuration = 60
 
 export async function POST(req: Request) {
   try {

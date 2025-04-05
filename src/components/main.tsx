@@ -22,7 +22,7 @@ function Page(props: MainProps) {
       body: JSON.stringify(params),
     })
     fileSaver(await data.blob(), `${doc.title}.pdf`)
-  }, [])
+  }, [doc.title, params])
 
   return (
     <>
