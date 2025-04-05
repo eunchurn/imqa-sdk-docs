@@ -23,7 +23,7 @@ Groovy 또는 Kotlin DSL을 사용하는 경우 각각 아래와 같이 Maven �
 
 **Groovy DSL**
 
-```
+```groovy
 allprojects {
   repositories {
     maven {
@@ -35,7 +35,7 @@ allprojects {
 
 **Kotlin DSL**
 
-```
+```kotlin
 repositories {
   maven {
     url = uri("https://s01.oss.sonatype.org/content/repositories/releases/")
@@ -49,7 +49,7 @@ repositories {
 
 **Groovy DSL**
 
-```
+```groovy
 dependencies {
   implementation 'io.imqa:imqa-android-sdk:1.0.1'
 }
@@ -57,7 +57,7 @@ dependencies {
 
 **Kotlin DSL**
 
-```
+```kotlin
 dependencies {
   implementation("io.imqa:imqa-android-sdk:1.0.1")
 }
@@ -73,7 +73,7 @@ dependencies {
 
 **Groovy DSL**
 
-```
+```groovy
 dependencies {
   implementation files('libs/imqa-android-sdk-1.0.1-release.aar')
 }
@@ -81,7 +81,7 @@ dependencies {
 
 **Kotlin DSL**
 
-```
+```kotlin
 dependencies {
   implementation(files("libs/imqa-android-sdk-1.0.1-release.aar"))
 }
@@ -94,7 +94,7 @@ IMQA SDK는 `Application` 클래스에 초기화 코드를 추가하여 동작�
 1. **Application 클래스 추가**
 애플리케이션의 `AndroidManifest.xml` 파일에 `android:name` 속성을 설정하여 `Application` 클래스를 지정합니다. 기존에 `Application` 클래스가 이미 존재하는 경우 이 단계를 생략할 수 있습니다.
 
-```
+```xml
 <application
     android:name=".Application"
     ...
@@ -106,7 +106,7 @@ IMQA SDK는 `Application` 클래스에 초기화 코드를 추가하여 동작�
 
 **Kotlin**
 
-```
+```kotlin
 import io.imqa.sdk.core.IMQA
 import io.imqa.sdk.core.IMQAOption
 
@@ -128,7 +128,7 @@ class Application : android.app.Application() {
 
 **Java**
 
-```
+```java
 import io.imqa.sdk.core.IMQA;
 import io.imqa.sdk.core.IMQAOption;
 
@@ -164,7 +164,7 @@ IMQA가 정상적으로 동작하는지 확인하기 위해 샘플 오류를 발
 
 **Kotlin**
 
-```
+```kotlin
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import java.lang.Exception
@@ -185,7 +185,7 @@ class MainActivity : AppCompatActivity() {
 
 **Java**
 
-```
+```java
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import java.lang.Exception;
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
 커스텀 사용자 ID를 지정하여 특정 사용자의 세션 분석 시 활용할 수 있습니다.
 
-```
+```java
 IMQA.custom.setupUserId("oopchoi")
 ```
 
@@ -228,7 +228,7 @@ IMQA.custom.setupUserId("oopchoi")
 > 
 - 단순히 화면 이동을 위한 버튼 클릭 시 이벤트 알림을 다음과 같이 전송할 수 있습니다.
 
-```
+```java
 val intent = Intent(this, HelloActivity::class.java)
 binding.button.setOnClickListener { startActivity(intent) }
 
@@ -237,7 +237,7 @@ IMQA.sendClickEvent(binding.button, false)
 
 - 버튼 클릭 시 서버로 데이터 조회를 할 경우 다음과 같이 전송할 수 있습니다.
 
-```
+```java
 binding.button.setOnClickListener {
     IMQA.sendClickEvent(it, true)
     service.getHello().enqueue(object : retrofit2.Callback<Data> {
