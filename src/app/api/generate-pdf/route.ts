@@ -11,11 +11,10 @@ export async function POST(req: Request) {
     let browser: Browser | BrowserCore | null = null
     if (process.env.NODE_ENV === 'production') {
       browser = await puppeteerCore.launch({
-        // args: chromium.args,
+        args: chromium.args,
         executablePath: await chromium.executablePath(),
-        // defaultViewport: chromium.defaultViewport,
+        defaultViewport: chromium.defaultViewport,
         headless: chromium.headless,
-        // headless: 'shell', // headless 모드 사용
       })
     } else {
       browser = await puppeteer.launch({
