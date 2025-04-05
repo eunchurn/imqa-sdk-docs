@@ -19,28 +19,6 @@ import { cache } from 'react'
 import rehypePrismPlus from 'rehype-prism-plus'
 import remarkGFM from 'remark-gfm'
 
-const actualComponents = { ...components }
-// const keys = ['str', '0']
-
-// const proxy = new Proxy(
-//   components,
-//   {
-//     ownKeys() {
-//       return ['str', '0']
-//     },
-//   },
-// )
-// const actual = Reflect.ownKeys(proxy)
-// console.log(actual)
-// const proxy = new Proxy(components, {
-//   ownKeys(components) {
-//     return Reflect.ownKeys(components); // ✅ Only return valid keys
-//   }
-// });
-// console.log(proxy)
-// const safeComponents = Object.isExtensible(components) ? components : { ...components }
-// const mdxComponents = Object.assign({}, safeComponents)
-// console.log(mdxComponents)
 /**
  * Checks for .md(x) file extension
  */
@@ -239,17 +217,17 @@ async function _getDocs(
               rehypeDetails,
               rehypeSummary,
               rehypeGha,
+              rehypePrismPlus,
               rehypeCode(),
               rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
               rehypeSandpack(dirname(file)),
-              [rehypePrismPlus, { ignoreMissing: true }],
             ],
           },
         },
         // @ts-ignore
         components: {
-          // ...components,
-          ...actualComponents,
+          ...components,
+          // ...actualComponents,
           Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
           Entries: () => <Entries items={entries} />,
         },

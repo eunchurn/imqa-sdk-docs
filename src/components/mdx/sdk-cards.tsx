@@ -1,5 +1,3 @@
-'use server'
-
 import { AndroidIcon, AppleIcon, BrowserIcon } from '@/components/ui/icons'
 import { SDKCard } from './sdk-card'
 

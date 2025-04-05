@@ -1,11 +1,9 @@
-'use client'
-
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import React from 'react'
 // import { CuboidIcon } from 'lucide-react'
 import { BrowserIcon } from '@/components/ui/icons'
-import { useRouter } from 'next/navigation'
+
+// import { useRouter } from 'next/navigation'
 
 interface SDKCardProps {
   title: string
@@ -23,7 +21,7 @@ export function SDKCard({
   color,
   link,
 }: SDKCardProps) {
-  const router = useRouter()
+  // const router = useRouter()
   return (
     <Card className="group relative overflow-hidden border-2 transition-all duration-300 hover:border-primary">
       <div className="flex h-full flex-col p-6">
@@ -36,13 +34,14 @@ export function SDKCard({
 
         <p className="text-muted-foreground mb-6 flex-grow">{description}</p>
 
-        <Button
-          variant="outline"
+        <a
+          // variant="outline"
           className="group-hover:text-primary-foreground w-full transition-colors duration-300 group-hover:bg-primary"
-          onClick={() => router.push(link)}
+          // onClick={() => router.push(link)}
+          href={link}
         >
           View Documentation
-        </Button>
+        </a>
       </div>
 
       <div className="pointer-events-none absolute inset-0 border-2 border-transparent opacity-0 transition-all duration-300 group-hover:opacity-100" />
