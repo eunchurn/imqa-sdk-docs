@@ -80,21 +80,22 @@ export async function POST(req: Request) {
         ],
       })
     }
-    console.log({ browser })
+
     if (!browser) {
       throw new Error('브라우저 생성 실패')
     }
     const page = await browser.newPage()
-    console.log({ page })
+
     const url = new URL(req.url)
     const { slug } = (await req.json()) as { slug: string[] }
 
     const targetURL = `${url.origin}/mdx-page/${slug.join('/')}`
     await page.goto(targetURL, { waitUntil: 'networkidle0' })
-
+    await page.emulateMediaType('screen')
     // PDF 생성
     const pdfBuffer = await page.pdf({
-      format: 'A3',
+      format: 'A4',
+      scale: 0.9,
       printBackground: true, // Tailwind 스타일 유지
       preferCSSPageSize: true,
     })

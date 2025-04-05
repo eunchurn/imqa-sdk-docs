@@ -76,7 +76,7 @@
     "prepare": "husky"
   },
   "engines": {
-    "node": ">=22"
+    "node": "22.x"
   },
   "packageManager": "npm@11.2.0",
   "overrides": {
