@@ -1,5 +1,21 @@
 @tailwind base;
 
+* {
+  -webkit-print-color-adjust: exact !important;
+  text-rendering: geometricprecision !important;
+  -webkit-font-smoothing: antialiased !important;
+  -webkit-box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  box-sizing: border-box !important;
+  padding: 0px;
+  margin: 0px;
+}
+
+::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+  -ms-overflow-style: none; /* IE 10+ */
+  scrollbar-width: none; /* Firefox */
+}
 /* Write your own custom base styles here */
 
 :root {
@@ -151,6 +167,7 @@ pre[class*='language-'] {
 .token.bold {
   font-weight: bold;
 }
+
 .token.italic {
   font-style: italic;
 }
@@ -167,13 +184,16 @@ pre[class*='language-'] {
  */
 
 .code-highlight {
-  float: left; /* 1 */
-  min-width: 100%; /* 2 */
+  float: left;
+  /* 1 */
+  min-width: 100%;
+  /* 2 */
 }
 
 .code-line {
   display: block;
-  border-left: var(--linenumber-border-width) solid transparent; /* Set placeholder for highlight accent border color to transparent */
+  border-left: var(--linenumber-border-width) solid transparent;
+  /* Set placeholder for highlight accent border color to transparent */
 
   @apply -mx-[--pad] px-[--pad];
 }
@@ -181,12 +201,14 @@ pre[class*='language-'] {
 .code-line.inserted {
   @apply bg-tip-container-dark/30;
 }
+
 .code-line.deleted {
   @apply bg-error-container-dark/30;
 }
 
 .highlight-line {
-  border-left: var(--linenumber-border-width) solid; /* Set highlight accent border color */
+  border-left: var(--linenumber-border-width) solid;
+  /* Set highlight accent border color */
   @apply -mx-[--pad] border-l-inverse-surface-dark/50 bg-inverse-surface-dark/10;
 }
 
@@ -196,7 +218,8 @@ pre[class*='language-'] {
   display: inline-block;
   width: var(--w);
   text-align: right;
-  color: var(--comment); /* Line number color */
+  color: var(--comment);
+  /* Line number color */
 
   @apply mr-[calc(var(--pad)/2)];
 }
@@ -216,16 +239,47 @@ h4 {
 h1 {
   font-weight: 600;
 }
+
 h2,
 h3,
 h4,
 h5,
 h6 {
-  /* font-size: inherit; */
   font-weight: 500;
 }
 
 .text-xs h4 {
   font-size: 0.9rem;
   line-height: 0.8;
+}
+
+@media print {
+  /* h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  } */
+
+  /* h4 {
+    font-size: 1.1rem;
+  } */
+
+  h1 {
+    font-weight: 600;
+  }
+
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 500;
+  }
+
+  .text-xs h4 {
+    font-size: 0.9rem;
+    line-height: 0.8;
+  }
 }

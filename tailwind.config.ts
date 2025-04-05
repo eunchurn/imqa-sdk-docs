@@ -18,7 +18,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['"Inconsolata"', ...defaultTheme.fontFamily.mono],
+        mono: ['Inconsolata', 'Nanum Gothic Coding', ...defaultTheme.fontFamily.mono],
       },
       keyframes: {
         'collapsible-down': {

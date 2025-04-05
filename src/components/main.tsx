@@ -1,6 +1,7 @@
 'use client'
 
 import type { Doc } from '@/app/[...slug]/DocsContext'
+import { PDFIcon } from '@/components/ui/icons'
 import cn from '@/lib/cn'
 import fileSaver from 'file-saver'
 import { useParams, usePathname } from 'next/navigation'
@@ -16,12 +17,19 @@ function Page(props: MainProps) {
   const params = useParams()
   const pathname = usePathname()
   const isPDFPrinting = pathname.startsWith('/mdx-page')
+  const [printing, setPrinting] = React.useState(false)
   const handleDownload = React.useCallback(async () => {
-    const data = await fetch('/api/generate-pdf', {
-      method: 'POST',
-      body: JSON.stringify(params),
-    })
-    fileSaver(await data.blob(), `${doc.title}.pdf`)
+    setPrinting(true)
+    try {
+      const data = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        body: JSON.stringify(params),
+      })
+      setPrinting(false)
+      fileSaver(await data.blob(), `${doc.title}.pdf`)
+    } catch {
+      setPrinting(false)
+    }
   }, [doc.title, params])
 
   return (
@@ -37,10 +45,11 @@ function Page(props: MainProps) {
           {isPDFPrinting ? null : !pdf ? null : (
             <div className="flex items-center gap-4">
               <button
-                className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 bg-tip-container inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
+                // className="bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 bg-tip-container inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
                 onClick={handleDownload}
+                disabled={printing}
               >
-                PDF Download
+                <PDFIcon width={20} printing={printing} />
               </button>
             </div>
           )}

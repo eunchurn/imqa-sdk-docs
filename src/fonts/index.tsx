@@ -5,3 +5,9 @@ export const pretendard = localFont({
   display: 'swap',
   variable: '--font-pretendard',
 })
+
+export const nanumsquareneo = localFont({
+  src: './NanumSquareNeo-Variable.woff2',
+  display: 'swap',
+  variable: '--font-nanumsquareneo',
+})

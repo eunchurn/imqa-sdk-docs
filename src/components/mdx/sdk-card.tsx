@@ -1,7 +1,7 @@
-import { Card } from '@/components/ui/card'
 import React from 'react'
 // import { CuboidIcon } from 'lucide-react'
 import { BrowserIcon } from '@/components/ui/icons'
+import Link from 'next/link'
 
 // import { useRouter } from 'next/navigation'
 
@@ -23,7 +23,10 @@ export function SDKCard({
 }: SDKCardProps) {
   // const router = useRouter()
   return (
-    <Card className="group relative overflow-hidden border-2 transition-all duration-300 hover:border-primary">
+    <Link
+      href={link}
+      className="bg-card text-card-foreground group relative overflow-hidden rounded-lg border-2 shadow-sm transition-all duration-300 hover:border-primary"
+    >
       <div className="flex h-full flex-col p-6">
         <div className="mb-4 flex items-center gap-4">
           <div className={`rounded-lg p-3 ${color} bg-opacity-10`}>
@@ -34,17 +37,17 @@ export function SDKCard({
 
         <p className="text-muted-foreground mb-6 flex-grow">{description}</p>
 
-        <a
+        {/* <Button
           // variant="outline"
           className="group-hover:text-primary-foreground w-full transition-colors duration-300 group-hover:bg-primary"
           // onClick={() => router.push(link)}
-          href={link}
+          // href={link}
         >
           View Documentation
-        </a>
+        </Button> */}
       </div>
 
       <div className="pointer-events-none absolute inset-0 border-2 border-transparent opacity-0 transition-all duration-300 group-hover:opacity-100" />
-    </Card>
+    </Link>
   )
 }
