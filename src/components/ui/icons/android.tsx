@@ -1,5 +1,8 @@
+'use server'
+
 import { SVGProps } from 'react'
-export const AndroidIcon = (props: SVGProps<SVGSVGElement>) => (
+
+export const AndroidIcon = async (props: SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" {...props}>
     <path
       fill="#3ddc84"

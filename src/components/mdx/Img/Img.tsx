@@ -23,7 +23,7 @@ export async function Img({
 
   if (process.env.MDX_BASEURL && src?.startsWith(process.env.MDX_BASEURL)) {
     const path = resolve(src.replace(process.env.MDX_BASEURL, process.env.MDX!))
-    const { width: w, height: h } = sizeOf(path)
+    const { width: w, height: h } = sizeOf(path as unknown as Uint8Array<ArrayBufferLike>)
     const ratio = w && h ? w / h : undefined
 
     // If only one dimension is provided, calculate the other based on the image's aspect ratio

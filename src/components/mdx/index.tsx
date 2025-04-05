@@ -1,38 +1,23 @@
-export * from './Code'
-// export * from './Codesandbox'
+// export * from './Code'
+// // export * from './Codesandbox'
 export * from './Details'
-// export * from './Entries'
+// // export * from './Entries'
 export * from './Gha'
-export * from './Grid'
-export * from './Hint'
-// export * from './Img'
+// export * from './Grid'
+// export * from './Hint'
+export * from './Img'
 export * from './Intro'
 export * from './Keypoints'
-export * from './People'
+// export * from './People'
 export * from './Sandpack'
-export * from './sdk-card'
+// export * from './sdk-card'
 export * from './sdk-cards'
-export * from './Summary'
-export * from './Toc'
-
-import * as Code from './Code'
-import * as Details from './Details'
-import * as Gha from './Gha'
-import * as Grid from './Grid'
-import * as Hint from './Hint'
-import * as Intro from './Intro'
-import * as Keypoints from './Keypoints'
-import * as People from './People'
-import * as Sandpack from './Sandpack'
-import * as SDKCard from './sdk-card'
-import * as SDKCards from './sdk-cards'
-import * as Summary from './Summary'
-import * as Toc from './Toc'
+// export * from './Summary'
+// export * from './Toc'
 
 import cn from '@/lib/cn'
 import { MARKDOWN_REGEX } from '@/utils/docs'
 import { ComponentProps } from 'react'
-import { Img } from './Img'
 
 type Hn = 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 function Heading({ id, Tag, ...props }: { id?: string; Tag: Hn } & ComponentProps<Hn>) {
@@ -120,47 +105,50 @@ export const a = ({ href, target, rel, className, ...props }: ComponentProps<'a'
   )
 }
 
-export const img = Img
+// export const img = Img
 
-export const code = (props: ComponentProps<'code'>) => (
-  <code
-    className="bg-surface-container-high rounded-md px-1.5 py-0.5 font-mono text-[85%]"
-    {...props}
-  />
-)
-
-export default {
-  Code,
-  Details,
-  Gha,
-  Grid,
-  Hint,
-  Intro,
-  Keypoints,
-  People,
-  Sandpack,
-  SDKCard,
-  SDKCards,
-  Summary,
-  Toc,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  ul,
-  ol,
-  li,
-  p,
-  hr,
-  blockquote,
-  table,
-  thead,
-  th,
-  tr,
-  td,
-  a,
-  img: Img,
-  code,
+export function code(props: ComponentProps<'code'>) {
+  return (
+    <code
+      className="bg-surface-container-high rounded-md px-1.5 py-0.5 font-mono text-[85%]"
+      {...props}
+    />
+  )
 }
+
+// export default {
+//   Code,
+//   Details,
+//   Gha,
+//   Grid,
+//   Hint,
+//   Intro,
+//   Keypoints,
+//   KeypointsItem,
+//   Backers,
+//   Sandpack,
+//   SDKCard,
+//   SDKCards,
+//   Summary,
+//   Toc,
+//   h1,
+//   h2,
+//   h3,
+//   h4,
+//   h5,
+//   h6,
+//   ul,
+//   ol,
+//   li,
+//   p,
+//   hr,
+//   blockquote,
+//   table,
+//   thead,
+//   th,
+//   tr,
+//   td,
+//   a,
+//   Img,
+//   code,
+// }

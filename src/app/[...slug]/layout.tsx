@@ -12,10 +12,7 @@ import { VscGithubAlt } from 'react-icons/vsc'
 import { DocsContext } from './DocsContext'
 import { Menu } from './Menu'
 
-export type Props = {
-  params: Promise<{ slug: string[] }>
-  children: React.ReactNode
-}
+export type Props = { params: Promise<{ slug: string[] }>; children: React.ReactNode }
 
 export default async function Layoutt({ params, children }: Props) {
   const slug = (await params).slug
@@ -62,10 +59,10 @@ export default async function Layoutt({ params, children }: Props) {
 
       <div className="flex">
         {[
-          { href: process.env.GITHUB, icon: <VscGithubAlt /> },
-          { href: process.env.DISCORD, icon: <PiDiscordLogoLight /> },
-        ].map(({ href, icon }) => (
-          <>
+          { key: 1, href: process.env.GITHUB, icon: <VscGithubAlt /> },
+          { key: 2, href: process.env.DISCORD, icon: <PiDiscordLogoLight /> },
+        ].map(({ key, href, icon }) => (
+          <React.Fragment key={key}>
             {href && (
               <Link
                 href={href}
@@ -75,7 +72,7 @@ export default async function Layoutt({ params, children }: Props) {
                 {icon}
               </Link>
             )}
-          </>
+          </React.Fragment>
         ))}
         {/* <ToggleTheme className="hidden size-9 items-center justify-center sm:flex" /> */}
 

@@ -1,4 +1,4 @@
-'use client'
+'use server'
 
 import { AndroidIcon, AppleIcon, BrowserIcon } from '@/components/ui/icons'
 import { SDKCard } from './sdk-card'
@@ -30,7 +30,7 @@ const sdks = [
   },
 ]
 
-export const SDKCards = () => (
+export const SDKCards = async () => (
   <div>
     <div className="mx-auto max-w-7xl px-6">
       <div className="mb-16 text-center">

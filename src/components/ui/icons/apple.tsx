@@ -1,5 +1,7 @@
+'use server'
+
 import { SVGProps } from 'react'
-export const AppleIcon = (props: SVGProps<SVGSVGElement>) => (
+export const AppleIcon = async (props: SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" {...props}>
     <path
       fill="#ffffff"

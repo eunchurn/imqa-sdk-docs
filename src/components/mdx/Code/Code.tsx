@@ -4,7 +4,7 @@ import cn from '@/lib/cn'
 import { ComponentProps, ReactNode, useEffect, useState } from 'react'
 import { TbClipboard, TbClipboardCheck } from 'react-icons/tb'
 
-export const Code = ({ children, className, ...props }: ComponentProps<'pre'>) => {
+export function Code({ children, className, ...props }: ComponentProps<'pre'>) {
   const [copied, setCopied] = useState(false)
 
   const handleClick = async () => {
