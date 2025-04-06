@@ -1,10 +1,29 @@
 import chromium from '@sparticuz/chromium'
 import { type Browser, executablePath } from 'puppeteer'
-import puppeteerCore, { type Browser as BrowserCore } from 'puppeteer-core'
+import puppeteerCore, { type Browser as BrowserCore, type Page } from 'puppeteer-core'
 
 chromium.setGraphicsMode = false
 
 export const maxDuration = 60
+
+async function autoScroll(page: Page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      let totalHeight = 0
+      const distance = 100
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight
+        window.scrollBy(0, distance)
+        totalHeight += distance
+
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer)
+          resolve(0)
+        }
+      }, 100)
+    })
+  })
+}
 
 export async function POST(req: Request) {
   try {
@@ -17,67 +36,10 @@ export async function POST(req: Request) {
         headless: chromium.headless,
       })
     } else {
-      console.log(executablePath())
-      console.log(chromium.defaultViewport)
       browser = await puppeteerCore.launch({
         executablePath: executablePath(),
-        // defaultViewport: chromium.defaultViewport,
-        // executablePath: await chromium.executablePath(
-        //   path.resolve(process.cwd(), './node_modules/@sparticuz/chromium/bin'),
-        // ),
-        // defaultViewport: chromium.defaultViewport,
-        // headless: false,
         headless: 'shell',
-        // args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        args: [
-          //   '--allow-pre-commit-input',
-          //   '--disable-background-networking',
-          //   '--disable-background-timer-throttling',
-          //   '--disable-backgrounding-occluded-windows',
-          //   '--disable-breakpad',
-          //   '--disable-client-side-phishing-detection',
-          //   '--disable-component-extensions-with-background-pages',
-          //   '--disable-component-update',
-          //   '--disable-default-apps',
-          //   '--disable-dev-shm-usage',
-          //   '--disable-extensions',
-          //   '--disable-hang-monitor',
-          //   '--disable-ipc-flooding-protection',
-          //   '--disable-popup-blocking',
-          //   '--disable-prompt-on-repost',
-          //   '--disable-renderer-backgrounding',
-          //   '--disable-sync',
-          //   '--enable-automation',
-          //   '--enable-blink-features=IdleDetection',
-          //   '--export-tagged-pdf',
-          //   '--force-color-profile=srgb',
-          //   '--metrics-recording-only',
-          //   '--no-first-run',
-          //   '--password-store=basic',
-          //   '--use-mock-keychain',
-          //   '--disable-domain-reliability',
-          //   '--disable-print-preview',
-          //   '--disable-speech-api',
-          //   '--disk-cache-size=33554432',
-          //   '--mute-audio',
-          //   '--no-default-browser-check',
-          //   '--no-pings',
-          //   '--single-process',
-          '--font-render-hinting=none',
-          //   '--disable-features=Translate,BackForwardCache,AcceptCHFrame,MediaRouter,OptimizationHints,AudioServiceOutOfProcess,IsolateOrigins,site-per-process',
-          //   '--enable-features=NetworkServiceInProcess2,SharedArrayBuffer',
-          //   '--hide-scrollbars',
-          //   '--ignore-gpu-blocklist',
-          //   '--in-process-gpu',
-          //   '--window-size=1920,1080',
-          //   '--disable-webgl',
-          //   '--allow-running-insecure-content',
-          //   '--disable-setuid-sandbox',
-          //   '--disable-site-isolation-trials',
-          //   '--disable-web-security',
-          '--no-sandbox',
-          //   '--no-zygote',
-        ],
+        args: ['--font-render-hinting=none', '--no-sandbox'],
       })
     }
 
@@ -92,6 +54,7 @@ export async function POST(req: Request) {
     const targetURL = `${url.origin}/mdx-page/${slug.join('/')}`
     await page.goto(targetURL, { waitUntil: 'networkidle0' })
     await page.emulateMediaType('screen')
+    await autoScroll(page)
     // PDF 생성
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -100,7 +63,7 @@ export async function POST(req: Request) {
       preferCSSPageSize: true,
     })
 
-    // await browser.close()
+    await browser.close()
 
     // PDF 반환
     return new Response(pdfBuffer, {
