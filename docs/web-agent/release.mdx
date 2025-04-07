@@ -9,6 +9,95 @@ pdf: true
 
 ![NPM Version](https://img.shields.io/npm/v/%40imqa%2Fweb-agent?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Fweb-agent?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Fweb-agent)
 
+### 0.1.7
+
+#### Features
+- 모바일 네이티브 파라미터 중 Collector URL `__imqa_collector_url` 연동 추가
+
+```typescript
+declare global {
+  interface Window {
+    IMQA: RumOtelWebType | undefined;
+    /**
+     * IMQA Mobile SDK에서 사용하는 공유된 세션 ID
+     */
+    __imqa_session_id?: string;
+    /**
+     * IMQA Mobile SDK에서 Web Agent 비활성화 여부
+     */
+    __imqa_deactivated?: boolean;
+    /**
+     * IMQA Mobile SDK에서 사용하는 공유된 서비스 이름
+     */
+    __imqa_service_name?: string;
+    /**
+     * IMQA Mobile SDK에서 사용하는 공유된 서비스 키
+     */
+    __imqa_service_key?: string;
+    /**
+     * IMQA Mobile SDK에서 사용하는 공유된 서비스 버전
+     */
+    __imqa_service_version?: string;
+    /**
+     * IMQA Mobile SDK에서 세션을 공유할 지 여부
+     * (true: 공유 = Mobile SDK에서 공유한 값으로 계측,
+     * false: 비공유 = 설정된 값으로 계측)
+     */
+    __imqa_shared_session?: boolean;
+    /**
+     * IMQA Mobile SDK에서 사용하는 공유된 콜렉터 URL
+     */
+    __imqa_collector_url?: string;
+  }
+}
+```
+
+- 세션 공유 중에 없는 파라미터 예외처리 추가
+
+```typescript
+    if (window.__imqa_shared_session) {
+      if (window.__imqa_session_id) {
+        serviceName = window.__imqa_service_name;
+      }
+      if (window.__imqa_service_key) {
+        serviceKey = window.__imqa_service_key;
+      }
+      if (window.__imqa_service_version) {
+        serviceVersion = window.__imqa_service_version;
+      }
+      if (window.__imqa_collector_url) {
+        collectorUrl = window.__imqa_collector_url;
+      }
+    }
+```
+
+- Offline Package 배포
+
+#### Bug Fixes
+- Offline package 배포 PL
+
+#### Installation
+
+##### CDN
+
+```html
+<script
+  src="https://cdn.imqa.io/release/npm/@web-agent/0.1.7/index.js"
+  integrity="sha384-CXRsnAUfUIh01MpNYQsQFbwqZQmAyMmi+5TAlRXOz59BOKW/blbpuM2gS2SGccaW"
+  crossorigin="anonymous">
+</script>
+```
+
+##### NPM
+
+```bash
+npm install @imqa/web-agent@0.1.7
+```
+
+##### Offline download package
+
+- [https://cdn.imqa.io/release/npm/@web-agent/0.1.7/imqa-web-agent-0.1.7.tgz](https://cdn.imqa.io/release/npm/@web-agent/0.1.7/imqa-web-agent-0.1.7.tgz)
+
 
 ### 0.1.1
 
@@ -37,8 +126,6 @@ pdf: true
 ```bash
 npm install @imqa/web-agent@0.1.1
 ```
-
-
 
 ### 0.1.0
 
