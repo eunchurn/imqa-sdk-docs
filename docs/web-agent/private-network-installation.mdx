@@ -20,7 +20,7 @@ pdf: true
 1. 폐쇄망에서는 CDN을 통해 직접 실행할 수 없으므로 인터넷이 연결된 환경에서 미리 번들링된 자바스크립트 [**파일을 다운로드**](https://cdn.imqa.io/release/npm/@web-agent/latest/index.js)를 받습니다.
 
 > [!NOTE]
-> [**다운로드 링크**](https://cdn.imqa.io/release/npm/@web-agent/latest/index.js) https://cdn.imqa.io/release/npm/@web-agent/latest/index.js
+> [https://cdn.imqa.io/release/npm/@web-agent/latest/index.js](https://cdn.imqa.io/release/npm/@web-agent/latest/index.js)
 
 2. 다운로드된 `index.js` 파일을 적절한 이름 `imqa-agent.js` 로 변경하여 프로젝트 내부에 포함 시킵니다. 아래 예시는 프로젝트내 `public` 폴더 내에 위치하고 있다고 가정합니다.
 3. 아래 코드와 같이 `<head>` 태그 안에 추가합니다.
@@ -129,9 +129,9 @@ const app = new Vue({
 
 ## 3안: 폐쇄망에서 `package.json`에 직접 의존성 추가
 
-- `imqa-web-agent-latest.tgz`]` 파일 다운로드
+- `imqa-web-agent-latest.tgz` 파일 다운로드
 
-[imqa-web-agent-latest.tgz](http://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz): http://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz
+[https://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz](https://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz)
 
 - 프로젝트 내부 적절한 경로에 배치 후 `npm install /path/to/imqa-web-agent-latest.tgz`
 
@@ -179,7 +179,7 @@ npm install ./third-pary-packages/imqa/imqa-web-agent-latest.tgz
 
 - `imqa-web-agent-latest.tgz` 파일 다운로드 후 압축 해제
 
-[imqa-web-agent-latest.tgz](http://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz): http://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz
+[https://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz](https://cdn.imqa.io/release/npm/@web-agent/latest/imqa-web-agent-latest.tgz)
 
 - 프로젝트 `node_modules/@imqa/web-agent` 폴더에 압축해제된 `package` 내의 파일들을 복사합니다.
 
