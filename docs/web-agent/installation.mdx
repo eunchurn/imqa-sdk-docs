@@ -108,7 +108,14 @@ IMQA.init({
 
 > (`string`, 선택)
 
-텔레메트리 데이터를 전송할 콜렉터의 URL을 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다. 필요에 따라 커스터마이즈할 수 있습니다.
+텔레메트리 데이터를 전송할 콜렉터의 URL을 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다.
+
+<Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
+  <ul>
+    <li>- Android/iOS SDK에서 웹뷰 환경을 계측할 경우, 네이티브 SDK에서 `collectorUrl`을 자동으로 전달하므로 별도로 입력할 필요가 없습니다.</li>
+    <li>- 반면, 웹 브라우저 환경을 계측할 경우에는 `collectorUrl` 값을 반드시 입력해야 합니다.</li>
+  </ul>
+</Gha>
 
 #### `authorizationToken`
 
@@ -118,21 +125,42 @@ IMQA.init({
 
 #### `serviceName`
 
-> (`string`, 필수)
+> (`string`, 선택)
 
-서비스의 이름을 지정합니다. 이 값은 텔레메트리 데이터 저장 및 분석에 사용됩니다. 필수 옵션으로 설정하지 않으면 텔레메트리 데이터가 저장되지 않습니다.
+IMQA에서 관리하는 서비스의 이름을 지정합니다. 이 값은 서비스를 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
+
+<Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
+  <ul>
+    <li>- Android/iOS SDK에서 웹뷰 환경을 계측할 경우, 네이티브 SDK에서 `serviceName`을 자동으로 전달하므로 별도로 입력할 필요가 없습니다.</li>
+    <li>- 반면, 웹 브라우저 환경을 계측할 경우에는 `serviceName` 값을 반드시 입력해야 합니다.</li>
+  </ul>
+</Gha>
 
 #### `serviceKey`
 
-> (`string`, 필수)
+> (`string`, 선택)
 
-서비스의 키를 설정합니다. 이 값 역시 텔레메트리 데이터 저장에 필수적입니다.
+IMQA에서 발급된 서비스의 키를 설정합니다. IMQA 관리 계정 로그인 후 글로벌 관리 > 서비스 관리에서 새로운 서비스를 등록하고 발급된 서비스 키를 사용하여 설치하세요.
+
+<Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
+  <ul>
+    <li>- Android/iOS SDK에서 웹뷰 환경을 계측할 경우, 네이티브 SDK에서 `serviceKey`을 자동으로 전달하므로 별도로 입력할 필요가 없습니다.</li>
+    <li>- 반면, 웹 브라우저 환경을 계측할 경우에는 `serviceKey` 값을 반드시 입력해야 합니다.</li>
+  </ul>
+</Gha>
 
 #### `serviceVersion`
 
-> (`string`, 필수)
+> (`string`, 선택)
 
-서비스의 버전을 지정합니다. 빈 문자열이거나 문자열이 아닌 경우 경고가 발생하며, 텔레메트리 데이터가 저장되지 않습니다.
+서비스의 버전을 지정합니다. 이 값 서비스 버전을 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
+
+<Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
+  <ul>
+    <li>- Android/iOS SDK에서 웹뷰 환경을 계측할 경우, 네이티브 SDK에서 `serviceVersion`을 자동으로 전달하므로 별도로 입력할 필요가 없습니다.</li>
+    <li>- 반면, 웹 브라우저 환경을 계측할 경우에는 `serviceVersion` 값을 반드시 입력해야 합니다.</li>
+  </ul>
+</Gha>
 
 #### `deploymentEnvironment`
 

@@ -39,10 +39,10 @@ pdf: true
 ```
 
 4. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
-- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다.
-- `serviceName` 서비스 이름은 필수값입니다. Web 앱 전용의 경우 사용하고자 하는 서비스이름을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 이름과 동일한 이름을 사용해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
-- `serviceVersion` 서비스 버전은 필수값입니다. Web 앱 전용의 경우 Web 앱의 버전을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 버전과 동일한 버전을 입력해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
-- `serviceKey` 서비스 키는 IMQA에서 생성한 서비스에 발급된 키를 입력해주세요.
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](./installation#collectorurl)
+- `serviceName` 서비스 이름. [상세 보기](./installation#servicename)
+- `serviceVersion` 서비스 버전 [상세 보기](./installation#serviceversion)
+- `serviceKey` 서비스 키 [상세 보기](./installation#servicekey)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
 
 [Installation - IMQA SDK](./installation.mdx#%EC%84%A4%EC%A0%95)
@@ -114,10 +114,10 @@ const app = new Vue({
 ```
 
 3. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
-- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다.
-- `serviceName` 서비스 이름은 필수값입니다. Web 앱 전용의 경우 사용하고자 하는 서비스이름을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 이름과 동일한 이름을 사용해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
-- `serviceVersion` 서비스 버전은 필수값입니다. Web 앱 전용의 경우 Web 앱의 버전을 입력합니다. WebView 인 경우 네이티브 앱에 설정된 서비스 버전과 동일한 버전을 입력해야 네이티브 앱과 함께 수집 데이터를 조회할 수 있습니다. 자세한 내용은 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 서비스 만들기를 참고해주세요.
-- `serviceKey` 서비스 키는 IMQA에서 생성한 서비스에 발급된 키를 입력해주세요.
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](./installation#collectorurl)
+- `serviceName` 서비스 이름. [상세 보기](./installation#servicename)
+- `serviceVersion` 서비스 버전 [상세 보기](./installation#serviceversion)
+- `serviceKey` 서비스 키 [상세 보기](./installation#servicekey)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 [IMQA 설정 문서](./installation.mdx#%EC%84%A4%EC%A0%95)를 참조해주세요.
 
 [Installation - IMQA SDK](./installation.mdx#%EC%84%A4%EC%A0%95)
