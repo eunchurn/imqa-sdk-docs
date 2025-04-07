@@ -244,7 +244,10 @@ IMQA Web Agent는 모바일 네이티브 파라미터를 WebView와 연동하여
 - `__imqa_service_name`: 서비스 이름
 - `__imqa_service_version`: 서비스 버전
 - `__imqa_service_key`: 서비스 키
-- `__imqa_shared_session`: 세션 공유 여부 (기본값: `true`), 비활성화인 경우 `init`에서 설정한 값을 사용합니다.
+- `__imqa_session_id`: 세션 ID
+- `__imqa_collector_url`: 콜렉터 URL
+- `__imqa_deactivated`: IMQA Web Agent 비활성화 여부 (기본값: `false`), 비활성화인 경우 IMQA Web Agent는 작동하지 않습니다.
+- `__imqa_shared_session`: 세션 및 서비스 파라미터 공유 여부 (기본값: `true`), 비활성화인 경우 `init`에서 설정한 값을 사용합니다.
 
 네이티브에서 사용하는 웹뷰는 네이티브 SDK에서 파라미터를 웹뷰에 자동으로 전달합니다. IMQA Web Agent는 이를 자동으로 감지하여 파라미터를 사용합니다. 이 설정은 IMQA Web Agent의 초기화 과정에서 자동으로 처리됩니다.
 
