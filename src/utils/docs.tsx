@@ -18,6 +18,7 @@ import { dirname } from 'node:path'
 import { cache } from 'react'
 import rehypePrismPlus from 'rehype-prism-plus'
 import remarkGFM from 'remark-gfm'
+import { ReleaseList } from './release-types'
 
 /**
  * Checks for .md(x) file extension
@@ -74,6 +75,67 @@ const MDX_BASEURL = process.env.MDX_BASEURL
 //   )
 //   return updated.replace(/integrity=\"\{\{SRI_HASH_INTEGRITY\}\}\"/, `integrity=\"${sriHash}\"`)
 // }
+
+async function getReleases(releaseUrl?: string): Promise<string | undefined> {
+  if (releaseUrl) {
+    try {
+      const response = await fetch(releaseUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
+        },
+      })
+      const data = (await response.json()) as ReleaseList
+      const source = data.reduce((acc, cur) => {
+        const { tag_name, name, body } = cur
+        const releaseName = name || tag_name
+        const releaseBody = body || ''
+        return `${acc}\n## ${releaseName}\n ${releaseBody}`
+      }, '')
+      return source
+    } catch (error) {
+      console.error('Error fetching release data:', error)
+    }
+  }
+}
+
+async function getReleaseJsx(releaseList: ReleaseList) {
+  const source = releaseList.reduce((acc, cur) => {
+    const { tag_name, name, body } = cur
+    const releaseName = name || tag_name
+    const releaseBody = body || ''
+    return `${acc}\n## ${releaseName}\n ${releaseBody}`
+  }, '')
+  const { content } = await compileMDX({
+    source,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGFM],
+        rehypePlugins: [
+          // rehypeImg(relFilePath, MDX_BASEURL),
+          rehypeDetails,
+          rehypeSummary,
+          rehypeGha,
+          rehypePrismPlus,
+          rehypeCode(),
+          // rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
+          // rehypeSandpack(dirname(file)),
+        ],
+      },
+    },
+    // @ts-ignore
+    components: {
+      ...components,
+      // ...actualComponents,
+      // Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
+      // Entries: () => <Entries items={entries} />,
+    },
+  })
+  return content
+}
 
 async function _getDocs(
   root: string,
@@ -204,11 +266,11 @@ async function _getDocs(
       //
       // inline images
       //
-
+      const releases = await getReleases(frontmatter.release)
       const tableOfContents: DocToC[] = []
 
       const { content: jsx } = await compileMDX({
-        source: `# ${title}\n ${content}`,
+        source: `# ${title}\n ${content}\n ${releases}`,
         options: {
           mdxOptions: {
             remarkPlugins: [remarkGFM],
@@ -246,6 +308,8 @@ async function _getDocs(
         boxes,
         tableOfContents,
         pdf: frontmatter.pdf,
+        // releases,
+        // releaseJsx: releases ? await getReleaseJsx(releases) : undefined,
       }
     }),
   )

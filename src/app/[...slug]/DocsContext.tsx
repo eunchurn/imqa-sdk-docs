@@ -27,6 +27,8 @@ export type Doc = {
   boxes: string[]
   tableOfContents: DocToC[]
   pdf?: boolean
+  // releases?: ReleaseList
+  // releaseJsx?: ReactNode
 }
 
 export type Ctx = { docs: Doc[]; doc: Doc }

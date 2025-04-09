@@ -61,10 +61,10 @@ function Page(props: MainProps) {
 }
 
 export function Main(props: MainProps) {
-  const { doc, pdf } = props
+  // const { doc, pdf, releases } = props
   return (
     <>
-      <Page doc={doc} pdf={pdf} />
+      <Page {...props} />
     </>
   )
 }
