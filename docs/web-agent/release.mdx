@@ -9,10 +9,23 @@ pdf: true
 
 ![NPM Version](https://img.shields.io/npm/v/%40imqa%2Fweb-agent?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Fweb-agent?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Fweb-agent)
 
+### 0.1.8
+
+#### Features
+- Android SDK WebView 파라미터 연동 브릿지 추가 [aed8923](https://github.com/idlerecord/imqa-js/commit/aed892360d253eaf9ab56ff968448351c0e85df0)
+
+```typescript
+window.IMQANative.getSession()
+```
+
+#### Bug Fixes
+- Fix webview parameter [9659501](https://github.com/idlerecord/imqa-js/commit/9659501962794e73c23e6c2f11a05bb6c7494fab)
+
 ### 0.1.7
 
 #### Features
 - 모바일 네이티브 파라미터 중 Collector URL `__imqa_collector_url` 연동 추가
+- Offline package CDN 배포 [e1d839a](https://github.com/idlerecord/imqa-js/commit/e1d839a36999081605848430c93be0498d259c7e)
 
 ```typescript
 declare global {
