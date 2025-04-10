@@ -88,8 +88,13 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
           Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
         },
       })
+      if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`)
+        return
+      }
       const data = (await response.json()) as ReleaseList
       const source = data.reduce((acc, cur) => {
+        if (!cur) return acc
         const { tag_name, name, body } = cur
         const releaseName = name || tag_name
         const releaseBody = body || ''
@@ -270,7 +275,7 @@ async function _getDocs(
       const tableOfContents: DocToC[] = []
 
       const { content: jsx } = await compileMDX({
-        source: `# ${title}\n ${content}\n ${releases}`,
+        source: releases ? `# ${title}\n ${content}\n ${releases}` : `# ${title}\n ${content}`,
         options: {
           mdxOptions: {
             remarkPlugins: [remarkGFM],
