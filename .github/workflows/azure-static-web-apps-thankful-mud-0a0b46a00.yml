@@ -33,7 +33,25 @@ jobs:
           api_location: '' # Api source code path - optional
           output_location: '' # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
-
+        env:
+          NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL: ${{ env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL }}
+          NEXT_PUBLIC_LIBNAME: ${{ env.NEXT_PUBLIC_LIBNAME }}
+          NEXT_PUBLIC_LIBNAME_SHORT: ${{ env.NEXT_PUBLIC_LIBNAME_SHORT }}
+          NEXT_PUBLIC_URL: ${{ env.NEXT_PUBLIC_URL }}
+          IDLERECORD_API_RELEASE_TOKEN: ${{ secrets.IDLERECORD_API_RELEASE_TOKEN }}
+          MDX: ${{ env.MDX }}
+          EDIT_BASEURL: ${{ env.EDIT_BASEURL }}
+          MDX_BASEURL: ${{ env.MDX_BASEURL }}
+          SOURCECODE_BASEURL: ${{ env.SOURCECODE_BASEURL }}
+          GITHUB: ${{ env.GITHUB }}
+          THEME_PRIMARY: ${{ env.THEME_PRIMARY }}
+          THEME_SCHEMA: ${{ env.THEME_SCHEMA }}
+          THEME_CONTRAST: ${{ env.THEME_CONTRAST }}
+          THEME_NOTE: ${{ env.THEME_NOTE }}
+          THEME_TIP: ${{ env.THEME_TIP }}
+          THEME_IMPORTANT: ${{ env.THEME_IMPORTANT }}
+          THEME_WARNING: ${{ env.THEME_WARNING }}
+          THEME_CAUTION: ${{ env.THEME_CAUTION }}
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
