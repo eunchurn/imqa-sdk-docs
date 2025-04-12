@@ -107,41 +107,6 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
   }
 }
 
-async function getReleaseJsx(releaseList: ReleaseList) {
-  const source = releaseList.reduce((acc, cur) => {
-    const { tag_name, name, body } = cur
-    const releaseName = name || tag_name
-    const releaseBody = body || ''
-    return `${acc}\n## ${releaseName}\n ${releaseBody}`
-  }, '')
-  const { content } = await compileMDX({
-    source,
-    options: {
-      mdxOptions: {
-        remarkPlugins: [remarkGFM],
-        rehypePlugins: [
-          // rehypeImg(relFilePath, MDX_BASEURL),
-          rehypeDetails,
-          rehypeSummary,
-          rehypeGha,
-          rehypePrismPlus,
-          rehypeCode(),
-          // rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
-          // rehypeSandpack(dirname(file)),
-        ],
-      },
-    },
-    // @ts-ignore
-    components: {
-      ...components,
-      // ...actualComponents,
-      // Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
-      // Entries: () => <Entries items={entries} />,
-    },
-  })
-  return content
-}
-
 async function _getDocs(
   root: string,
   slugOfInterest: string[] | null,
@@ -313,6 +278,7 @@ async function _getDocs(
         boxes,
         tableOfContents,
         pdf: frontmatter.pdf,
+        cover: frontmatter.cover,
         // releases,
         // releaseJsx: releases ? await getReleaseJsx(releases) : undefined,
       }

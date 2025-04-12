@@ -1,0 +1,70 @@
+'use client'
+
+import type { DocToC } from '@/app/[...slug]/DocsContext'
+import cn from '@/lib/cn'
+import { ComponentProps, useCallback, useEffect, useState } from 'react'
+
+export function TocPDF({ className, toc }: ComponentProps<'div'> & { toc: DocToC[] }) {
+  const [activeIndex, setActiveIndex] = useState<number | undefined>()
+
+  const updateActiveIndex = useCallback(
+    (hash: string) => {
+      const index = toc.findIndex((item) => item.id === hash.slice(1))
+      if (index !== -1) {
+        setActiveIndex(index)
+      }
+    },
+    [toc],
+  )
+
+  useEffect(() => {
+    updateActiveIndex(window.location.hash)
+
+    const onHashChanged = (e: HashChangeEvent) => {
+      updateActiveIndex(new URL(e.newURL).hash)
+    }
+
+    window.addEventListener('hashchange', onHashChanged)
+    return () => {
+      window.removeEventListener('hashchange', onHashChanged)
+    }
+  }, [updateActiveIndex])
+
+  // React.useEffect(() => {
+  //   const headings = toc.map((heading) => document.getElementById(heading.id))
+
+  //   const observer = new IntersectionObserver(([entry]) => {
+  //     if (entry.intersectionRatio > 0) {
+  //       const headingIndex = headings.indexOf(entry.target as HTMLElement)
+  //       setActiveIndex(headingIndex)
+  //     }
+  //   })
+
+  //   for (const heading of headings) {
+  //     if (heading) observer.observe(heading)
+  //   }
+
+  //   return () => observer.disconnect()
+  // }, [toc])
+
+  return (
+    <div className={cn(className, 'text-xs')}>
+      <h3 className="mb-8 pt-8">Table of Contents</h3>
+      {toc.map(({ title, id, level }, index) => (
+        <h4 key={`${title}-${index}`}>
+          <a
+            aria-label={title}
+            className={cn(
+              'block py-1 text-sm leading-relaxed text-on-surface-variant/50 hover:underline',
+              index === activeIndex && 'text-on-surface',
+            )}
+            style={{ marginLeft: `${(level - 1) * 1}rem` }}
+            href={`#${id}`}
+          >
+            {title}
+          </a>
+        </h4>
+      ))}
+    </div>
+  )
+}

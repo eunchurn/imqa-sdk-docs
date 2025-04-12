@@ -55,6 +55,7 @@ export async function POST(req: Request) {
     await page.goto(targetURL, { waitUntil: 'networkidle0' })
     await page.emulateMediaType('screen')
     await autoScroll(page)
+    // await sleep(2000) // 페이지 로딩 대기
     // PDF 생성
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -79,4 +80,38 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
+}
+
+// const waitForImagesToLoad = async () => {
+//   const images = Array.from(document.images)
+//   await Promise.all(
+//     images.map((img) => {
+//       if (img.complete) return Promise.resolve()
+//       return new Promise((res) => {
+//         img.onload = img.onerror = res
+//       })
+//     }),
+//   )
+// }
+
+const waitForImagesWithTimeout = `
+  async function waitForImagesToLoad(timeout = 30000) {
+    const images = Array.from(document.images);
+    const loadPromises = images.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((res) => {
+        img.onload = img.onerror = res;
+      });
+    });
+    // 타임아웃 방어
+    await Promise.race([
+      Promise.all(loadPromises),
+      new Promise((_, reject) => setTimeout(() => reject('Image load timeout'), timeout))
+    ]);
+  }
+  waitForImagesToLoad();
+`
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }

@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster'
 import { nanumsquareneo } from '@/fonts'
 import cn from '@/lib/cn'
 import { svg } from '@/utils/icon'
@@ -77,7 +78,10 @@ export default function RootLayout(props: RootLayoutProps) {
           'scrollbar-thin',
         )}
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   )

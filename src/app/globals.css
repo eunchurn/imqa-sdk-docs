@@ -1,4 +1,6 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 * {
   -webkit-print-color-adjust: exact !important;
@@ -256,6 +258,34 @@ h6 {
 .text-xs h4 {
   font-size: 0.9rem;
   line-height: 0.8;
+}
+
+@keyframes indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progress-indeterminate {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: hsl(var(--primary));
+  animation: indeterminate 1.5s ease-in-out infinite;
 }
 
 @media print {

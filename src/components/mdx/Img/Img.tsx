@@ -36,7 +36,7 @@ export async function Img({
     <img
       src={src}
       decoding="async"
-      loading="lazy"
+      loading="eager"
       alt={alt}
       className={cn('bg-surface-container inline-block rounded-lg', className)}
       {...dims}

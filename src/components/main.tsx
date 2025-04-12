@@ -1,7 +1,9 @@
 'use client'
 
 import type { Doc } from '@/app/[...slug]/DocsContext'
+import { TocPDF } from '@/components/mdx/Toc'
 import { PDFIcon } from '@/components/ui/icons'
+import { useToast } from '@/hooks/use-toast'
 import cn from '@/lib/cn'
 import fileSaver from 'file-saver'
 import { useParams, usePathname } from 'next/navigation'
@@ -14,12 +16,22 @@ interface MainProps {
 
 function Page(props: MainProps) {
   const { doc, pdf } = props
+  const { toast } = useToast()
   const params = useParams()
   const pathname = usePathname()
   const isPDFPrinting = pathname.startsWith('/mdx-page')
   const [printing, setPrinting] = React.useState(false)
   const handleDownload = React.useCallback(async () => {
     setPrinting(true)
+    toast({
+      title: 'PDF 생성 중...',
+      description: (
+        <div className="mt-2">
+          <div className="progress-indeterminate bg-secondary h-2 w-full rounded-full" />
+        </div>
+      ),
+      duration: 100000, // Long duration that will be dismissed when complete
+    })
     try {
       const data = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -27,11 +39,21 @@ function Page(props: MainProps) {
       })
       setPrinting(false)
       fileSaver(await data.blob(), `${doc.title}.pdf`)
+      toast({
+        title: 'PDF 생성 완료',
+        description: 'PDF가 다운로드됩니다.',
+        duration: 3000,
+      })
     } catch {
+      toast({
+        title: '오류 발생',
+        description: 'PDF 생성 중 문제가 발생했습니다.',
+        variant: 'destructive',
+      })
       setPrinting(false)
     }
-  }, [doc.title, params])
-
+  }, [doc.title, params, toast])
+  const toc = <TocPDF toc={doc.tableOfContents.filter(({ level }) => level > 0)} />
   return (
     <>
       <header className={cn('mb-6 mt-8 border-b', 'border-outline-variant/50')}>
@@ -55,6 +77,7 @@ function Page(props: MainProps) {
           )}
         </div>
       </header>
+      {isPDFPrinting ? toc : null}
       {doc ? <>{doc.content}</> : 'empty doc'}
     </>
   )

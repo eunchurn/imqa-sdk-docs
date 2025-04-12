@@ -3,6 +3,8 @@
 import { createRequiredContext } from '@/lib/createRequiredContext'
 import { ReactNode } from 'react'
 
+export type CoverKind = 'android' | 'ios' | 'web' | 'user-guide' | 'admin-guide'
+
 export type DocToC = {
   id: string
   level: number
@@ -27,6 +29,7 @@ export type Doc = {
   boxes: string[]
   tableOfContents: DocToC[]
   pdf?: boolean
+  cover?: CoverKind
   // releases?: ReleaseList
   // releaseJsx?: ReactNode
 }

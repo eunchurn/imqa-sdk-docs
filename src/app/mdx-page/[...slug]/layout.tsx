@@ -1,5 +1,8 @@
+import { Cover } from '@/components/cover'
+import { TocPDF } from '@/components/mdx/Toc'
 import cn from '@/lib/cn'
-
+import { getData } from '@/utils/docs'
+import type { Props } from '../../[...slug]/layout'
 interface MDXPageLayoutProps {
   children: React.ReactNode
 }
@@ -8,12 +11,18 @@ const NEXT_PUBLIC_LIBNAME_SHORT = process.env.NEXT_PUBLIC_LIBNAME_SHORT
 const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL
 const NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF = process.env.NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF
 
-export default function MDXPageLayout(props: MDXPageLayoutProps) {
-  const { children } = props
+export default async function MDXPageLayout(props: Props) {
+  const { params, children } = props
+  const slug = (await params).slug
+  const {
+    doc: { cover, tableOfContents },
+  } = await getData(...slug)
+  const toc = <TocPDF toc={tableOfContents.filter(({ level }) => level > 0)} />
   return (
     <div className={`print:bg-white`}>
       <div className="min-h-screen">
         <header className="w-full border-b bg-white print:pb-8">
+          {cover ? <Cover kind={cover} /> : null}
           <div className="mx-auto max-w-[850px] px-6 py-8">
             <div className="flex items-center justify-between">
               <span className="font-bold">
