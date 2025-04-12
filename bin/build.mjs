@@ -15,12 +15,12 @@ console.log('argv2=', argv)
 
 const help = argv.help || argv.h
 const man = `
-Usage: npm exec -y --package=@pmndrs/docs build -- MDX [ OUTDIR ] [ --libname=LIBNAME --basePath=BASE_PATH --help|-h ]
+Usage: npm exec -y --package=@imqa/docs build -- MDX [ OUTDIR ] [ --libname=LIBNAME --basePath=BASE_PATH --help|-h ]
 
-Generate static, pmndrs-standardized documentation website from *.mdx folder.
+Generate static, imqa-standardized documentation website from *.mdx folder.
 
-Example: npx @pmndrs/docs build ./docs
-         npx @pmndrs/docs build ~code/pmndrs/react-three-fiber/docs --libname="React Three Fiber" --basePath="/react-three-fiber" static-out
+Example: npx @imqa/docs build ./docs
+         npx @imqa/docs build ~code/imqa/react-three-fiber/docs --libname="React Three Fiber" --basePath="/react-three-fiber" static-out
 
 Arguments:
 
