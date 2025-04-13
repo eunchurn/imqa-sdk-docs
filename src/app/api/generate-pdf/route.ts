@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     const url = new URL(req.url)
     const { slug } = (await req.json()) as { slug: string[] }
 
-    const targetURL = `${url.origin}/mdx-page/${slug.join('/')}`
+    const targetURL = `${process.env.NEXT_PUBLIC_URL}/mdx-page/${slug.join('/')}`
     await page.goto(targetURL, { waitUntil: 'networkidle0' })
     await page.emulateMediaType('screen')
     await autoScroll(page)
