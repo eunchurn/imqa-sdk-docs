@@ -28,7 +28,7 @@ jobs:
         with:
           semantic_version: 24
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.IDLERECORD_IMQA_SDK_DOCS_GITHUB_TOKEN }}
 
   # vercel-job:
   #   runs-on: ubuntu-latest
@@ -103,7 +103,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.IDLERECORD_IMQA_SDK_DOCS_GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
