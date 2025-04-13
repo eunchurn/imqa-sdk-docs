@@ -69,12 +69,12 @@
   },
   "scripts": {
     "dev": "NODE_OPTIONS='--inspect' MDX=docs next",
-    "start": "MDX=docs next start",
+    "start": "node .next/standalone/server.js",
     "build": "MDX=docs next build",
     "github:build": "MDX=docs OUTPUT=export BASE_PATH=/imqa-sdk-docs next build",
     "format": "prettier -w src/",
     "lint": "eslint src/**/*.{ts,tsx} && prettier . --check",
-    "prepare": "husky",
+    "prepare": "husky || true",
     "postbuild": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/"
   },
   "overrides": {

@@ -1,0 +1,45 @@
+name: Build and deploy to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: imqa-docs
+  REGISTRY: imqav3.azurecr.io
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Container registry login
+        uses: azure/docker-login@v1
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ vars.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      - name: Build Docker image
+        run: |
+          docker build \
+          --push \
+          --build-arg NEXT_PUBLIC_LIBNAME=IMQA \
+          --build-arg NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL=document \
+          --build-arg NEXT_PUBLIC_LIBNAME_SHORT=imqa \
+          --build-arg NEXT_PUBLIC_URL=https://doc.imqa.io \
+          --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+    # - name: Deploy to Azure Web App for Containers
+    #   uses: azure/webapps-deploy@v3
+    #   with:
+    #     app-name: imqa-docs
+    #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}

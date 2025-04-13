@@ -1,0 +1,17 @@
+services:
+  imqa-docs:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_LIBNAME: IMQA
+        NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABLE: document
+        NEXT_PUBLIC_LIBNAME_SHORT: imqa
+        NEXT_PUBLIC_URL: http://localhost:3000
+    container_name: imqa-docs
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
