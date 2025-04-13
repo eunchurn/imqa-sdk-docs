@@ -4,7 +4,7 @@ import puppeteerCore, { type Browser as BrowserCore, type Page } from 'puppeteer
 
 chromium.setGraphicsMode = false
 
-export const maxDuration = 60
+export const maxDuration = 300
 
 async function autoScroll(page: Page) {
   await page.evaluate(async () => {
