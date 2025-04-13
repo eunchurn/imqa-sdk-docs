@@ -30,57 +30,57 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  vercel-job:
-    runs-on: ubuntu-latest
-    needs: semantic-release-job
-    if: needs.semantic-release-job.outputs.new_release_version != ''
+  # vercel-job:
+  #   runs-on: ubuntu-latest
+  #   needs: semantic-release-job
+  #   if: needs.semantic-release-job.outputs.new_release_version != ''
 
-    # Update the Production/Preview environment with the Vercel deployed URL
-    environment:
-      name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
-      url: ${{ steps.vercel-deploy.outputs.deployment_url }}
+  #   # Update the Production/Preview environment with the Vercel deployed URL
+  #   environment:
+  #     name: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
+  #     url: ${{ steps.vercel-deploy.outputs.deployment_url }}
 
-    steps:
-      - uses: actions/setup-node@v4
-      - uses: actions/checkout@v4
-      - id: vercel-deploy
-        run: |
-          npx -y vercel deploy --token=${{ secrets.VERCEL_TOKEN }} \
-            --target=${{ github.event_name == 'push' && 'production' || 'preview' }} \
-            --build-env MDX=docs \
-            --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL="docs" \
-            --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF="https://pmnd.rs" \
-            --build-env NEXT_PUBLIC_LIBNAME="IMQA SDK" \
-            --build-env NEXT_PUBLIC_LIBNAME_SHORT="imqa" \
-            --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL="docs" \
-            --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF="https://imqa.io" \
-            --build-env BASE_PATH= \
-            --build-env DIST_DIR= \
-            --build-env OUTPUT= \
-            --build-env HOME_REDIRECT= \
-            --build-env MDX_BASEURL="https://github.com/${{ github.repository }}/raw/${{ github.ref_name }}/docs" \
-            --build-env EDIT_BASEURL="https://github.com/${{ github.repository }}/edit/${{ github.ref_name }}/docs" \
-            --build-env SOURCECODE_BASEURL="https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}" \
-            --build-env NEXT_PUBLIC_URL="$VERCEL_PROJECT_PRODUCTION_URL" \
-            --build-env ICON= \
-            --build-env LOGO=gutenberg.jpg \
-            --build-env GITHUB="https://github.com/${{ github.repository }}" \
-            --build-env DISCORD="${{ secrets.DISCORD }}" \
-            --build-env THEME_PRIMARY="#323e48" \
-            --build-env THEME_SCHEME="tonalSpot" \
-            --build-env THEME_CONTRAST="0" \
-            --build-env THEME_NOTE="#1f6feb" \
-            --build-env THEME_TIP="#238636" \
-            --build-env THEME_IMPORTANT="#8957e5" \
-            --build-env THEME_WARNING="#d29922" \
-            --build-env THEME_CAUTION="#da3633" \
-            --build-env CONTRIBUTORS_PAT="${{ secrets.GITHUB_TOKEN }}" \
-            > deployment-url.txt
+  #   steps:
+  #     - uses: actions/setup-node@v4
+  #     - uses: actions/checkout@v4
+  #     - id: vercel-deploy
+  #       run: |
+  #         npx -y vercel deploy --token=${{ secrets.VERCEL_TOKEN }} \
+  #           --target=${{ github.event_name == 'push' && 'production' || 'preview' }} \
+  #           --build-env MDX=docs \
+  #           --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL="docs" \
+  #           --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF="https://pmnd.rs" \
+  #           --build-env NEXT_PUBLIC_LIBNAME="IMQA SDK" \
+  #           --build-env NEXT_PUBLIC_LIBNAME_SHORT="imqa" \
+  #           --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_LABEL="docs" \
+  #           --build-env NEXT_PUBLIC_LIBNAME_DOTSUFFIX_HREF="https://imqa.io" \
+  #           --build-env BASE_PATH= \
+  #           --build-env DIST_DIR= \
+  #           --build-env OUTPUT= \
+  #           --build-env HOME_REDIRECT= \
+  #           --build-env MDX_BASEURL="https://github.com/${{ github.repository }}/raw/${{ github.ref_name }}/docs" \
+  #           --build-env EDIT_BASEURL="https://github.com/${{ github.repository }}/edit/${{ github.ref_name }}/docs" \
+  #           --build-env SOURCECODE_BASEURL="https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}" \
+  #           --build-env NEXT_PUBLIC_URL="$VERCEL_PROJECT_PRODUCTION_URL" \
+  #           --build-env ICON= \
+  #           --build-env LOGO=gutenberg.jpg \
+  #           --build-env GITHUB="https://github.com/${{ github.repository }}" \
+  #           --build-env DISCORD="${{ secrets.DISCORD }}" \
+  #           --build-env THEME_PRIMARY="#323e48" \
+  #           --build-env THEME_SCHEME="tonalSpot" \
+  #           --build-env THEME_CONTRAST="0" \
+  #           --build-env THEME_NOTE="#1f6feb" \
+  #           --build-env THEME_TIP="#238636" \
+  #           --build-env THEME_IMPORTANT="#8957e5" \
+  #           --build-env THEME_WARNING="#d29922" \
+  #           --build-env THEME_CAUTION="#da3633" \
+  #           --build-env CONTRIBUTORS_PAT="${{ secrets.GITHUB_TOKEN }}" \
+  #           > deployment-url.txt
 
-          echo "deployment_url=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  #         echo "deployment_url=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+  #       env:
+  #         VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  #         VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   # https://docs.github.com/en/actions/publishing-packages/publishing-docker-images#publishing-images-to-github-packages
   docker-job:
