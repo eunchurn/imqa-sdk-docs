@@ -75,7 +75,7 @@ export async function POST(req: Request) {
     })
   } catch (error) {
     console.error('PDF 생성 오류:', error)
-    return new Response(JSON.stringify({ error: 'PDF 생성 실패' }), {
+    return new Response(JSON.stringify({ message: 'PDF 생성 실패', error }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     })
