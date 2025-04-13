@@ -1,8 +1,12 @@
-import { chromium } from 'playwright'
+import chromium from '@sparticuz/chromium'
+import { type Browser, executablePath } from 'puppeteer'
+import puppeteerCore, { type Browser as BrowserCore, type Page } from 'puppeteer-core'
+
+chromium.setGraphicsMode = false
 
 export const maxDuration = 60
 
-async function autoScroll(page: any) {
+async function autoScroll(page: Page) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
       let totalHeight = 0
@@ -23,32 +27,46 @@ async function autoScroll(page: any) {
 
 export async function POST(req: Request) {
   try {
-    const browser = await chromium.launch({
-      headless: true,
-      args: ['--no-sandbox'],
-    })
+    let browser: Browser | BrowserCore | null = null
+    if (process.env.NODE_ENV === 'production') {
+      browser = await puppeteerCore.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath(),
+        defaultViewport: chromium.defaultViewport,
+        headless: chromium.headless,
+      })
+    } else {
+      browser = await puppeteerCore.launch({
+        executablePath: executablePath(),
+        headless: 'shell',
+        args: ['--font-render-hinting=none', '--no-sandbox'],
+      })
+    }
 
-    const context = await browser.newContext()
-    const page = await context.newPage()
+    if (!browser) {
+      throw new Error('브라우저 생성 실패')
+    }
+    const page = await browser.newPage()
 
     const url = new URL(req.url)
     const { slug } = (await req.json()) as { slug: string[] }
 
     const targetURL = `${url.origin}/mdx-page/${slug.join('/')}`
-    await page.goto(targetURL, { waitUntil: 'networkidle' })
-
-    await page.emulateMedia({ media: 'screen' })
+    await page.goto(targetURL, { waitUntil: 'networkidle0' })
+    await page.emulateMediaType('screen')
     await autoScroll(page)
-
+    // await sleep(2000) // 페이지 로딩 대기
+    // PDF 생성
     const pdfBuffer = await page.pdf({
       format: 'A4',
       scale: 0.9,
-      printBackground: true,
+      printBackground: true, // Tailwind 스타일 유지
       preferCSSPageSize: true,
     })
 
     await browser.close()
 
+    // PDF 반환
     return new Response(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
@@ -62,4 +80,8 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
+}
+
+async function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
