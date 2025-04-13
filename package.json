@@ -74,7 +74,7 @@
     "lint": "eslint src/**/*.{ts,tsx} && prettier . --check",
     "prepare": "husky",
     "postbuild": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/",
-    "postinstall": "npx playwright install"
+    "postinstall": "npx playwright install && npx playwright install-deps"
   },
   "overrides": {
     "@types/react": "19.1.1",
