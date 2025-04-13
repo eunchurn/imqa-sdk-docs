@@ -1,12 +1,8 @@
-import chromium from '@sparticuz/chromium'
-import { type Browser, executablePath } from 'puppeteer'
-import puppeteerCore, { type Browser as BrowserCore, type Page } from 'puppeteer-core'
-
-chromium.setGraphicsMode = false
+import { chromium } from 'playwright'
 
 export const maxDuration = 60
 
-async function autoScroll(page: Page) {
+async function autoScroll(page: any) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
       let totalHeight = 0
@@ -27,46 +23,32 @@ async function autoScroll(page: Page) {
 
 export async function POST(req: Request) {
   try {
-    let browser: Browser | BrowserCore | null = null
-    if (process.env.NODE_ENV === 'production') {
-      browser = await puppeteerCore.launch({
-        args: chromium.args,
-        executablePath: await chromium.executablePath(),
-        defaultViewport: chromium.defaultViewport,
-        headless: chromium.headless,
-      })
-    } else {
-      browser = await puppeteerCore.launch({
-        executablePath: executablePath(),
-        headless: 'shell',
-        args: ['--font-render-hinting=none', '--no-sandbox'],
-      })
-    }
+    const browser = await chromium.launch({
+      headless: true,
+      args: ['--no-sandbox'],
+    })
 
-    if (!browser) {
-      throw new Error('브라우저 생성 실패')
-    }
-    const page = await browser.newPage()
+    const context = await browser.newContext()
+    const page = await context.newPage()
 
     const url = new URL(req.url)
     const { slug } = (await req.json()) as { slug: string[] }
 
     const targetURL = `${url.origin}/mdx-page/${slug.join('/')}`
-    await page.goto(targetURL, { waitUntil: 'networkidle0' })
-    await page.emulateMediaType('screen')
+    await page.goto(targetURL, { waitUntil: 'networkidle' })
+
+    await page.emulateMedia({ media: 'screen' })
     await autoScroll(page)
-    // await sleep(2000) // 페이지 로딩 대기
-    // PDF 생성
+
     const pdfBuffer = await page.pdf({
       format: 'A4',
       scale: 0.9,
-      printBackground: true, // Tailwind 스타일 유지
+      printBackground: true,
       preferCSSPageSize: true,
     })
 
     await browser.close()
 
-    // PDF 반환
     return new Response(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
@@ -80,38 +62,4 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
     })
   }
-}
-
-// const waitForImagesToLoad = async () => {
-//   const images = Array.from(document.images)
-//   await Promise.all(
-//     images.map((img) => {
-//       if (img.complete) return Promise.resolve()
-//       return new Promise((res) => {
-//         img.onload = img.onerror = res
-//       })
-//     }),
-//   )
-// }
-
-const waitForImagesWithTimeout = `
-  async function waitForImagesToLoad(timeout = 30000) {
-    const images = Array.from(document.images);
-    const loadPromises = images.map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise((res) => {
-        img.onload = img.onerror = res;
-      });
-    });
-    // 타임아웃 방어
-    await Promise.race([
-      Promise.all(loadPromises),
-      new Promise((_, reject) => setTimeout(() => reject('Image load timeout'), timeout))
-    ]);
-  }
-  waitForImagesToLoad();
-`
-
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }

@@ -41,7 +41,7 @@ function Page(props: MainProps) {
       fileSaver(await data.blob(), `${doc.title}.pdf`)
       toast({
         title: 'PDF 생성 완료',
-        description: 'PDF가 다운로드됩니다.',
+        description: '',
         duration: 3000,
       })
     } catch {
