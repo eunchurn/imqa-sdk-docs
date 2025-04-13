@@ -38,9 +38,9 @@ jobs:
           --build-arg NEXT_PUBLIC_URL=https://doc.imqa.io \
           --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
-      - name: Deploy to Azure Web App for Containers
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: imqa-docs
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_d0270147233149358b8909ad2b53eaf5 }}
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+    # - name: Deploy to Azure Web App for Containers
+    #   uses: azure/webapps-deploy@v3
+    #   with:
+    #     app-name: imqa-docs
+    #     publish-profile: ${{ secrets.AzureAppService_PublishProfile_d0270147233149358b8909ad2b53eaf5 }}
+    #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
