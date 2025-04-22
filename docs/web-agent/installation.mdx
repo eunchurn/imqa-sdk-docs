@@ -191,6 +191,11 @@ IMQA에서 발급된 서비스의 키를 설정합니다. IMQA 관리 계정 로
 
 네트워크 요청 및 응답의 상세한 추적을 활성화합니다. 기본값은 `false`이며, 활성화 시 네트워크 관련 데이터를 더 상세히 수집할 수 있습니다.
 
+<Gha keyword="WARNING" title="개인정보 보호">
+  이 기능을 활성화할 경우 `http.request.header`와 `http.request.body`의 정보가 포함됩니다. 민감한 정보가 포함될 수 있으므로 주의가 필요합니다.
+</Gha>
+
+
 #### `blockClass`
 
 > (`string`, 선택)

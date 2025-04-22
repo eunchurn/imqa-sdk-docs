@@ -12,80 +12,213 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 
 ## 속성 필드 설명
 
-### 1. 리소스 속성
+### 리소스 속성
 
 가장 최상의 리소스 속성으로 앱과 에이전트의 메타 데이터를 가지고 있습니다.
 
 - `service.name`: 서비스 이름
 - `service.version`: 서비스 버전
+- `telemetry.sdk.language`: 프로그래밍 언어 (webjs)
+- `telemetry.sdk.name`: SDK 이름 (opentelemetry)
+- `telemetry.sdk.version`: SDK 버전
+- `process.runtime.name`: 런타임 이름 (browser)
 - `os.name`: 운영체제 이름
 - `os.version`: 운영체제 버전
-- `telemetry.sdk.name`: SDK 이름
-- `telemetry.sdk.version`: SDK 버전
-- `telemetry.sdk.language`: SDK 언어
-- `imqa.rum.version`: RUM 에이전트 버전 (`@imqa/web-agent` 의 버전이 자동으로 추가됩니다. 에이전트를 사용하지 않는 경우 버전 정보를 추가해야 합니다)
-- `application`: 애플리케이션 이름 (설정된 경우, 서비스 이름과는 다릅니다.)
-- `deployment.environment`: 배포 환경 (설정된 경우, production 혹은 staging을 나타냅니다.)
-- `sampling.probability`: 샘플링 확률 (0 ~ 1사이의 샘플링 값을 가집니다.)
+- `imqa.browser.device`: 디바이스 타입
+- `imqa.browser.name`: 브라우저 이름
+- `imqa.browser.version`: 브라우저 전체 버전
+- `imqa.browser.version_major`: 브라우저 메이저 버전
+- `service.key`: 서비스 키
+- `imqa.agent.version`: IMQA 에이전트 버전
+- `imqa.rum.version`: RUM 에이전트 버전 (`@imqa/web-agent` 의 버전이 자동으로 추가됩니다)
+- `rum.scriptInstance`: RUM 스크립트 인스턴스 식별자
+- `application`: 애플리케이션 이름 (설정된 경우)
+- `environment`: 환경 이름
+- `deployment.environment`: 배포 환경 (production, staging 등)
+- `sampling.probability`: 샘플링 확률 (0 ~ 1 사이의 값)
 - `imqa.telemetry.sdk.export_timestamp`: 데이터 내보내기 타임스탬프
 - `host.ip`: IP 주소
 - `host.ip.geolocation`: IP 주소의 지리적 위치 정보 (콜렉터에서 추가)
-- `device.model.name`: 디바이스 모델 이름 (nullable)
+- `device.model.name`: 디바이스 모델 이름
 - `user_agent.original`: User Agent 문자열
-- `service.key`: 서비스 키
-- `network.carrier.name`: 통신사 이름 (nullable)
-- `network.connection.subtype`: 네트워크 연결 유형, 통신 방식 (nullable)
-- `device.battery.status`: 배터리 상태 (nullable)
-- `device.cpu.util`: CPU 사용률 (nullable)
-- `device.memory.util`: 메모리 사용률 (nullable)
+- `session.id`: 사용자 세션 ID (중요: 세션 그룹화를 위해 필수)
+- `network.carrier.name`: 통신사 이름
+- `network.connection.subtype`: 네트워크 연결 유형
+- `device.battery.status`: 배터리 상태
+- `device.cpu.util`: CPU 사용률
+- `device.memory.util`: 메모리 사용률
 
-### 2. 스팬 속성
+### 스팬 속성
 
-#### 2.1. 기본 스팬 속성
+#### 기본 스팬 속성
 
 모든 스팬에 공통적으로 포함되는 속성들입니다.
 
 - `location.href`: 현재 페이지의 URL
+- `environment`: 환경 이름 (development, production 등)
+- `deployment.environment`: 배포 환경
+- `screen.name`: 화면/페이지 이름
+- `screen.type`: 화면 타입 (e.g., "page", "route", "modal", "dialog")
+- `session.id`: 세션 ID
+- `url.full`: 전체 URL
 - `document.visibilityState`: 문서의 가시성 상태 ("visible" 또는 "hidden")
-- `session.id`: 세션 ID (사용자 접속시 생성됩니다. 포함하지 않을 경우 세션 항목으로 그룹화 할 수 없습니다.)
-- `screen.name`: 현 스팬의 화면 이름
-- `screen.type`: 화면 타입 (e.g., "route", "modal", "dialog")
+- `component`: 컴포넌트 식별자 (계측 유형에 따라 다름)
+- `span.type`: 스팬 타입 (e.g., "render", "xhr", "fetch", "user-interaction", "connectivity")
 - `action.type`: 스팬의 액션 타입 ("document_loads", "xhr_requests", 또는 "route_changes")
 
-#### 2.2. 루트 스팬 특정 속성
+#### Document Load 스팬 속성
 
-- `xhr.is_root_span`: XHR 요청을 포함하는 루트 스팬인 경우 true
-- `http.longtasks_sum`: Long task의 총 지속 시간 (나노초)
-- `http.time_to_first_xhr`: 루트 스팬 시작부터 첫 번째 XHR 요청까지의 시간 (나노초)
-- `http.time_in_xhr_calls`: 총 XHR 요청 시간 (중복 제외, 나노초)
-- `http.time_to_last_xhr`: 루트 스팬 시작부터 마지막 XHR 요청 종료까지의 시간 (나노초)
-- `http.time_to_xhr_processing_end`: 트레이스의 전체 지속 시간 (나노초)
+Document Load 스팬은 페이지 로딩 과정을 캡처하며 다음 속성을 포함합니다:
 
-#### 2.3. XHR 스팬 속성
+- `http.url`: 문서 URL
+- `http.response_content_length`: 응답 콘텐츠 길이 (바이트)
+- `http.response_content_length_uncompressed`: 압축 해제된 응답 콘텐츠 길이 (바이트)
+- `http.request.method`: HTTP 메서드 (일반적으로 "GET")
+- `http.user_agent`: 브라우저 유저 에이전트
+- `document.referrer`: 이전 페이지 URL (해당되는 경우)
+- `screen.xy`: 화면 해상도 (예: "1920x1080")
 
+#### XHR/Fetch 스팬 속성
+
+XHR 및 Fetch 스팬은 HTTP 요청을 캡처하며 다음 속성을 포함합니다:
+
+- `http.method`: HTTP 메소드 (GET, POST 등)
+- `http.url`: 요청 URL
+- `http.status_code`: HTTP 상태 코드
+- `http.status_text`: HTTP 상태 텍스트
+- `http.host`: 호스트 이름
+- `http.scheme`: URL 스키마 (http, https)
+- `http.user_agent`: User Agent 문자열
+- `http.response_content_length`: 응답 콘텐츠 길이 (바이트)
 - `root_span.operation`: 루트 스팬의 이름
 - `root_span.http.url`: 루트 스팬의 URL
 
-#### 2.4. Long Task 스팬 속성
+고급 모드(`advancedNetworkCapture`)를 활성화 한 경우에 다음 속성도 포함될 수 있습니다:
 
+- `http.request.header.*`: 요청 헤더 정보
+- `http.request.body`: 요청 본문 (POST, PUT 등)
+- `http.response.header.*`: 응답 헤더 정보
+- `http.response.body`: 응답 본문
+
+#### 사용자 상호작용 스팬 속성
+
+사용자 상호작용 스팬은 클릭 등의 이벤트를 캡처하며 다음 속성을 포함합니다:
+
+- `event_type`: 이벤트 타입 (click, dblclick 등)
+- `target_element`: 대상 요소 유형
+- `target_xpath`: 대상 요소의 XPath
+- `target.id`: 대상 요소 ID (있는 경우)
+- `target.classList`: 대상 요소의 클래스 목록
+
+#### Long Task 스팬 속성
+
+Long Task 스팬은 성능에 영향을 주는 긴 작업을 캡처하며 다음 속성을 포함합니다:
+
+- `longtask.name`: Long task의 유형 (e.g., "self")
+- `longtask.entry_type`: 항목 유형 (일반적으로 "longtask")
+- `longtask.duration`: Long task의 지속 시간 (ms)
+- `longtask.startTime`: Long task의 시작 시간
+- `longtask.attribution.name`: 어트리뷰션 소스 이름
+- `longtask.attribution.entry_type`: 어트리뷰션 항목 유형
+- `longtask.attribution.start_time`: 어트리뷰션 시작 시간
+- `longtask.attribution.duration`: 어트리뷰션 지속 시간
+- `longtask.attribution.container_type`: 컨테이너 유형 (e.g., "window")
+- `longtask.attribution.container_src`: 컨테이너 소스
+- `longtask.attribution.container_id`: 컨테이너 ID
+- `longtask.attribution.container_name`: 컨테이너 이름
 - `root_span.operation`: 루트 스팬의 이름
 - `root_span.http.url`: 루트 스팬의 URL
-- `http.action_type`: 트레이스의 HTTP 액션 타입 ("document_loads", "xhr_requests", 또는 "route_changes")
+- `http.action_type`: 트레이스의 HTTP 액션 타입
 
-#### 2.5. 이벤트
+#### 라우트 변경 스팬 속성
 
-이벤트는 스팬 내에서 발생하는 중요한 시점이나 상태 변화를 나타냅니다. 각 이벤트는 이름, 타임스탬프, 그리고 선택적으로 속성을 가질 수 있습니다.
+라우트 변경 스팬은 SPA에서의 페이지 전환을 캡처하며 다음 속성을 포함합니다:
 
-##### 2.5.1. 페이지 가시성 이벤트
+- `prev.href`: 이전 페이지 URL
+- `component`: 일반적으로 "route"로 설정
+- `span.type`: "user-interaction"으로 설정
 
-- `pageshow`: 페이지가 표시될 때 발생하는 이벤트
-   - 타임스탬프: 이벤트 발생 시간
-   - 속성: 없음
-- `pagehide`: 페이지가 숨겨질 때 발생하는 이벤트
-   - 타임스탬프: 이벤트 발생 시간
-   - 속성: 없음
+#### WebSocket 스팬 속성
 
-##### 2.5.2. 사용자 상호작용 이벤트
+WebSocket 통신을 캡처하며 다음 속성을 포함합니다:
+
+- `net.sock.peer.addr`: WebSocket 서버 주소
+- `net.sock.peer.port`: WebSocket 서버 포트
+- `websocket.operation`: 작업 유형 ("connect", "message", "close")
+- `websocket.url`: WebSocket URL (연결 스팬의 경우)
+- `websocket.protocol`: 사용된 WebSocket 프로토콜
+- `websocket.message.type`: 메시지 유형 ("text", "binary" 등)
+- `websocket.message.size`: 메시지 크기 (바이트)
+- `websocket.close.code`: WebSocket 종료 코드
+- `websocket.close.reason`: 연결 종료 이유
+
+#### Core Web Vitals 스팬 속성
+
+웹 바이탈 메트릭을 캡처하며 다음 속성을 포함합니다:
+
+- `web-vital.name`: 웹 바이탈 메트릭 이름 (e.g., "ttfb", "fcp", "lcp", "cls", "fid", "inp")
+- `web-vital.value`: 웹 바이탈 메트릭 값
+- `web-vital.delta`: 웹 바이탈 메트릭 델타 값
+- `web-vital.navigation_type`: 네비게이션 유형 (e.g., "reload")
+- `web-vital.rating`: 성능 등급 (e.g., "good", "needs-improvement", "poor")
+
+추가로 각 스팬은 다음 메트릭 중 하나를 포함합니다:
+- `fid`: First Input Delay (밀리초)
+- `lcp`: Largest Contentful Paint (밀리초)
+- `cls`: Cumulative Layout Shift 점수
+- `ttfb`: Time to First Byte (밀리초)
+- `fcp`: First Contentful Paint (밀리초)
+- `inp`: Interaction to Next Paint (밀리초)
+
+#### 연결 상태 스팬 속성
+
+네트워크 연결 상태를 캡처하며 다음 속성을 포함합니다:
+
+- `online`: 네트워크 연결 상태 (true = 온라인, false = 오프라인)
+- `span.type`: "connectivity"로 설정
+
+#### 가시성 상태 스팬 속성
+
+페이지 가시성 상태 변경을 캡처하며 다음 속성을 포함합니다:
+
+- `hidden`: 페이지 숨김 상태 (true = 숨김, false = 표시)
+- `span.type`: "visibility"로 설정
+
+### 이벤트 속성
+
+스팬은 중요한 이벤트를 포함할 수 있으며, 이벤트 타입에 따라 다양한 속성을 포함합니다:
+
+#### Document Load 이벤트
+
+- `fetchStart`: 페치 프로세스 시작
+- `unloadEventStart`: 이전 페이지 언로드 이벤트 시작
+- `unloadEventEnd`: 이전 페이지 언로드 이벤트 종료
+- `domInteractive`: DOM이 상호작용 가능한 상태
+- `domContentLoadedEventStart`: DOMContentLoaded 이벤트 시작
+- `domContentLoadedEventEnd`: DOMContentLoaded 이벤트 종료
+- `domComplete`: DOM 구성 완료
+- `loadEventStart`: load 이벤트 시작
+- `loadEventEnd`: load 이벤트 종료
+- `firstPaint`: 첫 번째 페인트
+- `firstContentfulPaint`: 첫 번째 콘텐츠풀 페인트
+
+#### XHR/Fetch 이벤트
+
+- `fetchStart`: 리소스 페치 시작
+- `domainLookupStart`: DNS 조회 시작
+- `domainLookupEnd`: DNS 조회 종료
+- `connectStart`: 서버 연결 시작
+- `secureConnectionStart`: 보안 연결 핸드셰이크 시작
+- `connectEnd`: 서버 연결 완료
+- `requestStart`: 요청 시작
+- `responseStart`: 응답 첫 바이트 수신
+- `responseEnd`: 응답 마지막 바이트 수신
+- `open`: XHR 객체 초기화 (XHR만 해당)
+- `send`: 요청 전송 (XHR만 해당)
+- `loaded`: 요청 완료 (XHR만 해당)
+- `error`: 오류 발생 (해당되는 경우)
+
+#### 사용자 상호작용(user-interaction) 이벤트
 
 `@opentelemetry/instrumentation-user-interaction`에 의해 수집되는 이벤트:
 
@@ -97,160 +230,124 @@ IMQA 성능 모니터링 서비스에서 웹 성능 모니터링을 사용하기
 - `dragstart`, `dragend`: 드래그 동작이 시작되거나 끝날 때 발생
 - `drop`: 드래그된 요소가 드롭될 때 발생
 
-각 이벤트는 다음과 같은 정보를 포함할 수 있습니다:
+#### 페이지 가시성 이벤트
 
-- 타임스탬프: 이벤트 발생 시간
-- 대상 요소: 이벤트가 발생한 HTML 요소의 정보 (예: 요소 유형, ID, 클래스 등)
-- 추가 컨텍스트: 이벤트와 관련된 추가 정보 (예: 클릭된 좌표, 제출된 폼 데이터 등)
+- `pageshow`: 페이지가 표시될 때 발생하는 이벤트
+- `pagehide`: 페이지가 숨겨질 때 발생하는 이벤트
 
-##### 2.5.3 성능 관련 이벤트
+### 로그 속성
 
-- `longtask`: 브라우저의 메인 스레드를 50ms 이상 차단하는 작업이 발생할 때 기록
-   - 타임스탬프: Long task 시작 시간
-   - 지속 시간: Long task의 지속 시간
+오류 및 예외에 대한 로그 데이터는 다음 속성을 포함합니다:
 
-#### 2.6. 성능 지표 데이터
-
-웹 애플리케이션의 성능과 사용자 경험에 대한 정보입니다. 이 데이터를 분석함으로써 페이지 로드 시간, API 호출 성능, 사용자 상호작용 패턴, 성능 병목 현상, 그리고 오류 발생 상황 등을 종합적으로 파악할 수 있습니다.
-
-`@imqa/web-agent` 는 추가 설정 없이 자동으로 여러 웹 애플리케이션 성능 지표를 수집합니다. 아래의 6가지 주요 자동 계측 항목은 에이전트를 사용하지 않고 커스텀 에이전트를 만들어 데이터를 컬렉터로 보내는 경우 아래의 문서들을 참고하여 데이터를 생성해야 합니다:
-
-- [PerformanceObserver](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver)
-- [PerformanceNavigationTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceNavigationTiming)
-- [PerformanceResourceTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceResourceTiming)
-- [PerformanceEntry](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEntry)
-- [PerformanceEventTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEventTiming)
-- [Performance](https://developer.mozilla.org/en-US/docs/Web/API/Performance)
-
-주요 자동 계측 항목은 다음과 같습니다.
-
-##### 2.6.1 Document Load
-
-> [!NOTE]
-> 오픈텔레메트리의 Document Load 항목을 참고하려면 [`@opentelemetry/instrumentation-document-load`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-document-load)을 확인해주세요.
-
-<Keypoints title="Sample">  
-  <KeypointsItem>[document-load.json](/samples/document-load.json)</KeypointsItem>
-</Keypoints>
-
-
-- `name`: "documentLoad"
-- `startTime`: 네비게이션 시작 시간
-- `endTime`: `loadEventEnd` 시간
-- 속성:
-   - `document.location`: 문서의 URL
-   - `document.timing.domInteractive`: DOM이 파싱되어 상호작용 가능한 시점까지의 시간
-   - `document.timing.domContentLoadedEventStart`: DOMContentLoaded 이벤트 시작 시간
-   - `document.timing.domContentLoadedEventEnd`: DOMContentLoaded 이벤트 종료 시간
-   - `document.timing.loadEventStart`: load 이벤트 시작 시간
-   - `document.timing.loadEventEnd`: load 이벤트 종료 시간
-   - `document.timing.domComplete`: DOM 구성 완료 시간
-
-##### 2.6.2 XML HTTP Request 
-
-> [!NOTE]
-> 오픈텔레메트리의 XML HTTP Request 항목을 참고하려면 [`@opentelemetry/instrumentation-xml-http-request`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-xml-http-request)을 확인해주세요.
-
-<Keypoints title="Sample">  
-  <KeypointsItem>[xhr.json](/samples/xhr.json)</KeypointsItem>
-</Keypoints>
-
-`name`: "HTTP "
-
-- 속성:
-   - `http.method`: HTTP 메소드 (GET, POST 등)
-   - `http.url`: 요청 URL
-   - `http.status_code`: HTTP 상태 코드
-   - `http.status_text`: HTTP 상태 텍스트
-   - `http.host`: 호스트 이름
-   - `http.scheme`: URL 스키마 (http, https)
-   - `http.user_agent`: User Agent 문자열
-
-##### 2.6.3 Fetch 
-
-> [!NOTE]
-> 오픈텔레메트리의 Fetch 항목을 참고하려면 [`@opentelemetry/instrumentation-fetch`](https://github.com/open-telemetry/opentelemetry-js/tree/main/experimental/packages/opentelemetry-instrumentation-fetch)을 확인해주세요.
-
-<Keypoints title="Sample">  
-  <KeypointsItem>[fetch.json](/samples/fetch.json)</KeypointsItem>
-</Keypoints>
-
-`name`: "HTTP "
-
-- 속성:
-   - `http.method`: HTTP 메소드 (GET, POST 등)
-   - `http.url`: 요청 URL
-   - `http.status_code`: HTTP 상태 코드
-   - `http.status_text`: HTTP 상태 텍스트
-   - `http.host`: 호스트 이름
-   - `http.scheme`: URL 스키마 (http, https)
-
-##### 2.6.4 User Interaction 
-
-> [!NOTE]
-> 오픈텔레메트리의 User Interaction 항목을 참고하려면 [`@opentelemetry/instrumentation-user-interaction`](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/web/opentelemetry-instrumentation-user-interaction)을 확인해주세요.
-
-<Keypoints title="Sample">  
-  <KeypointsItem>[user-interaction.json](/samples/user-interaction.json)</KeypointsItem>
-</Keypoints>
-
-`name`: " on "
-
-- 속성:
-   - `event.type`: 이벤트 타입 (click, dblclick 등)
-   - `target.element`: 대상 요소 유형
-   - `target.id`: 대상 요소 ID (있는 경우)
-   - `target.classList`: 대상 요소의 클래스 목록
-
-##### 2.6.5 Long Task 
-
-> [!NOTE]
-> 오픈텔레메트리의 Longtask 항목을 참고하려면 [`@opentelemetry/instrumentation-long-task`](https://github.com/open-telemetry/opentelemetry-js-contrib/blob/main/plugins/web/opentelemetry-instrumentation-long-task)을 확인해주세요.
-
-<Keypoints title="Sample">  
-  <KeypointsItem>[long-task.json](/samples/long-task.json)</KeypointsItem>
-</Keypoints>
-
-- `name`: "longtask"
-- `startTime`: Long task 시작 시간
-- `endTime`: Long task 종료 시간
-- 속성:
-   - `longtask.name`: Long task의 유형
-   - `longtask.duration`: Long task의 지속 시간 (ms)
-   - `longtask.startTime`: Long task의 시작 시간
-
-##### 2.6.6. Web Vital
-
-웹 바이탈은 웹사이트의 사용자 경험을 측정하는 데 필수적인 지표입니다. IMQA를 사용하면 OpenTelemetry를 통해 이러한 바이탈을 원활하게 모니터링할 수 있습니다. 주요 웹 바이탈은 다음과 같습니다:
-
-- Largest Contentful Paint (LCP)
-- First Input Delay (FID)
-- Cumulative Layout Shift (CLS)
-- Time to First Byte (TTFB)
-- Total Blocking Time (TBT)
-
-### 3. 로그 속성
-
-오류 및 예외에 대한 로그 데이터도 아래와 같이 수집됩니다:
-
+- `level`: 로그 레벨 (e.g., "info", "error", "warn", "debug")
+- `message`: 실제 로그 메시지 내용
 - `type`: 로그 타입 ("uncaughtException", "unhandledRejection", "consoleError", "documentError", "customError")
 - `http.url`: 오류 발생 시 페이지 URL
 - `root_span.operation`: 관련된 루트 스팬의 이름
 - `root_span.http.url`: 관련된 루트 스팬의 URL
 - `http.action_type`: 관련된 HTTP 액션 타입
 - `element.xpath`: 오류가 발생한 DOM 요소의 XPath (해당하는 경우)
+- `error`: 오류 플래그 (boolean)
 - `error.name`: 오류 이름
 - `error.message`: 오류 메시지
-- `error.stack`: 스택 트레이스 (가능한 경우)
+- `error.stack`: 스택 트레이스
+- `exception.type`: 예외 유형
+- `exception.message`: 예외 메시지
+- `exception.stack`: 예외 스택 트레이스
+- `exception.parsed_stacktrace`: 파싱된 스택 트레이스의 JSON 표현
 - `arguments`: 콘솔 오류의 인자 (해당하는 경우)
 
-### 4. 추가 메타데이터
+### 성능 지표 데이터
 
-- `imqa.telemetry.sdk.export_timestamp`: 데이터 내보내기 타임스탬프
+`@imqa/web-agent`는 다양한 웹 애플리케이션 성능 지표를 자동으로 수집합니다. 주요 자동 계측 항목은 다음과 같습니다:
 
-이 데이터 필드들은 웹 애플리케이션의 성능, 오류, 사용자 상호작용 등을 모니터링하고 분석하는 데 사용됩니다. 실제 데이터에는 위의 필드들 중 일부만 포함될 수 있으며, 설정과 상황에 따라 달라질 수 있습니다.
+#### Document Load 성능 지표
 
-## IMQA Schema (Opentelemetry Native)
+웹 페이지 로딩 프로세스에 대한 성능 정보를 수집합니다:
+
+- 페이지 로드 시간
+- DOM 처리 시간
+- 리소스 로딩 시간
+
+#### API 요청 성능 지표
+
+XHR 및 Fetch 요청에 대한 성능 정보를 수집합니다:
+
+- 요청 지연 시간
+- 응답 크기
+- 성공/실패 상태
+- 도메인 조회 시간
+- 연결 설정 시간
+
+#### 웹 바이탈 지표
+
+사용자 경험을 측정하는 핵심 웹 바이탈 지표를 수집합니다:
+
+##### LCP (Largest Contentful Paint)
+페이지가 로드를 시작한 시점부터 가장 큰 텍스트 블록이나 이미지 요소가 화면에 렌더링될 때까지의 시간을 측정합니다. 이 지표는 인지된 로딩 성능에 중요합니다.
+
+- **좋음**: < 2.5초
+- **개선 필요**: 2.5초 - 4초
+- **나쁨**: > 4초
+
+##### FID (First Input Delay)
+사용자가 페이지와 처음 상호작용(클릭, 탭, 키 입력)한 시점부터 브라우저가 해당 상호작용에 대응하여 이벤트 핸들러 처리를 시작할 수 있는 시간까지를 측정합니다. 이 지표는 상호작용성을 측정하는 데 중요합니다.
+
+- **좋음**: < 100ms
+- **개선 필요**: 100ms - 300ms
+- **나쁨**: > 300ms
+
+##### INP (Interaction to Next Paint)
+FID의 대체 지표로, 사용자 방문 전체 수명 동안 발생하는 모든 클릭, 탭, 키보드 상호작용을 관찰하여 페이지의 전반적인 응답성을 측정합니다. 모든 상호작용에서 관찰된 시각적 피드백 지연 중 가장 나쁜 경우를 보고합니다.
+
+- **좋음**: < 200ms
+- **개선 필요**: 200ms - 500ms
+- **나쁨**: > 500ms
+
+##### CLS (Cumulative Layout Shift)
+페이지 전체 수명 동안 발생하는 모든 예상치 못한 레이아웃 이동에 대한 개별 레이아웃 이동 점수의 합계를 측정합니다. 이 지표는 사용자가 예상치 못한 레이아웃 이동을 경험하는 빈도를 정량화하는 데 도움이 됩니다.
+
+- **좋음**: < 0.1
+- **개선 필요**: 0.1 - 0.25
+- **나쁨**: > 0.25
+
+##### FCP (First Contentful Paint)
+페이지 로드 시작부터 페이지 콘텐츠의 일부가 화면에 렌더링될 때까지의 시간을 측정합니다. 이것은 사용자가 페이지가 로드되고 있음을 확인할 수 있는 첫 순간입니다.
+
+- **좋음**: < 1.8초
+- **개선 필요**: 1.8초 - 3초
+- **나쁨**: > 3초
+
+##### TTFB (Time To First Byte)
+사용자가 탐색을 시작한 시점부터 응답의 첫 바이트가 도착하기 시작할 때까지의 시간을 측정합니다. TTFB는 모든 로딩 측정 항목에 영향을 미치는 기본 지표입니다.
+
+- **좋음**: < 800ms
+- **개선 필요**: 800ms - 1800ms
+- **나쁨**: > 1800ms
+
+#### 사용자 상호작용 지표
+
+사용자 상호작용에 대한 응답성 정보를 수집합니다:
+
+- 클릭 이벤트 응답 시간
+- 폼 제출 성능
+- 사용자 인터페이스 응답성
+
+#### 네트워크 연결 지표
+
+네트워크 연결 상태 변화에 대한 정보를 수집합니다:
+- 오프라인/온라인 상태 전환
+- 연결 불안정 이벤트
+
+#### 오류 및 예외 추적
+
+애플리케이션 오류 및 예외에 대한 정보를 수집합니다:
+- 캐치되지 않은 예외
+- 처리되지 않은 프라미스 거부
+- 콘솔 오류 및 경고
+- 커스텀 오류
+
+## IMQA Schema
 
 IMQA Agent는 OpenTelemetry 스키마 구조를 따르며 다른 어떤 Opentelemetry 계측과 호환성을 제공합니다. 이 스키마는 트레이스, 로그, 메트릭을 포함한 원격 측정 데이터의 수집과 표현을 표준화합니다. 스키마의 구조는 최상의 resource를 기반으로 scopeTraces, scopeLogs, scopeMetrics 를 페이로드로 IMQA 컬렉터(Collector)에 전달합니다.
 
@@ -311,12 +408,10 @@ IMQA Agent는 OpenTelemetry 스키마 구조를 따르며 다른 어떤 Opentele
 ```
 
 ### 트레이스
-
-트레이스는 분산 시스템을 통한 요청의 흐름을 나타냅니다. 이는 트레이스 내의 개별 작업을 설명하는 **스팬**으로 구성됩니다.
+트레이스는 분산 시스템을 통한 요청의 흐름을 나타냅니다. 이는 트레이스 내의 개별 작업을 설명하는 스팬으로 구성됩니다.
 
 > [!TIP]
-> `scope` 에는 스팬 계측에 대한 메타정보, `spans` 은 여러 스팬이 담겨있습니다. 개별 스팬에는 `traceId` , `spanId` , `parentSpanId` 등이 담겨 있습니다. 커스텀 `attributes` 에는 메타데이터들이 담겨있습니다.(아래 예시 참조). 특별히 `attributes` 에는 `session.id` 이 담겨있습니다.
-
+> scope 에는 스팬 계측에 대한 메타정보, spans 은 여러 스팬이 담겨있습니다. 개별 스팬에는 `traceId` , `spanId` , `parentSpanId` 등이 담겨 있습니다. 커스텀 `attributes` 에는 메타데이터들이 담겨있습니다.(아래 예시 참조). 특별히 `attributes` 에는 `session.id` 이 담겨있습니다.
 
 ```json
 {
@@ -391,12 +486,13 @@ IMQA Agent는 OpenTelemetry 스키마 구조를 따르며 다른 어떤 Opentele
 }
 ```
 
-#### XHR 이벤트
+### XHR 이벤트
 
 XHR (XMLHttpRequest) 이벤트는 HTTP 요청의 생명주기를 캡처합니다. 다음은 8개의 주요 이벤트입니다:
 
 ```json
-"events": [
+{
+  "events": [
   {
     "attributes": [],
     "name": "fetchStart",
@@ -446,16 +542,18 @@ XHR (XMLHttpRequest) 이벤트는 HTTP 요청의 생명주기를 캡처합니다
     "droppedAttributesCount": 0
   }
 ]
+}
 ```
 
 이 이벤트들은 HTTP 요청 생명주기의 다양한 단계에 대한 상세한 타이밍 정보를 제공합니다.
 
-#### 렌더 이벤트
+### 렌더 이벤트
 
 렌더 이벤트는 문서 로딩 및 렌더링의 생명주기를 캡처합니다. 다음은 주요 이벤트들입니다:
 
 ```json
-"events": [
+{
+  "events": [
   {
     "attributes": [],
     "name": "fetchStart",
@@ -523,15 +621,15 @@ XHR (XMLHttpRequest) 이벤트는 HTTP 요청의 생명주기를 캡처합니다
     "droppedAttributesCount": 0
   }
 ]
+}
 ```
 
 이 이벤트들은 문서 로딩 및 렌더링 과정의 다양한 단계에 대한 상세한 타이밍 정보를 제공하며, First Paint 및 First Contentful Paint와 같은 주요 성능 메트릭을 포함합니다.
 
+
 ### 로그
 
-<Keypoints title="Sample">  
-  <KeypointsItem>[logs.json](/samples/logs.json)</KeypointsItem>
-</Keypoints>
+<Keypoints title="Sample"> <KeypointsItem>logs.json</KeypointsItem> </Keypoints>
 
 로그는 트레이스와 유사한 구조를 따릅니다:
 
