@@ -1,6 +1,6 @@
 ---
-title: IMQA Android SDK
-description: IMQA Android SDK 설치 및 설정 방법을 안내합니다.
+title: IMQA Android SDK 설치 가이드
+description: IMQA Android SDK v1.0.15 설치 및 설정 방법을 안내합니다.
 nav: 410
 pdf: true
 release: https://api.github.com/repos/idlerecord/the-next-android-sdk/releases
@@ -11,15 +11,26 @@ cover: android
 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 **새로운 서비스를 등록하고 발급된 `서비스 키`를** 사용하여 설치하세요.
 </Gha>
 
+## IMQA Android SDK 지원 사양
+
+| 항목 | 요구사항 |
+|------|---------|
+| Java version | 1.8 이상 |
+| min SDK | 24 이상 |
+| compile SDK (= target SDK) | 34 이상 |
+| Support Language | Java, Kotlin |
+| Gradle | 8.10.2 이상 |
+| Gradle Plugin (AGP) | 8.8.0 이상 |
+
 ## IMQA Android SDK 설치
 
 IMQA SDK는 애플리케이션의 런타임에 데이터를 수집하기 위해 설계되었습니다. 아래 방법을 따라 SDK를 설치하세요.
 
-## 1. Gradle 설정
+### 1. Gradle 설정
 
 IMQA Android SDK는 Maven 저장소를 통해 제공됩니다. 프로젝트의 Gradle 설정 파일에서 SDK를 추가합니다.
 
-### 1-1. 프로젝트 수준의 `build.gradle` 또는 `settings.gradle`
+#### 1-1. 프로젝트 수준의 `build.gradle` 또는 `settings.gradle`
 
 Groovy 또는 Kotlin DSL을 사용하는 경우 각각 아래와 같이 Maven 저장소를 추가합니다.
 
@@ -45,7 +56,7 @@ repositories {
 }
 ```
 
-### 1-2. 모듈(app) 수준의 `build.gradle`
+#### 1-2. 모듈(app) 수준의 `build.gradle`
 
 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추가합니다.
 
@@ -53,7 +64,7 @@ repositories {
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.0.1'
+  implementation 'io.imqa:imqa-android-sdk:1.0.15'
 }
 ```
 
@@ -61,15 +72,14 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.0.1")
+  implementation("io.imqa:imqa-android-sdk:1.0.15")
 }
 ```
 
 > [!TIP]
 > **버전은 SDK의 최신 버전을 입력하세요.**
 
-
-### 1-3. aar 파일 직접 설치
+#### 1-3. aar 파일 직접 설치
 
 애플리케이션 디렉토리 하위에 libs 디렉토리를 생성하고 imqa-android-sdk-버전-release.aar 파일을 복사 후 dependencies 섹션에 IMQA SDK를 추가합니다.
 
@@ -77,7 +87,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.0.1-release.aar')
+  implementation files('libs/imqa-android-sdk-1.0.15-release.aar')
 }
 ```
 
@@ -85,11 +95,11 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.0.1-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.0.15-release.aar"))
 }
 ```
 
-## 2. Application 클래스 설정
+### 2. Application 클래스 설정
 
 IMQA SDK는 `Application` 클래스에 초기화 코드를 추가하여 동작합니다. `Application` 클래스의 `onCreate()` 메서드에서 다음을 설정하세요.
 
@@ -104,7 +114,8 @@ IMQA SDK는 `Application` 클래스에 초기화 코드를 추가하여 동작�
 </application>
 ```
 
-1. **SDK 초기화 코드 작성**`Application` 클래스의 `onCreate()` 메서드에 다음 코드를 추가합니다:
+2. **SDK 초기화 코드 작성**
+`Application` 클래스의 `onCreate()` 메서드에 다음 코드를 추가합니다:
 
 **Kotlin**
 
@@ -116,7 +127,7 @@ class Application : android.app.Application() {
     override fun onCreate() {
         super.onCreate()
 
-				val options = IMQAOption()
+        val options = IMQAOption()
         options.setDefault()
         options.setCollectorURL("여기에 url을 입력해주세요.")
         options.setServiceKey("여기에 service key를 입력해주세요.")
@@ -153,8 +164,40 @@ public class Application extends android.app.Application {
 
 - `setCollectorURL`: 데이터를 수집할 서버의 URL을 입력합니다.
 - `setServiceKey`: 발급받은 서비스 키를 입력합니다.
-- (option)  `setSampleRate` : 샘플링 비율을 입력합니다.  샘플링 디폴트 값은 0.5(50%) 입니다.
-    - 0.0~1.0 사이의 값을 입력합니다. (0.0 : 수집 안함, 1.0 : 100% 수집)
+- (option) `setSampleRate`: 샘플링 비율을 입력합니다. 샘플링 디폴트 값은 0.5(50%) 입니다.
+  - 0.0~1.0 사이의 값을 입력합니다. (0.0 : 수집 안함, 1.0 : 100% 수집)
+
+### 3. HttpInterceptor 설정
+
+XHR 데이터를 수집하기 위해 `io.imqa.sdk.network.interceptor.HttpInterceptor`를 설정해야 합니다.
+
+**Kotlin**
+
+```kotlin
+val client = OkHttpClient.Builder()
+    .addInterceptor(HttpInterceptor())
+    .build()
+
+val retrofit = Retrofit.Builder()
+    .baseUrl("https://api.example.com/")
+    .client(client)
+    .addConverterFactory(GsonConverterFactory.create())
+    .build()
+```
+
+**Java**
+
+```java
+OkHttpClient client = new OkHttpClient.Builder()
+    .addInterceptor(new HttpInterceptor())
+    .build();
+
+Retrofit retrofit = new Retrofit.Builder()
+    .baseUrl("https://api.example.com/")
+    .client(client)
+    .addConverterFactory(GsonConverterFactory.create())
+    .build();
+```
 
 ## 검증
 
@@ -207,39 +250,59 @@ public class MainActivity extends AppCompatActivity {
 }
 ```
 
----
+## IMQA Android SDK 설정
 
-# IMQA Android SDK 설정
-
-## 커스텀 사용자 ID 설정
+### 커스텀 사용자 ID 설정
 
 커스텀 사용자 ID를 지정하여 특정 사용자의 세션 분석 시 활용할 수 있습니다.
+일반적으로 로그인 성공 시 "사용자 아이디(또는 사번)"을 넣어주고, 로그아웃 성공 시 빈문자열("")을 설정해서 세션 분석을 진행합니다. `IMQA.initialize` 호출 이후에 실행되어야 정상적으로 동작합니다.
 
-```java
+**Kotlin**
+
+```kotlin
 IMQA.custom.setupUserId("oopchoi")
 ```
 
+**Java**
+
+```java
+IMQA.getCustomAttributes().setupUserId("oopchoi");
+```
 ![custom-id](./img/android-sdk-01.png)
 
-## 커스텀 이벤트 전송
+### 커스텀 이벤트 전송
 
 특정 버튼이나 탭 버튼을 클릭 시 이벤트가 발생했음을 알리는 기능입니다.
 
-> IMQA.sendClickEvent(view: View, isNetworkRequest: Boolean = false)
-- view : 클릭 대상, isNetworkRequest : 데이터 조회 여부
-> 
-- 단순히 화면 이동을 위한 버튼 클릭 시 이벤트 알림을 다음과 같이 전송할 수 있습니다.
+> `IMQA.sendClickEvent(view: View, isNetworkRequest: Boolean = false)`
+> - view : 클릭 대상, isNetworkRequest : 데이터 조회 여부
 
-```java
+단순히 화면 이동을 위한 버튼 클릭 시 이벤트 알림을 다음과 같이 전송할 수 있습니다.
+
+**Kotlin**
+
+```kotlin
 val intent = Intent(this, HelloActivity::class.java)
 binding.button.setOnClickListener { startActivity(intent) }
 
 IMQA.sendClickEvent(binding.button, false)
 ```
 
-- 버튼 클릭 시 서버로 데이터 조회를 할 경우 다음과 같이 전송할 수 있습니다.
+**Java**
 
 ```java
+Intent intent = new Intent(this, HelloActivity.class);
+binding.button.setOnClickListener(v -> {
+    startActivity(intent);
+});
+IMQA.sendClickEvent(binding.button, false);
+```
+
+버튼 클릭 시 서버로 데이터 조회를 할 경우 다음과 같이 전송할 수 있습니다.
+
+**Kotlin**
+
+```kotlin
 binding.button.setOnClickListener {
     IMQA.sendClickEvent(it, true)
     service.getHello().enqueue(object : retrofit2.Callback<Data> {
@@ -256,6 +319,88 @@ binding.button.setOnClickListener {
 }
 ```
 
-## Release Note
+**Java**
 
+```java
+binding.button.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        IMQA.sendClickEvent(v, true);
+        service.getHello().enqueue(new Callback<Data>() {
+            @Override
+            public void onResponse(Call<Data> call, Response<Data> response) {
+                Data data = response.body();
+                if (data != null) {
+                    IMQALog.debug("MainActivity", "Data: " + data.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Data> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+});
+```
+
+### 웹뷰 페이지 세션 연결
+
+네이티브 앱의 세션과 웹뷰 내 페이지 세션을 하나로 결합하기 위해 `webView.loadUrl(serverUrl)` 호출전 `JavaScriptInjector.injectSession(view)` 코드를 사용하여 연결해야 합니다.
+
+<Gha keyword="TIP" title="하이브리드 앱(WebView 사용)에서의 IMQA 설정">
+IMQA Android SDK, iOS SDK, WebAgent는 각각 환경의 특성에 맞는 데이터를 수집합니다.
+</Gha>
+
+**Kotlin**
+
+```kotlin
+// ... 생략 ...
+JavaScriptInjector.injectSession(webView)
+webView.loadUrl(serverUrl)
+// ... 생략 ...
+```
+
+**Java**
+
+```java
+// ... 생략 ...
+JavaScriptInjector.injectSession(webView);
+webView.loadUrl(serverUrl);
+// ... 생략 ...
+```
+
+### 사용자 커스텀 로깅
+
+필요한 경우 SDK의 IMQALog API를 사용하여 사용자 로그를 수집할 수 있습니다. 로그 레벨은 debug, info, warn, error로 다음과 같이 사용하실 수 있습니다.
+
+<Gha keyword="WARNING" title="사용자 커스텀 로깅시 주의사항">
+사용자 커스텀 로깅 기능은 꼭 필요한 경우에 사용해 주세요. 무분별하게 너무 많은 로그를 남기면 앱에 성능 저하를 일으킬 수 있습니다. 또한, 수집 데이터가 늘어나므로 저장소 용량이 커질 수 있습니다.
+</Gha>
+
+<Gha keyword="TIP" title="서비스에서의 중요한 로직과 거래 추적">
+문제 패턴과 예외 확인을 위한 커스텀 메시지를 남기고 식별할 수 있습니다.
+</Gha>
+
+**Kotlin**
+
+```kotlin
+IMQALog.debug("TAG", "message")
+IMQALog.info("TAG", "message")
+IMQALog.warn("TAG", "message")
+IMQALog.error("TAG", "message", RuntimeException("exception"))
+```
+
+**Java**
+
+```java
+IMQALog.debug("TAG", "message");
+IMQALog.info("TAG", "message");
+IMQALog.warn("TAG", "message");
+IMQALog.error("TAG", "message", new RuntimeException("exception"));
+```
+
+
+## Release Note
 ![Maven Central Version](https://img.shields.io/maven-central/v/io.imqa/imqa-android-sdk?color=%238ef7c1)
+
