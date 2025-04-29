@@ -1,0 +1,92 @@
+---
+title: Instrumentation XMLHttpRequest
+description: Instrumentation XMLHttpRequest for IMQA
+nav: 1013
+---
+## 개요
+
+XHR (XMLHttpRequest) 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 HTTP 요청 데이터를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 HTTP 요청과 응답을 추적하도록 설계되었습니다.
+
+## 스키마 구조
+
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. HTTP 요청 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+
+### ResourceSpans
+
+모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
+
+- `resource`: Telemetry를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
+
+### 리소스 속성
+
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| service.name | Telemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | Telemetry SDK의 이름 |
+| telemetry.sdk.version | Telemetry SDK의 버전 |
+| process.runtime.name | 런타임 이름 (예: "browser") |
+| service.version | 서비스 버전 |
+| os.name | 운영체제 이름 |
+| os.version | 운영체제 버전 |
+| imqa.browser.device | 디바이스 타입 |
+| imqa.browser.name | 브라우저 이름 |
+| imqa.browser.version | 브라우저 전체 버전 |
+| imqa.browser.version_major | 브라우저 메이저 버전 |
+| service.key | 서비스 식별 키 |
+| imqa.agent.version | IMQA 에이전트 버전 |
+| rum.version | RUM (Real User Monitoring) 버전 |
+| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
+| session.id | 사용자 세션 식별자 |
+
+### HTTP 요청 스팬
+
+HTTP 요청 스팬은 웹 애플리케이션의 HTTP 요청과 응답을 추적합니다:
+
+- `traceId`: 트레이스의 고유 식별자
+- `spanId`: 스팬의 고유 식별자
+- `name`: HTTP 메서드 (예: "GET", "POST")
+- `kind`: 스팬의 타입 (1 = INTERNAL)
+- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
+- `status`: 결과 상태 (0 = OK)
+
+### HTTP 요청 스팬 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| http.method | string | HTTP 메서드 (GET, POST 등) |
+| http.url | string(deprecated) | 요청의 전체 URL (예: "https://imqa.io/1.jpg" ) |
+| http.scheme | string | 프로토콜 (http, https) |
+| http.status_code | integer | HTTP 응답 코드 |
+| http.host | string | 요청에서의 호스트 이름 (예: "imqa.io") |
+| http.request_content_length | integer | 요청 컨텐츠의 크기 (바이트) |
+| http.response_content_length | integer | 응답 컨텐츠의 크기 (바이트) |
+| http.response_content_length_uncompressed | integer | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
+| duration | integer | 요청 처리 시간 (나노초) |
+| location.href | string | 현재 페이지 URL |
+| environment | string | 환경 이름 |
+| deployment.environment | string | 배포 환경 |
+| screen.name | string | 화면/페이지 이름 |
+| screen.type | string | 화면/페이지 타입 |
+| session.id | string | 사용자 세션 식별자 |
+| url.full | string | 전체 URL (예: "https://imqa.io/1.jpg?hmac=fk" ) |
+| component | string | 컴포넌트 (XHR) |
+| span.type | string | 스팬 타입 (XHR) |
+
+## 사용 방법
+
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 HTTP 요청을 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+
+## 예시
+
+유효한 XHR Telemetry 객체는 다음과 같은 내용을 포함합니다:
+
+- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
+- HTTP 요청과 응답을 캡처하는 XHR 스팬
+- 요청 처리 시간과 응답 크기와 같은 성능 메트릭
+
+데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
