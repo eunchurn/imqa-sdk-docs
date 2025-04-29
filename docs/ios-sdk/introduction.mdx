@@ -8,84 +8,107 @@ cover: ios
 release: https://api.github.com/repos/idlerecord/imqa-apm-iOS/releases
 ---
 
-
 <Gha keyword="TIP" title="서비스 키 발급">
 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 **새로운 서비스를 등록하고 발급된 `서비스 키`를** 사용하여 설치하세요.
 </Gha>
 
-## IMQA iOS SDK 설치
+## 개요
+IMQA iOS SDK는 iOS 애플리케이션을 위한 강력한 성능 모니터링 솔루션입니다. 이 문서는 설치 및 설정 방법에 대한 종합적인 가이드를 제공합니다.
 
-IMQA iOS SDK는 2가지 방식으로 설치 방법을 제공하고 있습니다. 사용하고 계신 환경에 맞춰서 아래 방법을 따라 SDK를 설치하세요.
+## 필수 요구사항
+- Xcode 12.0 이상
+- iOS 12.0 이상
+- Swift 5.0 이상
 
-## 1. XCFramework 를 통한 설치
+## 설치 방법
 
-### 1-1. Xcode에서 Project 폴더안에 넣어주세요.
+### 방법 1: XCFramework 설치
+
+1. **프로젝트에 XCFramework 추가**
+   - IMQA iOS SDK XCFramework를 Xcode 프로젝트로 드래그 앤 드롭
+   - "Copy items if needed" 옵션 체크
+   - 메인 타겟에 추가
 
 ![xcframework](./img/ios-sdk-xcframework-01.png)
 
-성공적으로 IMQA iOS SDK가 추가되었습니다.
-
-### 1-2. Code 추가
-
-```jsx
+2. **SDK 설정**
+```swift
 import IMQACore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    var window: UIWindow?
-    
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+    func application(_ application: UIApplication, 
+                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-            let endpoint = IMQA.Endpoints(collectorURL: "여기에 url을 입력해주세요.")
-            let serviceKey = "여기에 service key를 입력해주세요."
-            let option = IMQA.Options(serviceKey: serviceKey,
-                                      endpoints: endpoint ,
-                                      sampleRate: 1.0)
-            do{
-                try IMQA
-                    .setup(options: option)
-                    .start()
-            }catch (let error){
-                print("\(error.localizedDescription)")
-            }
-            
-            ...
- {
+        let endpoint = IMQA.Endpoints(
+            collectorURL: "수집기 URL"
+        )
+        
+        let serviceKey = "서비스 키"
+        
+        let option = IMQA.Options(
+            serviceKey: serviceKey,
+            endpoints: endpoint,
+            sampleRate: 1.0
+        )
+        
+        do {
+            try IMQA
+                .setup(options: option)
+                .start()
+        } catch {
+            print("IMQA SDK 초기화 실패: \(error.localizedDescription)")
+        }
+        
+        return true
+    }
+}
 ```
 
-- `Endpoints`: collector주소를 입력합니다. baseURL은 release환경주소값입니다. developmentBaseURL은 개발환경입니다.
-- `serviceKey`: 발급받은 서비스 키를 입력합니다.
-- `sampleRate` : 샘플링 비율을 입력합니다.  샘플링 디폴트 값은 1.0(100%) 입니다.
-    
-    0.0~1.0 사이의 값을 입력합니다. (0.0 : 수집 안함, 1.0 : 100% 수집)
-    
+### 방법 2: CocoaPods 설치
 
----
+1. **Podfile에 추가**
+```ruby
+use_frameworks!
 
-## 2. Cocoapods 를 통한 설치
-
-### 2-1. Podfile에 IMQA iOS SDK 경로추가
+target 'YourApp' do
+  pod 'IMQACore'
+end
+```
 
 ![cocoapods](./img/ios-sdk-cocoapods-01.png)
 
-```swift
-use_frameworks!
-...
-pod ‘IMQACore’  
-...
+2. **의존성 설치**
+```bash
+pod install
 ```
 
-## IMQA iOS SDK 설정
+## 설정
 
-### 커스텀 사용자 ID 설정
+### 엔드포인트
+- `collectorURL`: 프로덕션 환경 URL
+- `developmentBaseURL`: 개발 환경 URL (선택사항)
 
-커스텀 사용자 ID를 지정하여 특정 사용자의 세션 분석 시 활용할 수 있습니다.
+### 옵션
+- `serviceKey`: 고유 서비스 키
+- `sampleRate`: 샘플링 비율 (0.0 ~ 1.0)
+  - 0.0: 수집 안함
+  - 1.0: 100% 수집 (기본값)
 
-```jsx
-IMQA.setUserId(id: "oopchoi")
+### 커스텀 사용자 ID
+```swift
+IMQA.setUserId(id: "사용자_식별자")
 ```
 
 ![custom user](./img/ios-sdk-custom-01.png)
+
+## 모범 사례
+1. SDK를 `AppDelegate`의 `didFinishLaunchingWithOptions`에서 초기화
+2. 개발 및 프로덕션 환경에 맞는 URL 사용
+3. 세션 추적을 위한 의미 있는 사용자 ID 설정
+4. SDK 초기화 오류 모니터링
+
+## 지원
+추가 지원이나 질문이 있으시면 IMQA 지원팀에 문의해 주세요.
 
 ## Release Note
