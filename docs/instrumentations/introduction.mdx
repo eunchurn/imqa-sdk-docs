@@ -1,0 +1,216 @@
+---
+title: IMQA Instrumentation 항목
+description: Instrumentation for IMQA
+nav: 1010
+---
+
+## 개요
+
+이 문서는 IMQA 모니터링 시스템에서 사용되는 다양한 스키마의 구조와 사용 방법을 설명합니다. 모든 스키마는 OpenTelemetry 형식을 따르며, 웹 애플리케이션의 성능, 오류, 사용자 상호작용 등을 모니터링하는 데 사용됩니다.
+
+## 공통 스키마 구조
+
+### ResourceSpans
+
+모든 스키마의 최상위 컨테이너로, 다음과 같은 구성요소를 포함합니다:
+
+- `resource`: Telemetry를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
+
+### 공통 리소스 속성
+
+모든 스키마에서 공통으로 사용되는 리소스 속성들입니다:
+
+| 속성 | 설명 |
+|------|------|
+| service.name | Telemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | Telemetry SDK의 이름 |
+| telemetry.sdk.version | Telemetry SDK의 버전 |
+| process.runtime.name | 런타임 이름 (예: "browser") |
+| service.version | 서비스 버전 |
+| os.name | 운영체제 이름 |
+| os.version | 운영체제 버전 |
+| imqa.browser.device | 디바이스 타입 |
+| imqa.browser.name | 브라우저 이름 |
+| imqa.browser.version | 브라우저 전체 버전 |
+| imqa.browser.version_major | 브라우저 메이저 버전 |
+| service.key | 서비스 식별 키 |
+| imqa.agent.version | IMQA 에이전트 버전 |
+| rum.version | RUM (Real User Monitoring) 버전 |
+| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
+| session.id | 사용자 세션 식별자 |
+
+### 공통 스팬 속성
+
+모든 스팬에서 공통으로 사용되는 속성들입니다:
+
+| 속성 | 타입 | 설명 |
+|------|------|------|
+| location.href | string | 현재 페이지 URL |
+| environment | string | 환경 이름 |
+| deployment.environment | string | 배포 환경 |
+| screen.name | string | 화면/페이지 이름 |
+| screen.type | string | 화면/페이지 타입 |
+| session.id | string | 사용자 세션 식별자 |
+| url.full | string | 완전한 URL |
+
+## 스키마별 상세 설명
+
+### 브라우저 Longtask 스키마
+
+- **목적**: 브라우저에서 실행되는 장시간 작업을 모니터링
+- **주요 속성**:
+  - `longtask.duration`: 장시간 작업의 지속 시간 (밀리초)
+  - `longtask.name`: 장시간 작업의 소스
+  - `longtask.attribution.name`: 속성 소스의 이름
+  - `longtask.attribution.entry_type`: 속성 엔트리 타입
+  - `longtask.attribution.start_time`: 속성 시작 시간
+  - `longtask.attribution.duration`: 속성 지속 시간
+  - `longtask.attribution.container_type`: 컨테이너 타입
+  - `longtask.attribution.container_src`: 컨테이너 소스
+  - `longtask.attribution.container_id`: 컨테이너 ID
+  - `longtask.attribution.container_name`: 컨테이너 이름
+- **사용**: 50ms 이상 실행되는 작업을 모니터링하여 성능 병목 현상을 식별
+
+### 연결성 스키마
+
+- **목적**: 네트워크 연결 상태 변경을 모니터링
+- **주요 속성**:
+  - `online`: 네트워크 연결 상태 (true = 온라인, false = 오프라인)
+- **사용**: 사용자의 네트워크 상태를 모니터링하여 오프라인 환경에서의 애플리케이션 동작을 분석
+
+### 콘솔 인스트루멘테이션 스키마
+
+- **목적**: 브라우저 콘솔 로그를 모니터링
+- **로그 레벨**:
+  - Info (console.log, console.info): 일반 정보 메시지
+  - Warn (console.warn): 잠재적인 문제를 나타내는 경고 메시지
+  - Error (console.error): 애플리케이션 기능에 영향을 미치는 오류 메시지
+  - Debug (console.debug): 상세 디버깅 정보
+- **주요 속성**:
+  - `level`: 로그 레벨
+  - `message`: 콘솔 로그의 실제 메시지 내용
+  - `component`: 컴포넌트 이름
+  - `span.type`: 스팬 타입 (항상 "log")
+- **사용**: 프로덕션 환경에서의 디버깅과 문제 해결을 위한 로그 모니터링
+
+### Fetch API 스키마
+
+- **목적**: Fetch API를 통한 HTTP 요청/응답 데이터를 모니터링
+- **주요 속성**:
+  - `http.method`: HTTP 메서드 (GET, POST 등)
+  - `http.url`: 요청의 전체 URL
+  - `http.response_content_length`: 응답 본문의 크기 (바이트)
+  - `http.status_code`: HTTP 상태 코드
+  - `http.status_text`: HTTP 상태 텍스트
+  - `http.host`: 요청에서의 호스트 이름
+  - `http.scheme`: 프로토콜 (http, https)
+  - `http.user_agent`: 사용자 에이전트 문자열
+  - `component`: 요청을 수행하는 컴포넌트
+  - `span.type`: 스팬 타입 (예: "fetch")
+- **사용**: 웹 애플리케이션의 HTTP 요청/응답을 모니터링하여 네트워크 성능을 분석
+
+### 오류 스키마
+
+- **목적**: 웹 애플리케이션의 오류와 예외를 모니터링
+- **주요 속성**:
+  - `error`: 오류 플래그
+  - `exception.type`: 예외 타입
+  - `exception.message`: 오류 메시지
+  - `exception.stack`: 오류 스택 트레이스
+  - `error.stack`: 오류 스택 트레이스
+  - `component`: 컴포넌트 (오류)
+  - `span.type`: 스팬 타입 (오류)
+- **사용**: 클라이언트 측 오류를 모니터링하여 애플리케이션의 안정성을 개선
+
+### 웹 비탈즈 스키마
+
+- **목적**: 웹 페이지의 핵심 성능 지표를 모니터링
+- **주요 속성**:
+  - `web-vital.name`: 웹 비탈즈 메트릭 이름 (예: "ttfb", "fcp")
+  - `web-vital.value`: 웹 비탈즈 메트릭 값
+  - `web-vital.delta`: 웹 비탈즈 메트릭의 차이값
+  - `web-vital.navigation_type`: 네비게이션 타입
+  - `web-vital.rating`: 성능 등급
+  - `fid`: 첫 입력 지연 시간 (밀리초)
+  - `lcp`: 가장 큰 컨텐츠 렌더링 시간 (밀리초)
+  - `cls`: 누적 레이아웃 변동 점수
+  - `ttfb`: 첫 바이트까지의 시간 (밀리초)
+  - `fcp`: 첫 컨텐츠 렌더링 시간 (밀리초)
+  - `inp`: 상호작용 후 다음 렌더링까지의 시간 (밀리초)
+- **사용**: 웹 페이지의 성능을 모니터링하여 사용자 경험을 개선
+
+### 문서 로드 스키마
+
+- **목적**: 웹 페이지 로딩 성능 지표를 모니터링
+- **주요 속성**:
+  - `http.url`: 문서나 리소스를 가져오는 URL
+  - `http.response_content_length`: 응답 컨텐츠의 크기 (바이트)
+  - `http.request.method`: HTTP 요청 메서드 (대개 "GET")
+  - `http.user_agent`: 브라우저 사용자 에이전트
+  - `document.referrer`: 이전 페이지 URL
+  - `screen.xy`: 화면 크기 (예: "1920x1080")
+  - `component`: 컴포넌트 타입 (예: "document-load")
+  - `span.type`: 스팬 타입 (예: "render")
+- **사용**: 웹 페이지 로딩 성능을 모니터링하여 성능 최적화를 위한 분석
+
+### 사용자 상호작용 스키마
+
+- **목적**: 웹 애플리케이션의 사용자 이벤트를 모니터링
+- **주요 속성**:
+  - `event_type`: 이벤트 타입 (예: "click")
+  - `target_element`: 상호작용된 HTML 요소 타입
+  - `target_xpath`: 대상 요소의 XPath
+  - `component`: 컴포넌트 (사용자 상호작용)
+  - `span.type`: 스팬 타입 (사용자 상호작용)
+- **사용**: 사용자 행동을 모니터링하여 사용자 경험을 개선
+
+### 라우트 변경 스키마
+
+- **목적**: 싱글 페이지 애플리케이션의 라우트 변경 이벤트를 모니터링
+- **주요 속성**:
+  - `route.from`: 출발 라우트
+  - `route.to`: 도착 라우트
+  - `route.duration`: 라우트 변경 지속 시간
+  - `route.type`: 라우트 변경 타입
+  - `component`: 컴포넌트 (라우트)
+  - `span.type`: 스팬 타입 (라우트)
+- **사용**: 라우트 변경 성능을 모니터링하여 싱글 페이지 애플리케이션의 성능을 개선
+
+### 가시성 스키마
+
+- **목적**: 웹 페이지의 가시성 상태 변경을 모니터링
+- **주요 속성**:
+  - `visibility.state`: 가시성 상태 (visible, hidden, prerender)
+  - `visibility.reason`: 가시성 상태 변경 이유
+  - `visibility.duration`: 가시성 상태 지속 시간
+  - `component`: 컴포넌트 (가시성)
+  - `span.type`: 스팬 타입 (가시성)
+- **사용**: 사용자의 페이지 가시성 상태를 모니터링하여 사용자 경험을 분석
+
+### 웹소켓 스키마
+
+- **목적**: 웹소켓 연결과 메시지 이벤트를 모니터링
+- **주요 속성**:
+  - `websocket.url`: 웹소켓 URL
+  - `websocket.event_type`: 웹소켓 이벤트 타입 (connect, message, close)
+  - `websocket.status`: 웹소켓 상태
+  - `websocket.message_size`: 메시지 크기
+  - `component`: 컴포넌트 (웹소켓)
+  - `span.type`: 스팬 타입 (웹소켓)
+- **사용**: 실시간 통신 성능을 모니터링하여 웹소켓 기반 애플리케이션의 성능을 분석
+
+## 사용 방법
+
+1. **스키마 검증**: Telemetry 데이터가 스키마에 정의된 필드들을 올바르게 포함하고 있는지 검증
+2. **데이터 수집**: IMQA 모니터링 시스템으로 Telemetry 데이터를 수집 및 저장
+3. **분석**: 수집된 데이터를 분석하여 애플리케이션의 성능과 사용자 경험을 개선
+
+## 주의사항
+
+1. **적절한 로그 레벨 사용**: console.error는 실제 오류에만 사용하고, console.warn은 잠재적인 문제에 사용
+2. **문맥 정보 포함**: 로그 메시지에는 충분한 문맥 정보를 포함시켜야 함
+3. **구조화된 로그 메시지**: 로그 메시지를 일관된 형식으로 작성하여 분석을 용이하게 함
+
+이 문서는 IMQA 모니터링 시스템의 핵심 스키마들을 이해하고 활용하는 데 도움을 주는 종합적인 가이드입니다.

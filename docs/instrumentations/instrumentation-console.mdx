@@ -1,0 +1,143 @@
+---
+title: Instrumentation Console
+description: Instrumentation Console for IMQA
+nav: 1013
+---
+
+## 개요
+
+콘솔 인스트루멘테이션 스키마는 IMQA 모니터링 시스템에서 브라우저 콘솔 로그를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 콘솔 로깅 활동을 추적하도록 설계되어 있으며, 개발자가 프로덕션 환경에서 애플리케이션의 동작을 모니터링하고 디버깅할 수 있도록 합니다.
+
+## 스키마 구조
+
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 콘솔 테이lemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+
+### ResourceSpans
+
+모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
+
+- `resource`: 테이lemetry를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
+
+### 리소스 속성
+
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| service.name | 테이lemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | 테이lemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | 테이lemetry SDK의 이름 |
+| telemetry.sdk.version | 테이lemetry SDK의 버전 |
+| process.runtime.name | 런타임 이름 (예: "browser") |
+| service.version | 서비스 버전 |
+| os.name | 운영체제 이름 |
+| os.version | 운영체제 버전 |
+| imqa.browser.device | 디바이스 타입 |
+| imqa.browser.name | 브라우저 이름 |
+| imqa.browser.version | 브라우저 전체 버전 |
+| imqa.browser.version_major | 브라우저 메이저 버전 |
+| service.key | 서비스 식별 키 |
+| imqa.agent.version | IMQA 에이전트 버전 |
+| rum.version | RUM (Real User Monitoring) 버전 |
+| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
+| session.id | 사용자 세션 식별자 |
+
+### 인스트루멘테이션 범위
+
+콘솔 로그 테이lemetry는 버전 "0.0.15"의 `@imqa/instrumentation-console` 인스트루멘테이션 범위를 통해 캡처됩니다.
+
+### 콘솔 스팬
+
+각 콘솔 로그 항목은 스팬으로 표시됩니다:
+
+- `traceId`: 트레이스의 고유 식별자
+- `spanId`: 스팬의 고유 식별자
+- `parentSpanId`: 부모 스팬의 식별자 (일반적으로 사용자 상호작용에서)
+- `name`: 콘솔 메서드의 이름 (예: "console.log")
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 콘솔 로그가 캡처된 시간 (에포크 이후의 나노초)
+- `endTimeUnixNano`: 종료 시간 (순간적 이벤트의 경우 시작 시간과 동일)
+- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+
+### 스팬 속성
+
+콘솔 스팬은 다음과 같은 공통 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| location.href | string | 현재 페이지 URL |
+| environment | string | 환경 이름 |
+| deployment.environment | string | 배포 환경 |
+| screen.name | string | 화면/페이지 이름 |
+| screen.type | string | 화면/페이지 타입 (예: "page") |
+| session.id | string | 사용자 세션 식별자 |
+| url.full | string | 완전한 URL |
+| component | string | 컴포넌트 이름 ("@imqa/instrumentation-console") |
+| span.type | string | 스팬 타입 (항상 "log") |
+| level | string | 로그 레벨 (예: "info", "error", "warn", "debug") |
+| message | string | 콘솔 로그의 실제 메시지 내용 |
+
+## 콘솔 로그 레벨
+
+콘솔 인스트루멘테이션은 다음과 같은 로그 레벨에 해당하는 다른 유형의 콘솔 메서드를 캡처합니다:
+
+### Info (console.log, console.info)
+
+일반 정보 메시지입니다. 일반적으로 애플리케이션 상태 정보 및 디버깅에 사용됩니다.
+
+### Warn (console.warn)
+
+경고 메시지는 애플리케이션 실패를 반드시 초래하지 않는 잠재적인 문제를 나타냅니다.
+
+### Error (console.error)
+
+오류 메시지는 애플리케이션 기능에 영향을 미칠 수 있는 실패나 예외 상황을 나타냅니다.
+
+### Debug (console.debug)
+
+상세한 디버깅 정보로, 일반적으로 개발 중이나 상세한 문제 해결 시에만 사용됩니다.
+
+## 콘솔 인스트루멘테이션 데이터 사용
+
+콘솔 인스트루멘테이션 데이터는 다음과 같은 목적으로 사용될 수 있습니다:
+
+### 프로덕션 문제 디버깅
+
+- 특정 사용자 세션과 관련된 콘솔 오류 추적
+- 특정 브라우저나 환경에서 발생하는 오류 패턴 식별
+- 오류의 맥락을 이해하기 위해 사용자 상호작용과 콘솔 로그 연관
+
+### 애플리케이션 모니터링
+
+- 콘솔 오류의 빈도를 애플리케이션 안정성의 메트릭으로 모니터링
+- 중요 오류나 오류 패턴에 대한 경고 설정
+- 다른 애플리케이션 버전 간의 오류율 추적
+
+### 사용자 경험 분석
+
+- 사용자 경험에 영향을 미칠 수 있는 클라이언트 사이드 오류 식별
+- 사용자 경험에 미치는 영향을 이해하기 위해 성능 메트릭과 콘솔 로그 연관
+- 사용자 세그먼트나 지리적 지역별 오류 패턴 분석
+
+## 콘솔 로깅 최선의 관행
+
+콘솔 인스트루멘테이션을 효과적으로 활용하기 위해:
+
+1. **적절한 로그 레벨 사용** - console.error는 실제 오류에만 사용하고, console.warn은 잠재적인 문제에 사용하며, console.log/info는 정보 메시지에 사용
+
+2. **문맥 정보 포함** - 로그 메시지에는 문제를 이해하기에 충분한 문맥 정보를 포함시켜야 함
+
+3. **구조화된 로그 메시지** - 로그 메시지를 일관된 형식으로 작성하여 파싱과 분석을 용이하게 함
+
+4. **민감한 데이터 피하기** - 절대 사용자 정보나 자격 증명을 로깅하지 않음
+
+5. **속도 제한** - 테이lemetry 시스템을 압도하지 않도록 콘솔 로그에 대한 속도 제한 구현을 고려
+
+## 보안 및 개인정보 고려사항
+
+콘솔 로그에는 민감한 정보가 포함될 수 있습니다. IMQA 모니터링 시스템은 적절한 데이터 정제 및 접근 제어를 구현하여 콘솔 로그 데이터가 안전하게 처리되고 관련 데이터 보호 규정을 준수하도록 해야 합니다.
+
+## 사용 방법
+
+이 스키마는 프로덕션 환경에서 애플리케이션의 동작을 모니터링하고 디버깅하는 데 도움이 되는 중요한 정보를 제공하기 위해 IMQA 모니터링 시스템으로 테이lemetry 데이터를 처리하고 저장하기 전에 콘솔 테이lemetry 데이터를 검증하는 데 사용됩니다.

@@ -1,0 +1,129 @@
+---
+title: Instrumentation Post Document Load
+description: Instrumentation Post Document Load for IMQA
+nav: 1015
+---
+
+## 개요
+
+문서 로드 후 스키마는 IMQA 모니터링 시스템에서 초기 문서 로드 후 웹 페이지 리소스 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 메인 문서가 로드된 후 발생하는 리소스 가져오기를 추적하도록 설계되어 있으며, 웹 애플리케이션의 동적 리소스 로딩 성능에 대한 통찰력을 제공합니다.
+
+## 스키마 구조
+
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 문서 로드 후 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+
+### ResourceSpans
+
+모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
+
+- `resource`: Telemetry를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
+
+### 리소스 속성
+
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| service.name | Telemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | Telemetry SDK의 이름 |
+| telemetry.sdk.version | Telemetry SDK의 버전 |
+| process.runtime.name | 런타임 이름 (예: "browser") |
+| service.version | 서비스 버전 |
+| os.name | 운영체제 이름 |
+| os.version | 운영체제 버전 |
+| imqa.browser.device | 디바이스 타입 |
+| imqa.browser.name | 브라우저 이름 |
+| imqa.browser.version | 브라우저 전체 버전 |
+| imqa.browser.version_major | 브라우저 메이저 버전 |
+| service.key | 서비스 식별 키 |
+| imqa.agent.version | IMQA 에이전트 버전 |
+| rum.version | RUM (Real User Monitoring) 버전 |
+| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
+| session.id | 사용자 세션 식별자 |
+
+### 인스트루멘테이션 범위
+
+문서 로드 후 Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-post-doc-load-resource`: 문서 로드 후 리소스 로딩 캡처
+
+### 스팬 유형
+
+#### 리소스 가져오기 스팬
+
+초기 페이지 로드 후 다양한 리소스의 가져오기를 나타내는 스팬:
+
+- `traceId`: 트레이스의 고유 식별자
+- `spanId`: 스팬의 고유 식별자
+- `parentSpanId`: 부모 스팬(예: 사용자 상호작용)을 연결하는 선택적 식별자
+- `name`: "resourceFetch"
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 리소스 가져오기 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 리소스 가져오기 종료 시간 (나노초)
+- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+
+### 스팬 속성
+
+각 문서 로드 후 스팬은 다음과 같은 공통 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| location.href | string | 현재 페이지 URL |
+| environment | string | 환경 컨텍스트 (예: "development", "production") |
+| deployment.environment | string | 배포 환경 |
+| screen.name | string | 현재 화면이나 페이지의 이름 |
+| screen.type | string | 화면 타입 (예: "page") |
+| session.id | string | 사용자 세션 식별자 |
+| url.full | string | 현재 페이지의 전체 URL |
+| component | string | 인스트루멘테이션 컴포넌트 이름 |
+| span.type | string | 스팬 타입 (예: "post-docs") |
+| http.request.method | string | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
+| http.response_content_length | integer | 응답 컨텐츠의 크기 (바이트) |
+| http.response_content_length_uncompressed | integer | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
+
+#### 사용자 상호작용 관련 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| event_type | string | 사용자 상호작용 이벤트의 타입 (예: "click") |
+| target_element | string | 상호작용된 HTML 요소 타입 |
+| target_xpath | string | 상호작용된 요소의 XPath |
+| http.url | string | 상호작용이 발생한 페이지의 URL |
+
+#### 이벤트
+
+문서 로드 후 스팬은 리소스 로딩 프로세스의 주요 마일스톤을 나타내는 다양한 이벤트를 포함합니다:
+
+##### 리소스 가져오기 이벤트
+
+| 이벤트 | 설명 |
+|-------|-------------|
+| fetchStart | 리소스 가져오기 시작 |
+| domainLookupStart | 도메인 이름 조회 시작 |
+| domainLookupEnd | 도메인 이름 조회 종료 |
+| connectStart | 서버 연결 설정 시작 |
+| secureConnectionStart | 보안 연결 핸드셰이크 시작 |
+| connectEnd | 연결 설정 완료 |
+| requestStart | 요청 시작 |
+| responseStart | 첫 번째 바이트 응답 수신 |
+| responseEnd | 응답 수신 종료 |
+
+## 사용 방법
+
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 초기 문서 로드 후 로드된 리소스의 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 다음과 같은 메트릭을 모니터링하여 로드 후 리소스 성능을 추적하는 데 도움이 됩니다:
+
+- 초기 페이지 로드 후 가져온 리소스
+- 동적으로 로드된 리소스의 로딩 시간
+- 리소스 크기
+
+데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다. 문서 로드 후 이벤트는 초기 페이지 표시 후 웹 애플리케이션의 동작 방식에 대한 통찰력을 제공하여 동적 콘텐츠 로딩과 AJAX 요청의 성능 문제를 식별하는 데 도움이 됩니다.
+
+문서 로드 후 모니터링은 다음과 같은 경우에 특히 유용합니다:
+
+- 동적으로 콘텐츠를 로드하는 싱글 페이지 애플리케이션(SPA)
+- 지연 로딩 기술을 사용하는 웹 애플리케이션
+- 사용자 상호작용 중 발생하는 리소스 로딩 병목 현상 식별
+- 메인 문서가 로드된 후 로드되는 서드파티 스크립트와 위젯의 성능 영향 측정
+
+이 데이터를 분석함으로써 개발자는 초기 페이지 표시 후의 인식된 성능과 사용자 경험을 개선하기 위한 리소스 로딩 전략을 최적화할 수 있습니다.

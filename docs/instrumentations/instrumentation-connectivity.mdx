@@ -1,0 +1,87 @@
+---
+title: Instrumentation Connectivity
+description: Instrumentation Connectivity for IMQA
+nav: 1015
+---
+## 개요
+
+연결성 스키마는 웹 애플리케이션의 네트워크 연결 상태 변경을 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 온라인/오프라인 상태 전환을 추적하도록 설계되었습니다.
+
+## 스키마 구조
+
+스키마는 JSON 문서로, JSON 스키마 사양을 따릅니다. 연결성 테이lemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+
+### ResourceSpans
+
+모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
+
+- `resource`: 테이lemetry를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
+
+### 리소스 속성
+
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| service.name | 테이lemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | 테이lemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | 테이lemetry SDK의 이름 |
+| telemetry.sdk.version | 테이lemetry SDK의 버전 |
+| process.runtime.name | 런타임 이름 (예: "browser") |
+| service.version | 서비스 버전 |
+| os.name | 운영체제 이름 |
+| os.version | 운영체제 버전 |
+| imqa.browser.device | 디바이스 타입 |
+| imqa.browser.name | 브라우저 이름 |
+| imqa.browser.version | 브라우저 전체 버전 |
+| imqa.browser.version_major | 브라우저 메이저 버전 |
+| service.key | 서비스 식별 키 |
+| imqa.agent.version | IMQA 에이전트 버전 |
+| rum.version | RUM (Real User Monitoring) 버전 |
+| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
+| session.id | 사용자 세션 식별자 |
+
+### 스팬
+
+각 스팬은 브라우저에서 발생하는 연결 상태 변경을 나타내며, 다음과 같은 내용을 포함합니다:
+
+- `traceId`: 트레이스의 고유 식별자
+- `spanId`: 스팬의 고유 식별자
+- `name`: 작업의 이름 (일반적으로 "connectivity")
+- `kind`: 스팬의 타입 (1 = INTERNAL)
+- `startTimeUnixNano`: 에포크 이후의 연결 상태 변경 시간 (나노초)
+- `endTimeUnixNano`: 종료 시간 (순간적 이벤트의 경우 시작 시간과 동일) (나노초)
+- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+
+### 스팬 속성
+
+각 스팬은 다음과 같은 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| location.href | string | 현재 페이지 URL |
+| environment | string | 환경 이름 |
+| deployment.environment | string | 배포 환경 |
+| screen.name | string | 화면/페이지 이름 |
+| screen.type | string | 화면/페이지 타입 |
+| session.id | string | 사용자 세션 식별자 |
+| url.full | string | 완전한 URL |
+| online | boolean | 네트워크 연결 상태 (true = 온라인, false = 오프라인) |
+| span.type | string | 스팬 타입 ("connectivity") |
+
+## 사용 방법
+
+이 스키마는 IMQA 모니터링 시스템으로 테이lemetry 데이터를 처리하고 저장하기 전에 연결 상태 변경 테이lemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+
+## 예시
+
+유효한 연결성 테이lemetry 객체는 다음과 같은 내용을 포함합니다:
+
+- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
+- 연결 상태 변경을 나타내는 하나 이상의 스팬
+- 연결 상태(온라인/오프라인)에 대한 상세 정보를 포함하는 각 스팬
+
+연결 상태 변경을 모니터링하면 네트워크 상태가 불안정할 때의 사용자 경험을 이해하는 데 도움이 됩니다. 이러한 메트릭은 오프라인이나 간헐적인 네트워크 환경에서 작동해야 하는 애플리케이션에 매우 유용합니다.
+
+데이터는 다양한 테이lemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
