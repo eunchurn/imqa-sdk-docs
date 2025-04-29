@@ -10,13 +10,13 @@ nav: 1015
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON 스키마 사양을 따릅니다. 브라우저 장시간 작업 테이lemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+스키마는 JSON 문서로, JSON 스키마 사양을 따릅니다. 브라우저 장시간 작업 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
 모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
 
-- `resource`: 테이lemetry를 생성하는 서비스에 대한 정보
+- `resource`: Telemetry를 생성하는 서비스에 대한 정보
 - `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
 
 ### 리소스 속성
@@ -25,10 +25,10 @@ nav: 1015
 
 | 속성 | 설명 |
 |-----------|-------------|
-| service.name | 테이lemetry를 생성하는 서비스의 이름 |
-| telemetry.sdk.language | 테이lemetry SDK의 프로그래밍 언어 |
-| telemetry.sdk.name | 테이lemetry SDK의 이름 |
-| telemetry.sdk.version | 테이lemetry SDK의 버전 |
+| service.name | Telemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | Telemetry SDK의 이름 |
+| telemetry.sdk.version | Telemetry SDK의 버전 |
 | process.runtime.name | 런타임 이름 (예: "browser") |
 | service.version | 서비스 버전 |
 | os.name | 운영체제 이름 |
@@ -84,11 +84,11 @@ nav: 1015
 
 ## 사용 방법
 
-이 스키마는 IMQA 모니터링 시스템으로 테이lemetry 데이터를 처리하고 저장하기 전에 장시간 작업 테이lemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 장시간 작업 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
 
 ## 예시
 
-유효한 브라우저 장시간 작업 테이lemetry 객체는 다음과 같은 내용을 포함합니다:
+유효한 브라우저 장시간 작업 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
 - 서비스, 브라우저 및 환경을 식별하는 리소스 정보
 - 장시간 작업을 나타내는 하나 이상의 스팬
@@ -96,4 +96,4 @@ nav: 1015
 
 장시간 작업은 50ms 이상 실행되는 작업으로, 사용자 경험 저하를 초래할 수 있습니다. 이러한 작업을 모니터링하면 웹 애플리케이션의 성능 병목 현상을 식별하는 데 도움이 됩니다.
 
-데이터는 다양한 테이lemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
+데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

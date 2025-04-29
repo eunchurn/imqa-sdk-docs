@@ -10,13 +10,13 @@ nav: 1013
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 콘솔 테이lemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 콘솔 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
 모든 스팬 데이터의 최상위 컨테이너입니다. 각 ResourceSpans 객체는 다음과 같습니다:
 
-- `resource`: 테이lemetry를 생성하는 서비스에 대한 정보
+- `resource`: Telemetry를 생성하는 서비스에 대한 정보
 - `scopeSpans`: 인스트루멘테이션 범위별로 그룹화된 스팬 컬렉션
 
 ### 리소스 속성
@@ -25,10 +25,10 @@ nav: 1013
 
 | 속성 | 설명 |
 |-----------|-------------|
-| service.name | 테이lemetry를 생성하는 서비스의 이름 |
-| telemetry.sdk.language | 테이lemetry SDK의 프로그래밍 언어 |
-| telemetry.sdk.name | 테이lemetry SDK의 이름 |
-| telemetry.sdk.version | 테이lemetry SDK의 버전 |
+| service.name | Telemetry를 생성하는 서비스의 이름 |
+| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
+| telemetry.sdk.name | Telemetry SDK의 이름 |
+| telemetry.sdk.version | Telemetry SDK의 버전 |
 | process.runtime.name | 런타임 이름 (예: "browser") |
 | service.version | 서비스 버전 |
 | os.name | 운영체제 이름 |
@@ -45,7 +45,7 @@ nav: 1013
 
 ### 인스트루멘테이션 범위
 
-콘솔 로그 테이lemetry는 버전 "0.0.15"의 `@imqa/instrumentation-console` 인스트루멘테이션 범위를 통해 캡처됩니다.
+콘솔 로그 Telemetry는 버전 "0.0.15"의 `@imqa/instrumentation-console` 인스트루멘테이션 범위를 통해 캡처됩니다.
 
 ### 콘솔 스팬
 
@@ -132,7 +132,7 @@ nav: 1013
 
 4. **민감한 데이터 피하기** - 절대 사용자 정보나 자격 증명을 로깅하지 않음
 
-5. **속도 제한** - 테이lemetry 시스템을 압도하지 않도록 콘솔 로그에 대한 속도 제한 구현을 고려
+5. **속도 제한** - Telemetry 시스템을 압도하지 않도록 콘솔 로그에 대한 속도 제한 구현을 고려
 
 ## 보안 및 개인정보 고려사항
 
@@ -140,4 +140,4 @@ nav: 1013
 
 ## 사용 방법
 
-이 스키마는 프로덕션 환경에서 애플리케이션의 동작을 모니터링하고 디버깅하는 데 도움이 되는 중요한 정보를 제공하기 위해 IMQA 모니터링 시스템으로 테이lemetry 데이터를 처리하고 저장하기 전에 콘솔 테이lemetry 데이터를 검증하는 데 사용됩니다.
+이 스키마는 프로덕션 환경에서 애플리케이션의 동작을 모니터링하고 디버깅하는 데 도움이 되는 중요한 정보를 제공하기 위해 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 콘솔 Telemetry 데이터를 검증하는 데 사용됩니다.
