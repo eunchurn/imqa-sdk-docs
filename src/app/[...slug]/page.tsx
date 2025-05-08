@@ -27,33 +27,21 @@ export async function generateMetadata(props: Props) {
   }
 }
 
-export default async function Page({ params }: Props) {
-  const slug = (await params).slug
-  const { doc } = await getData(...slug) // [ 'getting-started', 'introduction' ]
-  return <Main doc={doc} pdf={doc.pdf} />
-}
-
 export async function generateStaticParams() {
-  // return [
-  //   { slug: ['getting-started', 'authoring'] },
-  //   { slug: ['getting-started', 'github-actions'] },
-  //   { slug: ['getting-started', 'introduction'] },
-  //   { slug: ['getting-started', 'real-user-monitoring'] },
-  //   { slug: ['licenses', 'opensources'] },
-  //   { slug: ['network-and-security', 'onpremise-vm'] },
-  //   { slug: ['opentelemetry', 'glossary'] },
-  //   { slug: ['web-agent', 'api'] },
-  //   { slug: ['web-agent', 'installation'] },
-  //   { slug: ['web-agent', 'web-agent'] },
-  // ]
-
   const MDX = process.env.MDX
   if (!MDX) {
     console.warn('MDX env var not set')
     return []
   }
-
   const docs = await getDocs(MDX, null, true)
   const paths = docs.map(({ slug }) => ({ slug }))
   return paths
 }
+
+export default async function Page({ params }: Props) {
+  const slug = (await params).slug
+  const { doc } = await getData(...slug)
+  return <Main doc={doc} pdf={doc.pdf} />
+}
+
+export const dynamic = 'force-dynamic'

@@ -79,6 +79,15 @@ const MDX_BASEURL = process.env.MDX_BASEURL
 async function getReleases(releaseUrl?: string): Promise<string | undefined> {
   if (releaseUrl) {
     try {
+      // const { data } = await axios.get<ReleaseList>(releaseUrl, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Accept: 'application/vnd.github+json',
+      //     'X-GitHub-Api-Version': '2022-11-28',
+      //     Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
+      //   },
+      // })
+      // console.log(data)
       const response = await fetch(releaseUrl, {
         method: 'GET',
         headers: {
@@ -87,6 +96,7 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
           'X-GitHub-Api-Version': '2022-11-28',
           Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
         },
+        cache: 'no-store',
       })
       if (!response.ok) {
         console.error(`HTTP error! status: ${response.status}`)
@@ -238,9 +248,41 @@ async function _getDocs(
       //
       const releases = await getReleases(frontmatter.release)
       const tableOfContents: DocToC[] = []
-
+      const isCompilalble = await (async () => {
+        if (releases) {
+          try {
+            await compileMDX({
+              source: releases,
+              options: {
+                mdxOptions: {
+                  remarkPlugins: [remarkGFM],
+                  rehypePlugins: [
+                    rehypeImg(relFilePath, MDX_BASEURL),
+                    rehypeDetails,
+                    rehypeSummary,
+                    rehypeGha,
+                    rehypePrismPlus,
+                    rehypeCode(),
+                    rehypeSandpack(dirname(file)),
+                  ],
+                },
+              },
+            })
+            return true
+          } catch (error) {
+            console.error('Error compiling MDX:', error)
+            return false
+          }
+        } else {
+          return true
+        }
+      })()
       const { content: jsx } = await compileMDX({
-        source: releases ? `# ${title}\n ${content}\n ${releases}` : `# ${title}\n ${content}`,
+        source: releases
+          ? isCompilalble
+            ? `# ${title}\n ${content}\n ${releases}`
+            : `# ${title}\n ${content}\n Error: Release notes are not compilable right now`
+          : `# ${title}\n ${content}`,
         options: {
           mdxOptions: {
             remarkPlugins: [remarkGFM],
@@ -251,8 +293,8 @@ async function _getDocs(
               rehypeGha,
               rehypePrismPlus,
               rehypeCode(),
-              rehypeToc(tableOfContents, url, title), // 2. will populate `doc.tableOfContents`
               rehypeSandpack(dirname(file)),
+              rehypeToc(tableOfContents, url, title),
             ],
           },
         },
@@ -263,6 +305,10 @@ async function _getDocs(
           Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
           Entries: () => <Entries items={entries} />,
         },
+      }).catch((error) => {
+        console.error('Error compiling MDX:', error)
+        console.log(releases)
+        return { content: '' }
       })
       return {
         slug,
