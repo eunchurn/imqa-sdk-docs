@@ -43,5 +43,3 @@ export default async function Page({ params }: Props) {
   const { doc } = await getData(...slug)
   return <Main doc={doc} pdf={doc.pdf} />
 }
-
-export const revalidate = 60
