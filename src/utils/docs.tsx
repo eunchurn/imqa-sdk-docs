@@ -11,7 +11,6 @@ import { rehypeSandpack } from '@/components/mdx/Sandpack/rehypeSandpack'
 import { rehypeSummary } from '@/components/mdx/Summary/rehypeSummary'
 import { rehypeToc } from '@/components/mdx/Toc/rehypeToc'
 import resolveMdxUrl from '@/utils/resolveMdxUrl'
-import axios from 'axios'
 import matter from 'gray-matter'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import fs from 'node:fs'
@@ -80,7 +79,17 @@ const MDX_BASEURL = process.env.MDX_BASEURL
 async function getReleases(releaseUrl?: string): Promise<string | undefined> {
   if (releaseUrl) {
     try {
-      const { data } = await axios.get<ReleaseList>(releaseUrl, {
+      // const { data } = await axios.get<ReleaseList>(releaseUrl, {
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Accept: 'application/vnd.github+json',
+      //     'X-GitHub-Api-Version': '2022-11-28',
+      //     Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
+      //   },
+      // })
+      // console.log(data)
+      const response = await fetch(releaseUrl, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/vnd.github+json',
@@ -88,22 +97,11 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
           Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
         },
       })
-      // console.log(data)
-      // const response = await fetch(releaseUrl, {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Accept: 'application/vnd.github+json',
-      //     'X-GitHub-Api-Version': '2022-11-28',
-      //     Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
-      //   },
-      //   cache: 'no-store',
-      // })
-      // if (!response.ok) {
-      //   console.error(`HTTP error! status: ${response.status}`)
-      //   return
-      // }
-      // const data = (await response.json()) as ReleaseList
+      if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`)
+        return
+      }
+      const data = (await response.json()) as ReleaseList
       const source = data.reduce((acc, cur) => {
         if (!cur) return acc
         const { tag_name, name, body } = cur
