@@ -44,4 +44,4 @@ export default async function Page({ params }: Props) {
   return <Main doc={doc} pdf={doc.pdf} />
 }
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60
