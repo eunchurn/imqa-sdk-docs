@@ -6,11 +6,11 @@ nav: 1011
 
 ## 개요
 
-문서 로드 스키마는 웹 페이지 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 페이지 로드의 전체 수명 주기를 추적하도록 설계되었습니다. 이는 리소스 가져오기, 렌더링, 완료 이벤트를 포함합니다.
+DocumentLoad 스키마는 웹 페이지 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 페이지 로드의 전체 수명 주기를 추적하도록 설계되었습니다. 이는 ResourceFetch, 렌더링, 완료 이벤트를 포함합니다.
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 문서 로드 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. DocumentLoad Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
@@ -25,33 +25,33 @@ nav: 1011
 
 | 속성 | 설명 |
 |-----------|-------------|
-| service.name | Telemetry를 생성하는 서비스의 이름 |
-| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
-| telemetry.sdk.name | Telemetry SDK의 이름 |
-| telemetry.sdk.version | Telemetry SDK의 버전 |
-| process.runtime.name | 런타임 이름 (예: "browser") |
-| service.version | 서비스 버전 |
-| os.name | 운영체제 이름 |
-| os.version | 운영체제 버전 |
-| imqa.browser.device | 디바이스 타입 |
-| imqa.browser.name | 브라우저 이름 |
-| imqa.browser.version | 브라우저 전체 버전 |
-| imqa.browser.version_major | 브라우저 메이저 버전 |
-| service.key | 서비스 식별 키 |
-| imqa.agent.version | IMQA 에이전트 버전 |
-| rum.version | RUM (Real User Monitoring) 버전 |
-| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
-| session.id | 사용자 세션 식별자 |
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `service.version` | 서비스 버전 |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
 
 ### 인스트루멘테이션 범위
 
-문서 로드 Telemetry는 주로 `@opentelemetry/instrumentation-document-load` 인스트루멘테이션 범위를 통해 캡처됩니다.
+DocumentLoad Telemetry는 주로 `@opentelemetry/instrumentation-document-load` 인스트루멘테이션 범위를 통해 캡처됩니다.
 
-### 문서 로드 스팬
+### DocumentLoad 스팬
 
-문서 로드 인스트루멘테이션은 여러 유형의 스팬을 생성합니다:
+DocumentLoad 인스트루멘테이션은 여러 유형의 스팬을 생성합니다:
 
-#### 주 문서 로드 스팬
+#### 메인 DocumentLoad 스팬
 
 전체 페이지 로딩 프로세스를 나타내는 주 스팬입니다:
 
@@ -63,14 +63,14 @@ nav: 1011
 - `endTimeUnixNano`: 에포크 이후의 페이지 로드 종료 시간 (나노초)
 - `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
 
-#### 문서 가져오기 스팬
+#### DocumentFetch 스팬
 
-초기 HTML 문서 가져오기 작업을 나타내는 자식 스팬입니다:
+초기 HTML DocumentFetch 작업을 나타내는 자식 스팬입니다:
 
 - `name`: "documentFetch"
 - `parentSpanId`: 부모 documentLoad 스팬의 ID
 
-#### 리소스 가져오기 스팬
+#### ResourceFetch 스팬
 
 스크립트, 스타일시트 등 다양한 페이지 리소스의 가져오기를 나타내는 여러 자식 스팬:
 
@@ -79,69 +79,85 @@ nav: 1011
 
 ### 스팬 속성
 
-각 문서 로드 스팬은 다음과 같은 공통 속성을 포함합니다:
+각 DocumentLoad 스팬은 다음과 같은 공통 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| location.href | string | 현재 페이지 URL |
-| environment | string | 환경 이름 |
-| deployment.environment | string | 배포 환경 |
-| screen.name | string | 화면/페이지 이름 |
-| screen.type | string | 화면/페이지 타입 (예: "page") |
-| session.id | string | 사용자 세션 식별자 |
-| url.full | string | 완전한 URL |
-| http.url | string | 가져오는 문서나 리소스의 URL |
-| http.response_content_length | integer | 응답 컨텐츠의 크기 (바이트) |
-| component | string | 컴포넌트 타입 (예: "document-load") |
-| span.type | string | 스팬 타입 (예: "render") |
-| http.request.method | string | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
+| `location.href` | `string` | 현재 페이지 URL |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 (예: "page") |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
+| `http.url` | `string` | (deprecated) 가져오는 문서나 리소스의 URL (예: "https://example.com/articales/4" ) |
+| `http.response_content_length` | integer | 응답 컨텐츠의 크기 (바이트) |
+| `component` | `string` | 컴포넌트 타입 (예: "document-load") |
+| `span.type`| `string` | 스팬 타입 (예: "render") |
+| `http.request.method` | `string` | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
+| `http.scheme` | `string` | 요청에 사용된 프로토콜 (예: "https") |
+| `http.host` | `string` | 요청에 사용된 호스트 (예: "example.com") |
 
 주 문서Load 스팬은 다음과 같은 추가 속성도 포함할 수 있습니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| http.user_agent | string | 브라우저 사용자 에이전트 |
-| document.referrer | string | 적용 가능한 경우 이전 페이지 URL |
-| screen.xy | string | 화면 크기 (예: "1920x1080") |
+| `http.user_agent` | `string` | 브라우저 사용자 에이전트 |
+| `document.referrer` | `string` | 적용 가능한 경우 이전 페이지 URL |
+| `screen.xy` | `string` | 화면 크기 (예: "1920x1080") |
 
 ### 이벤트
 
-문서 로드 스팬은 페이지 로드 프로세스의 주요 마일스톤을 나타내는 다양한 이벤트를 포함합니다:
+DocumentLoad 스팬은 페이지 로드 프로세스의 주요 마일스톤을 나타내는 다양한 이벤트를 포함합니다:
 
-#### 문서 로드 이벤트
-
-| 이벤트 | 설명 |
-|-------|-------------|
-| fetchStart | 가져오기 프로세스 시작 |
-| unloadEventStart | 이전 페이지의 언로드 이벤트 시작 |
-| unloadEventEnd | 이전 페이지의 언로드 이벤트 종료 |
-| domInteractive | DOM이 상호작용 준비 완료 |
-| domContentLoadedEventStart | DOMContentLoaded 이벤트 시작 |
-| domContentLoadedEventEnd | DOMContentLoaded 이벤트 종료 |
-| domComplete | DOM 구조화 완료 |
-| loadEventStart | 로드 이벤트 시작 |
-| loadEventEnd | 로드 이벤트 종료 |
-
-#### 리소스 가져오기 이벤트
+#### DocumentLoad 이벤트
 
 | 이벤트 | 설명 |
 |-------|-------------|
-| fetchStart | 리소스 가져오기 시작 |
-| domainLookupStart | DNS 조회 시작 |
-| domainLookupEnd | DNS 조회 종료 |
-| connectStart | 서버 연결 시작 |
-| connectEnd | 서버 연결 종료 |
-| requestStart | 서버로 요청 전송 |
-| responseStart | 첫 번째 바이트 응답 수신 |
-| responseEnd | 마지막 바이트 응답 수신 |
+| `fetchStart` | 가져오기 프로세스 시작 |
+| `unloadEventStart` | 이전 페이지의 언로드 이벤트 시작 |
+| `unloadEventEnd` | 이전 페이지의 언로드 이벤트 종료 |
+| `domInteractive` | DOM이 상호작용 준비 완료 |
+| `domContentLoadedEventStart` | DOMContentLoaded 이벤트 시작 |
+| `domContentLoadedEventEnd` | DOMContentLoaded 이벤트 종료 |
+| `domComplete` | DOM 구조화 완료 |
+| `loadEventStart` | 로드 이벤트 시작 |
+| `loadEventEnd` | 로드 이벤트 종료 |
+
+#### ResourceFetch 이벤트
+
+| 이벤트 | 설명 |
+|-------|-------------|
+| `fetchStart` | ResourceFetch 시작 |
+| `domainLookupStart` | DNS 조회 시작 |
+| `domainLookupEnd` | DNS 조회 종료 |
+| `connectStart` | 서버 연결 시작 |
+| `connectEnd` | 서버 연결 종료 |
+| `requestStart` | 서버로 요청 전송 |
+| `responseStart` | 첫 번째 바이트 응답 수신 |
+| `responseEnd` | 마지막 바이트 응답 수신 |
 
 ## 사용 방법
 
 이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 다음과 같은 주요 메트릭을 모니터링하여 페이지 로드 성능을 추적하는 데 도움이 됩니다:
 
 - 전체 페이지 로드 시간
-- 문서 가져오기 시간
-- 리소스 로딩 시간
-- DOM 처리 시간
+- DocumentFetch 시간
+- ResourceFetch 시간
+- DOM 처리 시간 (DocumentLoad)
 
-데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다. 문서 로드 이벤트는 페이지 로드의 전체 수명 주기를 캡처하여 성능 병목 현상과 최적화 기회에 대한 상세한 통찰력을 제공합니다.
+### 계측 설정
+
+> (`boolean` 또는 `IMQADocLoadInstrumentationConfig`, 선택)
+
+DocumentLoad 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 DocumentLoad 이벤트가 계측됩니다. `IMQADocLoadInstrumentationConfig`을 제공하여 계측의 세부 설정을 조정할 수 있습니다.
+
+
+```typescript
+interface IMQADocLoadInstrumentationConfig
+  extends InstrumentationConfig {
+  ignoreUrls?: (string | RegExp)[];
+}
+```
+- `ignoreUrls`: 계측하지 않을 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 부분 일치 또는 정확히 일치하는 URL은 계측되지 않습니다.
+

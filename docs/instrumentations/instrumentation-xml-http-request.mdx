@@ -24,23 +24,23 @@ XHR (XMLHttpRequest) 스키마는 IMQA 모니터링 시스템에서 웹 애플�
 
 | 속성 | 설명 |
 |-----------|-------------|
-| service.name | Telemetry를 생성하는 서비스의 이름 |
-| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
-| telemetry.sdk.name | Telemetry SDK의 이름 |
-| telemetry.sdk.version | Telemetry SDK의 버전 |
-| process.runtime.name | 런타임 이름 (예: "browser") |
-| service.version | 서비스 버전 |
-| os.name | 운영체제 이름 |
-| os.version | 운영체제 버전 |
-| imqa.browser.device | 디바이스 타입 |
-| imqa.browser.name | 브라우저 이름 |
-| imqa.browser.version | 브라우저 전체 버전 |
-| imqa.browser.version_major | 브라우저 메이저 버전 |
-| service.key | 서비스 식별 키 |
-| imqa.agent.version | IMQA 에이전트 버전 |
-| rum.version | RUM (Real User Monitoring) 버전 |
-| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
-| session.id | 사용자 세션 식별자 |
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `service.version` | 서비스 버전 |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
 
 ### HTTP 요청 스팬
 
@@ -58,28 +58,56 @@ HTTP 요청 스팬은 웹 애플리케이션의 HTTP 요청과 응답을 추적�
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| http.method | string | HTTP 메서드 (GET, POST 등) |
-| http.url | string(deprecated) | 요청의 전체 URL (예: "https://imqa.io/1.jpg" ) |
-| http.scheme | string | 프로토콜 (http, https) |
-| http.status_code | integer | HTTP 응답 코드 |
-| http.host | string | 요청에서의 호스트 이름 (예: "imqa.io") |
-| http.request_content_length | integer | 요청 컨텐츠의 크기 (바이트) |
-| http.response_content_length | integer | 응답 컨텐츠의 크기 (바이트) |
-| http.response_content_length_uncompressed | integer | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
-| duration | integer | 요청 처리 시간 (나노초) |
-| location.href | string | 현재 페이지 URL |
-| environment | string | 환경 이름 |
-| deployment.environment | string | 배포 환경 |
-| screen.name | string | 화면/페이지 이름 |
-| screen.type | string | 화면/페이지 타입 |
-| session.id | string | 사용자 세션 식별자 |
-| url.full | string | 전체 URL (예: "https://imqa.io/1.jpg?hmac=fk" ) |
-| component | string | 컴포넌트 (XHR) |
-| span.type | string | 스팬 타입 (XHR) |
+| `http.method` | `string` | HTTP 메서드 (GET, POST 등) |
+| `http.url` | `string` | (deprecated) 요청의 전체 URL (예: "https://imqa.io/1.jpg" ) |
+| `http.scheme` | `string` | 프로토콜 (http, https) |
+| `http.status_code` | `integer` | HTTP 응답 코드 |
+| `http.host` | `string` | 요청에서의 호스트 이름 (예: "imqa.io") |
+| `http.request_content_length` | `integer` | 요청 컨텐츠의 크기 (바이트) |
+| `http.response_content_length` | `integer` | 응답 컨텐츠의 크기 (바이트) |
+| `http.response_content_length_uncompressed` | `integer` | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
+| `duration` | `integer` | 요청 처리 시간 (나노초) |
+| `location.href` | `string` | 현재 페이지 URL |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `url.full` | `string` | 전체 URL (예: "https://imqa.io/1.jpg?hmac=fk" ) |
+| `component` | `string` | 컴포넌트 (XHR) |
+| `span.type` | `string` | 스팬 타입 (XHR) |
 
 ## 사용 방법
 
 이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 HTTP 요청을 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+
+## 계측 설정
+
+> (`boolean` 또는 `IMQAXMLHttpRequestInstrumentationConfig`, 선택)
+
+XMLHttpRequest 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 XMLHttpRequest 요청이 자동으로 계측됩니다. `IMQAXMLHttpRequestInstrumentationConfig`을 통해 계측의 세부 설정을 조정할 수 있습니다.
+
+자세한 계측 정보는 [@imqa/instrumentation-xml-http-request](../instrumentations/instrumentation-xml-http-request.mdx) 참조
+
+```typescript
+interface XMLHttpRequestInstrumentationConfig extends InstrumentationConfig {
+    clearTimingResources?: boolean;
+    propagateTraceHeaderCorsUrls?: PropagateTraceHeaderCorsUrls;
+    ignoreUrls?: Array<string | RegExp>;
+    applyCustomAttributesOnSpan?: XHRCustomAttributeFunction;
+    ignoreNetworkEvents?: boolean;
+    measureRequestSize?: boolean;
+    advancedNetworkCapture?: () => boolean;
+}
+```
+- `clearTimingResources`: 타이밍 리소스를 초기화합니다. 기본값은 `false`입니다.
+- `propagateTraceHeaderCorsUrls`: CORS 요청에 Trace Header를 전파할 URL 목록을 지정합니다. 기본값은 `web.PropagateTraceHeaderCorsUrls`입니다.
+- `ignoreUrls`: 계측하지 않을 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 부분 일치 또는 정확히 일치하는 URL은 계측되지 않습니다.
+- `applyCustomAttributesOnSpan`: Span에 사용자 정의 속성을 추가하는 함수입니다. 기본값은 `undefined`입니다.
+- `ignoreNetworkEvents`: 네트워크 이벤트를 무시합니다. 기본값은 `false`입니다.
+- `measureRequestSize`: 요청 크기를 측정합니다. 기본값은 `false`입니다.
+- `advancedNetworkCapture`: 고급 네트워크 캡처를 활성화합니다. 기본값은 `false`입니다.
+
 
 ## 예시
 

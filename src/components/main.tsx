@@ -57,7 +57,7 @@ function Page(props: MainProps) {
   return (
     <>
       <header className={cn('mb-6 mt-8 border-b', 'border-outline-variant/50')}>
-        <h1 className="mb-2 text-5xl tracking-tighter">{doc.title}</h1>
+        <h1 className="mb-2 text-3xl tracking-tighter">{doc.title}</h1>
         <div className="flex justify-between">
           {!!doc?.description?.length && (
             <p className={cn('my-2 text-base leading-5', 'text-on-surface-variant/50')}>

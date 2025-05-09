@@ -5,19 +5,19 @@ import { svg } from '@/utils/icon'
 import resolveMdxUrl from '@/utils/resolveMdxUrl'
 import type { Metadata } from 'next'
 import { ThemeProvider } from 'next-themes'
-import { Inconsolata, Inter, Nanum_Gothic_Coding } from 'next/font/google'
+// import { Inconsolata, Inter, Nanum_Gothic_Coding } from 'next/font/google'
 import './globals.css'
 import { SandpackCSS } from './sandpack-styles'
 
-const inter = Inter({ subsets: ['latin'] })
-const inconsolata = Inconsolata({ subsets: ['latin'] })
+// const inter = Inter({ subsets: ['latin'] })
+// const inconsolata = Inconsolata({ subsets: ['latin'] })
 
-const nanumGothicCoding = Nanum_Gothic_Coding({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-nanum-gothic-coding',
-  display: 'swap',
-})
+// const nanumGothicCoding = Nanum_Gothic_Coding({
+//   subsets: ['latin'],
+//   weight: ['400', '700'],
+//   variable: '--font-nanum-gothic-coding',
+//   display: 'swap',
+// })
 
 const NEXT_PUBLIC_URL = process.env.NEXT_PUBLIC_URL
 const NEXT_PUBLIC_LIBNAME = process.env.NEXT_PUBLIC_LIBNAME

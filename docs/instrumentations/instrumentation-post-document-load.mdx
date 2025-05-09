@@ -25,23 +25,23 @@ nav: 1018
 
 | 속성 | 설명 |
 |-----------|-------------|
-| service.name | Telemetry를 생성하는 서비스의 이름 |
-| telemetry.sdk.language | Telemetry SDK의 프로그래밍 언어 |
-| telemetry.sdk.name | Telemetry SDK의 이름 |
-| telemetry.sdk.version | Telemetry SDK의 버전 |
-| process.runtime.name | 런타임 이름 (예: "browser") |
-| service.version | 서비스 버전 |
-| os.name | 운영체제 이름 |
-| os.version | 운영체제 버전 |
-| imqa.browser.device | 디바이스 타입 |
-| imqa.browser.name | 브라우저 이름 |
-| imqa.browser.version | 브라우저 전체 버전 |
-| imqa.browser.version_major | 브라우저 메이저 버전 |
-| service.key | 서비스 식별 키 |
-| imqa.agent.version | IMQA 에이전트 버전 |
-| rum.version | RUM (Real User Monitoring) 버전 |
-| rum.scriptInstance | RUM 스크립트 인스턴스 식별자 |
-| session.id | 사용자 세션 식별자 |
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `service.version` | 서비스 버전 |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
 
 ### 인스트루멘테이션 범위
 
@@ -69,27 +69,27 @@ nav: 1018
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| location.href | string | 현재 페이지 URL |
-| environment | string | 환경 컨텍스트 (예: "development", "production") |
-| deployment.environment | string | 배포 환경 |
-| screen.name | string | 현재 화면이나 페이지의 이름 |
-| screen.type | string | 화면 타입 (예: "page") |
-| session.id | string | 사용자 세션 식별자 |
-| url.full | string | 현재 페이지의 전체 URL |
-| component | string | 인스트루멘테이션 컴포넌트 이름 |
-| span.type | string | 스팬 타입 (예: "post-docs") |
-| http.request.method | string | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
-| http.response_content_length | integer | 응답 컨텐츠의 크기 (바이트) |
-| http.response_content_length_uncompressed | integer | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
+| `location.href` | `string` | 현재 페이지 URL |
+| `environment` | `string` | 환경 컨텍스트 (예: "development", "production") |
+| `deployment.environment` | `string` | 배포 환경 |
+| `screen.name` | `string` | 현재 화면이나 페이지의 이름 |
+| `screen.type` | `string` | 화면 타입 (예: "page") |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `url.full` | `string` | 현재 페이지의 전체 URL |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "post-docs") |
+| `http.request.method` | `string` | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
+| `http.response_content_length` | `integer` | 응답 컨텐츠의 크기 (바이트) |
+| `http.response_content_length_uncompressed` | `integer` | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
 
 #### 사용자 상호작용 관련 속성
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| event_type | string | 사용자 상호작용 이벤트의 타입 (예: "click") |
-| target_element | string | 상호작용된 HTML 요소 타입 |
-| target_xpath | string | 상호작용된 요소의 XPath |
-| http.url | string | 상호작용이 발생한 페이지의 URL |
+| `event_type` | `string` | 사용자 상호작용 이벤트의 타입 (예: "click") |
+| `target_element` | `string` | 상호작용된 HTML 요소 타입 |
+| `target_xpath` | `string` | 상호작용된 요소의 XPath |
+| `http.url` | `string` | 상호작용이 발생한 페이지의 URL |
 
 #### 이벤트
 
@@ -99,15 +99,15 @@ nav: 1018
 
 | 이벤트 | 설명 |
 |-------|-------------|
-| fetchStart | 리소스 가져오기 시작 |
-| domainLookupStart | 도메인 이름 조회 시작 |
-| domainLookupEnd | 도메인 이름 조회 종료 |
-| connectStart | 서버 연결 설정 시작 |
-| secureConnectionStart | 보안 연결 핸드셰이크 시작 |
-| connectEnd | 연결 설정 완료 |
-| requestStart | 요청 시작 |
-| responseStart | 첫 번째 바이트 응답 수신 |
-| responseEnd | 응답 수신 종료 |
+| `fetchStart` | 리소스 가져오기 시작 |
+| `domainLookupStart` | 도메인 이름 조회 시작 |
+| `domainLookupEnd` | 도메인 이름 조회 종료 |
+| `connectStart` | 서버 연결 설정 시작 |
+| `secureConnectionStart` | 보안 연결 핸드셰이크 시작 |
+| `connectEnd` | 연결 설정 완료 |
+| `requestStart` | 요청 시작 |
+| `responseStart` | 첫 번째 바이트 응답 수신 |
+| `responseEnd` | 응답 수신 종료 |
 
 ## 사용 방법
 

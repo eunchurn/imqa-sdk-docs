@@ -327,6 +327,7 @@ node_modules/@imqa/web-agent
 | `socketio`               | `boolean`                                       | optional      | Socket.IO 계측을 활성화합니다. 기본값은 `false`입니다.                                                                                                                 |
 | `captureMetric`              | `boolean`                                       | optional      | 메트릭 수집을 활성화합니다. 기본값은 `false`입니다. (beta)                                                                                                                    |
 | `disablePreflight`              | `boolean`                                       | optional      | preflight 요청 비활성화 여부 (기본값: false) preflight는 CORS 요청을 위한 OPTIONS 요청입니다.                                                                                                              |
+
 ### 옵션 상세 설명
 
 #### `collectorUrl`
@@ -716,6 +717,8 @@ export interface InstrumentationConfig {
 > (`boolean` 또는 `InstrumentationConfig`, 선택)
 
 페이지 가시성 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 페이지의 가시성 상태(포그라운드/백그라운드 변화)가 자동으로 계측됩니다.
+
+자세한 계측 정보는 [@imqa/instrumentation-visibility](../instrumentations/instrumentation-visibility.mdx) 참조
 
 ```typescript
 export interface InstrumentationConfig {

@@ -1,0 +1,100 @@
+---
+title: '@imqa/instrumentation-visibility'
+description: Instrumentation Visibility for IMQA
+nav: 1023
+---
+
+## 개요
+
+Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시성 상태 변화(page visibility state changes)를 캡처하고 보고하기 위한 구조를 정의합니다. 이 스키마는 웹 페이지가 사용자에게 **보이거나(hidden → visible)** **숨겨질 때(visible → hidden)** 를 추적하여, 사용자 참여도 및 브라우저 탭 전환 행동에 대한 인사이트를 제공합니다. 이 스키마는 **OpenTelemetry** 형식을 사용합니다.
+
+## 스키마 구조
+
+이 스키마는 **JSON Schema Draft 2020-12** 명세를 따르는 JSON 문서로, 다음과 같은 주요 구성 요소를 포함합니다:
+
+### ResourceSpans
+
+모든 스팬(span) 데이터를 포함하는 최상위 컨테이너입니다. 각 `ResourceSpans` 객체는 다음을 포함합니다:
+
+- `resource`: 텔레메트리를 생성하는 서비스에 대한 정보
+- `scopeSpans`: 계측 범위(instrumentation scope)별로 그룹화된 스팬들
+
+### 리소스 속성 (Resource Attributes)
+
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `service.version` | 서비스 버전 |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
+
+### 스팬 (Spans)
+
+각 스팬은 페이지 가시성 상태 변화 이벤트를 나타냅니다. 포함되는 항목은 다음과 같습니다:
+
+- `traceId`: 추적 식별자 (trace 고유 ID)
+- `spanId`: 스팬 고유 ID
+- `name`: 작업 이름 (일반적으로 `"visibility"`)
+- `kind`: 스팬 유형 (INTERNAL = 1)
+- `startTimeUnixNano`: 이벤트 발생 시점 (나노초 단위 유닉스 시간)
+- `endTimeUnixNano`: 즉시 발생하는 이벤트의 경우 시작 시간과 동일
+- `status`: 상태 코드 (0 = OK, 1 = ERROR, 2 = UNSET)
+
+### 스팬 속성 (Span Attributes)
+
+각 visibility 스팬은 다음과 같은 속성을 포함합니다:
+
+| 속성                 | 타입    | 설명                                               |
+|--------------------|--------|--------------------------------------------------|
+| `location.href`      | `string` | 현재 페이지의 URL                                   |
+| `environment`        | `string` | 환경 이름                                          |
+| `deployment.environment` | `string` | 배포 환경                                           |
+| `screen.name`        | `string` | 화면 또는 페이지 이름                               |
+| `screen.type`        | `string` | 화면/페이지 유형 (예: `"page"`)                    |
+| `session.id`         | `string` | 사용자 세션 ID                                      |
+| `url.full`           | `string` | 전체 URL                                           |
+| `span.type`          | `string` | 스팬 유형 (항상 `"visibility"`)                    |
+| `hidden`             | `boolean` | 페이지가 숨김 상태인지 여부 (`true` = 숨김, `false` = 보임) |
+
+## 사용 방법
+
+이 스키마는 IMQA 모니터링 시스템에 데이터를 처리하고 저장하기 전에 **텔레메트리 데이터 유효성을 검사**하는 데 사용됩니다.  
+사용자가 탭을 전환하거나 브라우저를 최소화하거나 다시 돌아오는 등의 행위를 추적하여, 사용자 참여도(engagement)를 측정합니다.
+
+### 계측 설정
+
+> (`boolean` 또는 `InstrumentationConfig`, 선택)
+
+페이지 가시성 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 페이지의 가시성 상태(포그라운드/백그라운드 변화)가 자동으로 계측됩니다.
+
+```typescript
+export interface InstrumentationConfig {
+    enabled?: boolean;
+}
+```
+
+## 예시
+
+유효한 Page Visibility 텔레메트리 객체에는 다음이 포함됩니다:
+
+- 서비스를 식별하는 리소스 정보 (브라우저, 환경 포함)
+- 하나 이상의 페이지 가시성 변화 이벤트를 나타내는 스팬
+- 각 스팬에는 페이지 URL 및 가시성 상태에 대한 상세 정보 포함
+
+이 데이터는 **OpenTelemetry 프로토콜 형식**을 따르므로, 다양한 텔레메트리 수집 및 분석 도구와 호환됩니다.  
+일반적으로 이 이벤트는 사용자가 **브라우저 탭을 전환하거나**, **브라우저 창을 최소화하거나**, **페이지로 다시 돌아올 때** 발생합니다.

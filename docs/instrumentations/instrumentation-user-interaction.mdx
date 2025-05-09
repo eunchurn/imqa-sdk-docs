@@ -20,7 +20,27 @@ nav: 1020
 
 ### 리소스 속성
 
-리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다. 다른 스키마 문서와 동일한 속성을 포함합니다.
+리소스 섹션은 서비스와 환경을 설명하는 속성을 포함합니다:
+
+| 속성 | 설명 |
+|-----------|-------------|
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `service.version` | 서비스 버전 |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
 
 ## 사용자 상호작용 범위
 
@@ -50,19 +70,19 @@ nav: 1020
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| event_type | string | 이벤트의 타입 (예: "click") |
-| target_element | string | 상호작용된 HTML 요소 타입 |
-| target_xpath | string | 대상 요소의 XPath |
-| http.url | string | 현재 페이지 URL |
-| location.href | string | 현재 페이지 URL |
-| environment | string | 환경 이름 |
-| deployment.environment | string | 배포 환경 |
-| screen.name | string | 화면/페이지 이름 |
-| screen.type | string | 화면/페이지 타입 |
-| session.id | string | 사용자 세션 식별자 |
-| url.full | string | 완전한 URL |
-| component | string | 컴포넌트 (사용자 상호작용) |
-| span.type | string | 스팬 타입 (사용자 상호작용) |
+| `event_type` | `string` | 이벤트의 타입 (예: "click") |
+| `target_element` | `string` | 상호작용된 HTML 요소 타입 |
+| `target_xpath` | `string` | 대상 요소의 XPath |
+| `http.url` | `string` | 현재 페이지 URL |
+| `location.href` | `string` | 현재 페이지 URL |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
+| `component` | `string` | 컴포넌트 (사용자 상호작용) |
+| `span.type` | `string` | 스팬 타입 (사용자 상호작용) |
 
 ## 다른 스키마와의 관계
 
@@ -75,6 +95,56 @@ nav: 1020
 ## 사용 방법
 
 이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 사용자 상호작용을 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+
+### 계측 설정
+
+> (`boolean` 또는 `IMQAUserInteractionInstrumentationConfig`, 선택)
+
+사용자 상호작용 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클릭, 입력 등 사용자 상호작용 이벤트가 자동으로 계측됩니다. `IMQAUserInteractionInstrumentationConfig`을 통해 상호작용 계측의 세부 설정을 커스터마이즈할 수 있습니다.
+
+자세한 계측 정보는 [@imqa/instrumentation-user-interaction](../instrumentations/instrumentation-user-interaction.mdx) 참조
+
+```typescript
+interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
+    eventNames?: EventName[];
+    shouldPreventSpanCreation?: ShouldPreventSpanCreation;
+    events?: UserInteractionEventsConfig;
+}
+```
+- `eventNames`: 계측할 이벤트 목록을 지정합니다. 기본값은 `DEFAULT_AUTO_INSTRUMENTED_EVENTS`입니다.
+  - 포인터 이벤트: `click`, `dblclick`, `mousedown`, `mouseup`
+  - Form 이벤트: `submit`, `reset`, `change`
+  - Drag & Drop: `dragend`, `drop`
+  - 미디어 이벤트: `ended`, `pause`, `play`
+- `shouldPreventSpanCreation`: Span이 생성될 때 호출되는 콜백 함수입니다. `true`를 반환하면 Span 기록을 방지합니다. 이 핸들러를 사용하여 생성된 Span에 추가 속성을 추가할 수 있습니다.
+- `events`: 사용자 상호작용 이벤트를 설정합니다. `UserInteractionEventsConfig` 인터페이스를 사용하여 세부 설정을 지정할 수 있습니다.
+
+```typescript
+type UserInteractionEventsConfig = {
+  [type: string]: boolean;
+};
+const DEFAULT_AUTO_INSTRUMENTED_EVENTS: UserInteractionEventsConfig = {
+  // pointer
+  click: true,
+  dblclick: true,
+  mousedown: true,
+  mouseup: true,
+
+  // form
+  submit: true,
+  reset: true,
+  change: true,
+
+  // drap & drop
+  dragend: true,
+  drop: true,
+
+  // media
+  ended: true,
+  pause: true,
+  play: true,
+};
+```
 
 ## 예시
 
