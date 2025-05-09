@@ -48,7 +48,7 @@ HTTP 요청 스팬은 웹 애플리케이션의 HTTP 요청과 응답을 추적�
 
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
-- `name`: HTTP 메서드 (예: "GET", "POST")
+- `name`: HTTP 메서드 (예: "`GET`", "`POST`")
 - `kind`: 스팬의 타입 (1 = INTERNAL)
 - `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
 - `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
@@ -58,7 +58,7 @@ HTTP 요청 스팬은 웹 애플리케이션의 HTTP 요청과 응답을 추적�
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `http.method` | `string` | HTTP 메서드 (GET, POST 등) |
+| `http.method` | `string` | HTTP 메서드 (`GET`, `POST` 등) |
 | `http.url` | `string` | (deprecated) 요청의 전체 URL (예: "https://imqa.io/1.jpg" ) |
 | `http.scheme` | `string` | 프로토콜 (http, https) |
 | `http.status_code` | `integer` | HTTP 응답 코드 |

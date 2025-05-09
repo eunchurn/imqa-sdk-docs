@@ -48,11 +48,11 @@ nav: 1017
 
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
-- `name`: 작업의 이름 (일반적으로 "connectivity")
-- `kind`: 스팬의 타입 (1 = INTERNAL)
+- `name`: 작업의 이름 (일반적으로 "`connectivity`")
+- `kind`: 스팬의 타입 (1 = `INTERNAL`)
 - `startTimeUnixNano`: 에포크 이후의 연결 상태 변경 시간 (나노초)
 - `endTimeUnixNano`: 종료 시간 (순간적 이벤트의 경우 시작 시간과 동일) (나노초)
-- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `status`: 결과 상태 (0 = OK, 1 = `ERROR`, 2 = `UNSET`)
 
 ### 스팬 속성
 
@@ -67,8 +67,8 @@ nav: 1017
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 완전한 URL |
-| `online` | `boolean` | 네트워크 연결 상태 (true = 온라인, false = 오프라인) |
-| `span.type` | `string` | 스팬 타입 ("connectivity") |
+| `online` | `boolean` | 네트워크 연결 상태 (`true` = 온라인, `false` = 오프라인) |
+| `span.type` | `string` | 스팬 타입 ("`connectivity`") |
 
 ## 사용 방법
 

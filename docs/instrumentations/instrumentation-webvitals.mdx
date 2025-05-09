@@ -59,9 +59,9 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `metric.name` | `string` | 성능 지표의 이름 (LCP, FID, CLS 등) |
+| `metric.name` | `string` | 성능 지표의 이름 (`LCP`, `FID`, `CLS` 등) |
 | `metric.value` | `integer` | 지표의 값 (밀리초 또는 비율) |
-| `metric.rating` | `string` | 지표의 등급 (good, needs-improvement, poor) |
+| `metric.rating` | `string` | 지표의 등급 (`good`, `needs-improvement`, `poor`) |
 | `location.href` | `string` | 현재 페이지 URL |
 | `environment` | `string` | 환경 이름 |
 | `deployment.environment` | `string` | 배포 환경 |
@@ -96,7 +96,7 @@ interface InstrumentationConfig {
 유효한 WebVitals Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
 - 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- LCP, FID, CLS와 같은 웹 성능 지표를 캡처하는 WebVitals 스팬
+- `LCP`, `FID`, `CLS와` 같은 웹 성능 지표를 캡처하는 WebVitals 스팬
 - 지표의 값과 등급을 포함하는 성능 메트릭
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

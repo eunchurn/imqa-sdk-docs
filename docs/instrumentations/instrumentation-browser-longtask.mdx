@@ -49,7 +49,7 @@ nav: 1015
 
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
-- `name`: 작업의 이름 (일반적으로 "longtask")
+- `name`: 작업의 이름 (일반적으로 "`longtask`")
 - `kind`: 스팬의 타입 (1 = INTERNAL)
 - `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
 - `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
@@ -68,16 +68,16 @@ nav: 1015
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 식별자 ("browser-longtask") |
+| `component` | `string` | 컴포넌트 식별자 ("`browser-longtask`") |
 | `span.type` | `string` | 스팬 타입 ("longtask") |
-| `longtask.name` | `string` | LongTask의 소스 (예: "self") |
-| `longtask.entry_type` | `string` | 엔트리 타입 (일반적으로 "longtask") |
+| `longtask.name` | `string` | LongTask의 소스 (예: "`self`") |
+| `longtask.entry_type` | `string` | 엔트리 타입 (일반적으로 "`longtask`") |
 | `longtask.duration` | `integer` | LongTask의 지속 시간 (밀리초) |
 | `longtask.attribution.name` | `string` | 속성 소스의 이름 |
 | `longtask.attribution.entry_type` | `string` | 속성 엔트리의 타입 |
 | `longtask.attribution.start_time` | `integer` | 속성 시작 시간 |
 | `longtask.attribution.duration` | `integer` | 속성 지속 시간 |
-| `longtask.attribution.container_type` | `string` | 컨테이너 타입 (예: "window") |
+| `longtask.attribution.container_type` | `string` | 컨테이너 타입 (예: "`window`") |
 | `longtask.attribution.container_src` | `string` | 컨테이너의 소스 |
 | `longtask.attribution.container_id` | `string` | 컨테이너의 ID |
 | `longtask.attribution.container_name` | `string` | 컨테이너의 이름 |

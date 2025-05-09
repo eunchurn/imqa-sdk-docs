@@ -29,7 +29,7 @@ Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시�
 | `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
 | `telemetry.sdk.name` | Telemetry SDK의 이름 |
 | `telemetry.sdk.version` | Telemetry SDK의 버전 |
-| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `process.runtime.name` | 런타임 이름 (예: "`browser`") |
 | `service.version` | 서비스 버전 |
 | `os.name` | 운영체제 이름 |
 | `os.version` | 운영체제 버전 |
@@ -50,10 +50,10 @@ Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시�
 - `traceId`: 추적 식별자 (trace 고유 ID)
 - `spanId`: 스팬 고유 ID
 - `name`: 작업 이름 (일반적으로 `"visibility"`)
-- `kind`: 스팬 유형 (INTERNAL = 1)
+- `kind`: 스팬 유형 (`INTERNAL` = 1)
 - `startTimeUnixNano`: 이벤트 발생 시점 (나노초 단위 유닉스 시간)
 - `endTimeUnixNano`: 즉시 발생하는 이벤트의 경우 시작 시간과 동일
-- `status`: 상태 코드 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `status`: 상태 코드 (0 = `OK`, 1 = `ERROR`, 2 = `UNSET`)
 
 ### 스팬 속성 (Span Attributes)
 

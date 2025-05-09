@@ -30,7 +30,7 @@ console 계측 스키마는 IMQA 모니터링 시스템에서 브라우저 conso
 | `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
 | `telemetry.sdk.name` | Telemetry SDK의 이름 |
 | `telemetry.sdk.version` | Telemetry SDK의 버전 |
-| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `process.runtime.name` | 런타임 이름 (예: "`browser`") |
 | `service.version` | 서비스 버전 |
 | `os.name` | 운영체제 이름 |
 | `os.version` | 운영체제 버전 |
@@ -55,11 +55,11 @@ console 로그 Telemetry는 버전 "0.0.15"의 `@imqa/instrumentation-console` �
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
 - `parentSpanId`: 부모 스팬의 식별자 (일반적으로 사용자 상호작용에서)
-- `name`: console 메서드의 이름 (예: "console.log")
+- `name`: console 메서드의 이름 (예: "`console.log`")
 - `kind`: 스팬의 타입 (INTERNAL = 1)
 - `startTimeUnixNano`: console 로그가 캡처된 시간 (에포크 이후의 나노초)
 - `endTimeUnixNano`: 종료 시간 (순간적 이벤트의 경우 시작 시간과 동일)
-- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `status`: 결과 상태 (0 = `OK`, 1 = `ERROR`, 2 = `UNSET`)
 
 ### 스팬 속성
 
@@ -71,12 +71,12 @@ console 스팬은 다음과 같은 공통 속성을 포함합니다:
 | `environment` | `string` | 환경 이름 |
 | `deployment.environment` | `string` | 배포 환경 |
 | `screen.name` | `string` | 화면/페이지 이름 |
-| `screen.type` | `string` | 화면/페이지 타입 (예: "page") |
+| `screen.type` | `string` | 화면/페이지 타입 (예: "`page`") |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
 | `component` | `string` | 컴포넌트 이름 ("@imqa/instrumentation-console") |
-| `span.type` | `string` | 스팬 타입 (항상 "log") |
-| `level` | `string` | 로그 레벨 (예: "INFO", "ERROR", "WARN", "DEBUG") |
+| `span.type` | `string` | 스팬 타입 (항상 "`log`") |
+| `level` | `string` | 로그 레벨 (예: "`INFO`", "`ERROR`", "`WARN`", "`DEBUG`") |
 | `message` | `string` | console 로그의 실제 메시지 내용 |
 
 ## console 로그 레벨
