@@ -24,7 +24,7 @@ const sdks = [
       '웹 애플리케이션 전반에서 사용자 행동을 추적하고 분석할 수 있도록 Opentelemetry Native IMQA Web Agent를 배포하세요.',
     icon: BrowserIcon,
     color: 'bg-white',
-    link: '/web-agent/installation',
+    link: '/web-agent/introduction',
   },
 ]
 
@@ -37,7 +37,7 @@ export const SDKCards = async () => (
         </p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
         {sdks.map((sdk) => (
           <SDKCard key={sdk.title} {...sdk} />
         ))}
