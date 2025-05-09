@@ -275,6 +275,7 @@ h6 {
 .progress-indeterminate {
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .progress-indeterminate::after {
@@ -284,8 +285,10 @@ h6 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: hsl(var(--primary));
+  background: #5de4c7;
   animation: indeterminate 1.5s ease-in-out infinite;
+  /* width: 50%; */
+  z-index: 2;
 }
 
 @media print {

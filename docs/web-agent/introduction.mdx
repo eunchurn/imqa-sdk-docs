@@ -62,7 +62,7 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
 
 #### 특정 버전
 
-특정 버전을 사용하기 위한 설치 코드는 아래와 같습니다. `{{VERSION}}` 부분을 사용하려는 버전으로 대체하세요. 사용가능한 버전과 릴리즈 노트는 [릴리즈 페이지](./release.mdx)에서 확인할 수 있습니다.
+특정 버전을 사용하기 위한 설치 코드는 아래와 같습니다. `{{VERSION}}` 부분을 사용하려는 버전으로 대체하세요. 사용가능한 버전과 릴리즈 노트는 [릴리즈 노트](#release-notes)에서 확인할 수 있습니다.
 
 ```html
 <script
@@ -82,7 +82,9 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
 
 IMQA 지원하는 모든 옵션은 [설정](#설정)을 참조해주세요. `collectorUrl`, `serviceName`, `serviceKey`, `serviceVersion`을 올바르게 제공하면 웹사이트가 준비되며 다른 필수 작업은 필요하지 않습니다. 수집된 추적 정보를 지정된 IMQA 수집기로 전송합니다.
 
-### [npm](https://www.npmjs.com/package/@imqa/web-agent) 을 통한 설치
+### NPM 을 통한 설치
+
+https://www.npmjs.com/package/@imqa/web-agent
 
 ![NPM Version](https://img.shields.io/npm/v/%40imqa%2Fweb-agent?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Fweb-agent?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Fweb-agent?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Fweb-agent)
 
@@ -139,17 +141,16 @@ IMQA.init({
 ```
 
 4. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
-- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](./installation#collectorurl)
-- `serviceName` 서비스 이름. [상세 보기](./installation#servicename)
-- `serviceVersion` 서비스 버전 [상세 보기](./installation#serviceversion)
-- `serviceKey` 서비스 키 [상세 보기](./installation#servicekey)
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](#collectorurl)
+- `serviceName` 서비스 이름. [상세 보기](#servicename)
+- `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
+- `serviceKey` 서비스 키 [상세 보기](#servicekey)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
 
-[Installation - IMQA SDK](./installation.mdx#%EC%84%A4%EC%A0%95)
+[설정 옵션](#설정-(options))
 
-5. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 아래 IMQA Web Agent API 문서를 참조해주세요.
+5. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 [IMQA Web Agent API](#api)를 참조해주세요.
 
-[API - IMQA SDK](./api.mdx)
 
 ### Option 2: `npm` 또는 `yarn`등으로 설치 후 초기화
 
@@ -215,18 +216,14 @@ const app = new Vue({
 ```
 
 3. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
-- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](./installation#collectorurl)
-- `serviceName` 서비스 이름. [상세 보기](./installation#servicename)
-- `serviceVersion` 서비스 버전 [상세 보기](./installation#serviceversion)
-- `serviceKey` 서비스 키 [상세 보기](./installation#servicekey)
-- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 [IMQA 설정 문서](./installation.mdx#%EC%84%A4%EC%A0%95)를 참조해주세요.
+- `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](#collectorurl)
+- `serviceName` 서비스 이름. [상세 보기](#servicename)
+- `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
+- `serviceKey` 서비스 키 [상세 보기](#servicekey)
+- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
 
-[Installation - IMQA SDK](./installation.mdx#%EC%84%A4%EC%A0%95)
 
-4. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 아래 [IMQA Web Agent API 문서](./api.mdx)를 참조해주세요.
-
-[API - IMQA SDK](./api.mdx)
-
+4. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 [IMQA Web Agent API 문서](#api)를 참조해주세요.
 
 ### Option 3: 폐쇄망에서 `package.json`에 직접 의존성 추가
 
@@ -298,7 +295,7 @@ node_modules/@imqa/web-agent
 - 프로젝트의 `package.json` 을 열고 `dependencies` 에 `"@imqa/web-agent": "latest"` 를 추가합니다.
 - 이후 2안과 같이 설정 진행하면 됩니다.
 
-## 설정
+## 설정 (Options)
 
 | 옵션 이름                    | 타입                                            | 필수 여부 | 설명                                                                                                                                                                 |
 |-----------------------------|-------------------------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -827,7 +824,7 @@ interface XMLHttpRequestInstrumentationConfig extends InstrumentationConfig {
 - `measureRequestSize`: 요청 크기를 측정합니다. 기본값은 `false`입니다.
 - `advancedNetworkCapture`: 고급 네트워크 캡처를 활성화합니다. 기본값은 `false`입니다.
 
-## IMQA API
+## API
 
 <Gha keyword="TIP" title="IMQA API">
 `IMQA`객체는 웹 애플리케이션에서 RUM(Real User Monitoring)과 OpenTelemetry 기능을 초기화하고 관리하는 역할을 담당합니다. 이 객체는 세션 기록, 사용자 행동 추적, 예외 기록 등 다양한 기능을 제공합니다. 
@@ -835,7 +832,7 @@ interface XMLHttpRequestInstrumentationConfig extends InstrumentationConfig {
 
 IMQA Web Agent를 사용하면 프론트엔드 애플리케이션에서 이벤트를 IMQA로 전송하도록 설정할 수 있습니다. 이를 통해 네트워크 요청과 예외를 백엔드 이벤트와 함께 단일 타임라인에서 확인할 수 있습니다.
 
-아래 내용은 IMQA 객체에 대한 API를 설명합니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 합니다.
+아래 내용은 `IMQA` 객체에 대한 API를 설명합니다. 이 객체는 `window.IMQA`에 존재합니다. 패키지로 설치한 경우 `import IMQA from "@imqa/web-agent"`를 통해 객체를 가져올 수 있습니다. 이 `IMQA` 객체는 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 합니다.
 
 ### `init`
 
@@ -843,7 +840,7 @@ IMQA Web Agent를 사용하면 프론트엔드 애플리케이션에서 이벤�
 IMQA.init(config: IMQASDKConfig): void
 ```
 
-초기 설정을 통해 `IMQA` 인스턴스를 초기화합니다. 초기화 설정은 [IMQA init](./installation.mdx#설정)을 참고하세요.
+초기 설정을 통해 `IMQA` 인스턴스를 초기화합니다. 초기화 설정은 [IMQA init](#설정-(options))을 참고하세요.
 
 - **매개변수:**
   - `config` (`IMQASDKConfig`): 초기화 설정을 담은 객체입니다.

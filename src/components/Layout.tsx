@@ -52,7 +52,7 @@ export function LayoutNav({ className, ...props }: ComponentProps<'nav'>) {
     <nav
       className={cn(
         'hidden overflow-auto lg:[display:initial]',
-        'sticky top-[--header-height] h-[calc(100dvh-var(--header-height))] grid-in-n',
+        'sticky top-[--header-height] h-[calc(100dvh-var(--header-height))] pb-8 grid-in-n',
         className,
       )}
       {...props}
@@ -65,7 +65,7 @@ export function LayoutAside({ className, ...props }: ComponentProps<'aside'>) {
     <aside
       className={cn(
         'hidden overflow-auto scrollbar-none xl:[display:initial]',
-        'sticky top-[--header-height] h-[calc(100dvh-var(--header-height))] grid-in-t',
+        'sticky top-[--header-height] h-[calc(100dvh-var(--header-height))] pb-8 pr-2 grid-in-t',
         className,
       )}
       {...props}

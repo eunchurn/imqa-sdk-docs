@@ -54,6 +54,20 @@ export async function crawl(dir: string, filter?: (dir: string) => boolean, file
   return files
 }
 
+const filteredTableOfContents = (tableOfContents: DocToC[]): DocToC[] => {
+  return tableOfContents.filter((item) => {
+    // Check if current item or any parent has 'release-notes' id
+    const hasReleaseNotesParent = (node: DocToC | undefined): boolean => {
+      if (!node) return false
+      if (node.id === 'release-notes') return true
+      return node.parent ? hasReleaseNotesParent(node.parent) : false
+    }
+
+    // Filter out items that have 'release-notes' in their parent hierarchy
+    return !hasReleaseNotesParent(item)
+  })
+}
+
 /**
  * Fetches all docs, filters to a lib if specified.
  *
@@ -107,7 +121,7 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
         const { tag_name, name, body } = cur
         const releaseName = name || tag_name
         const releaseBody = body || ''
-        return `${acc}\n## ${releaseName}\n ${releaseBody}`
+        return `${acc}\n### ${releaseName}\n ${releaseBody}`
       }, '')
       return source
     } catch (error) {
@@ -309,6 +323,7 @@ async function _getDocs(
         console.log(releases)
         return { content: '' }
       })
+
       return {
         slug,
         url,
@@ -321,7 +336,7 @@ async function _getDocs(
         nav,
         content: jsx,
         boxes,
-        tableOfContents,
+        tableOfContents: filteredTableOfContents(tableOfContents),
         pdf: frontmatter.pdf,
         cover: frontmatter.cover,
         // releases,
