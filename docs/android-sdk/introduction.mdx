@@ -1,6 +1,6 @@
 ---
 title: IMQA Android SDK 설치 가이드
-description: IMQA Android SDK v1.0.15 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.0.17 설치 및 설정 방법을 안내합니다.
 nav: 410
 pdf: true
 release: https://api.github.com/repos/idlerecord/the-next-android-sdk/releases
@@ -64,7 +64,7 @@ repositories {
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.0.15'
+  implementation 'io.imqa:imqa-android-sdk:1.0.17'
 }
 ```
 
@@ -72,7 +72,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.0.15")
+  implementation("io.imqa:imqa-android-sdk:1.0.17")
 }
 ```
 
@@ -87,7 +87,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.0.15-release.aar')
+  implementation files('libs/imqa-android-sdk-1.0.17-release.aar')
 }
 ```
 
@@ -95,7 +95,45 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.0.15-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.0.17-release.aar"))
+}
+```
+
+#### 1-4. Desugaring 적용
+
+minSdkVersion 이 26 미만인 경우 디슈가링을 활성화해야합니다.
+
+**Groovy DSL**
+
+```groovy
+compileOptions {
+  ...
+  coreLibraryDesugaringEnabled true
+}
+dependencies {
+    // For AGP 7.4+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    // For AGP 7.3
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.3'
+    // For AGP 4.0 to 7.2
+    // coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.9'
+}
+```
+
+**Kotlin DSL**
+
+```kotlin
+compileOptions {
+  ...
+  isCoreLibraryDesugaringEnabled = true
+}
+dependencies {
+    // For AGP 7.4+
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
+    // For AGP 7.3
+    // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.2.3")
+    // For AGP 4.0 to 7.2
+    // coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.9")
 }
 ```
 
