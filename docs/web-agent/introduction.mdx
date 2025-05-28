@@ -294,6 +294,32 @@ node_modules/@imqa/web-agent
 - 프로젝트의 `package.json` 을 열고 `dependencies` 에 `"@imqa/web-agent": "latest"` 를 추가합니다.
 - 이후 2안과 같이 설정 진행하면 됩니다.
 
+## 레거시 브라우저 설치 (Support IE11)
+
+IMQA Web Agent는 레거시 브라우저를 제한적으로 지원합니다. [제한적으로 지원되는 레거시 브라우저](#제한적으로-지원되는-레거시-브라우저) 참조.
+
+> [!NOTE]
+> Internet Explorer 11 에서 테스트 되었습니다.
+
+설치 방법은 아래 코드와 같이 `index-legacy.js` 파일을 사용하여 설치합니다. 
+
+```html
+<script
+  src="https://cdn.imqa.io/release/npm/@web-agent/latest/index-legacy.js"
+  type="text/javascript">
+</script>
+<script>
+    window.IMQA.init({
+      collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+      serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
+      serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+      serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+    });
+</script>
+```
+
+특정 버전의 설치는 버전 `@web-agent/{VERSION}`을 사용하여 설치합니다. 지원되는 버전은 `1.0.0` 이상입니다. 이후 `IMQA`를 초기화하는 코드는 동일합니다. 설정이 완료되면 모든 계측이 자동으로 수행됩니다.
+
 ## 설정 (Options)
 
 | 옵션 이름                    | 타입                                            | 필수 여부 | 설명                                                                                                                                                                 |
@@ -1183,41 +1209,63 @@ IMQA Web Agent는 모바일 네이티브 파라미터를 WebView와 연동하여
 
 ### IMQA Web Agent 브라우저 및 프레임워크 지원 사항
 
-#### 지원되는 브라우저
+#### 권장 브라우저
 
--   **Chrome**
-    -   버전 60 이상
-    -   ES6+ 기능 지원
-    -   WebSocket 지원
-    -   Performance API 지원
--   **Firefox**
-    -   버전 55 이상
-    -   ES6+ 기능 지원
-    -   WebSocket 지원
-    -   Performance API 지원
--   **Safari**
-    -   버전 11 이상
-    -   ES6+ 기능 지원
-    -   WebSocket 지원
-    -   Performance API 지원
--   **Edge**
-    -   버전 16 이상
-    -   ES6+ 기능 지원
-    -   WebSocket 지원
-    -   Performance API 지원
-    -   
+- **Chrome**
+  - 버전 60 이상
+  - ES6+ 기능 지원
+  - WebSocket 지원
+  - Performance API 지원
+- **Firefox**
+  - 버전 55 이상
+  - ES6+ 기능 지원
+  - WebSocket 지원
+  - Performance API 지원
+- **Safari**
+  - 버전 11 이상
+  - ES6+ 기능 지원
+  - WebSocket 지원
+  - Performance API 지원
+- **Edge**
+  - 버전 80 이상
+  - ES6+ 기능 지원
+  - WebSocket 지원
+  - Performance API 지원
+
+#### 제한적으로 지원되는 레거시 브라우저
+
+- **Chrome**
+  - 버전 52 까지
+- **Safari**
+  - 버전 11 까지
+- **Firefox**
+  - 버전 57 까지
+- **Edge**
+  - 버전 79 까지
+- **Internet Explorer 11**
+  - ES6+ 기능 미지원
+  - WebSocket 지원 불완전
+  - Fetch API 미지원
+
 #### 지원되지 않는 브라우저
 
--   **Internet Explorer**
-    -   모든 버전 (IE 11 포함)
-    -   ES6+ 기능 미지원
-    -   WebSocket 지원 불완전
-    -   Performance API 미지원
--   **구형 모바일 브라우저**
-    -   Android Browser 4.4 이하
-    -   iOS Safari 10 이하
-    -   Opera Mini
-    -   UC Browser
+- **Internet Explorer**
+  - IE 11 미만 모든버전
+  - ES6+ 기능 미지원
+  - WebSocket 지원 불완전
+  - Performance API 미지원
+- **Chrome**
+  - 버전 51 이하
+- **Safari**
+  - 버전 10 이하
+- **Firefox**
+  - 버전 56 이하
+- **Edge**
+  - 버전 78 이하
+- **기타 구형 모바일 브라우저**
+  - Android Browser 4.4 이하
+  - Opera Mini
+  - UC Browser
 
 ### WebView 환경에 IMQA Web Agent 지원 사항
 

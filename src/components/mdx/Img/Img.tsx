@@ -21,8 +21,8 @@ export async function Img({
   // If image is from MDX folder, we can determine its dimensions
   //
 
-  if (process.env.MDX_BASEURL && src?.startsWith(process.env.MDX_BASEURL)) {
-    const path = resolve(src.replace(process.env.MDX_BASEURL, process.env.MDX!))
+  if (process.env.MDX_BASEURL && (src as string).startsWith(process.env.MDX_BASEURL)) {
+    const path = resolve((src as string).replace(process.env.MDX_BASEURL, process.env.MDX!))
     const { width: w, height: h } = sizeOf(path)
     const ratio = w && h ? w / h : undefined
 

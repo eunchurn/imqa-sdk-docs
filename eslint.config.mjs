@@ -1,0 +1,7 @@
+export default {
+  extends: 'next',
+  rules: {
+    'react/jsx-no-target-blank': 0,
+    'import/no-anonymous-default-export': 0,
+  },
+}
