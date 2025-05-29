@@ -5,7 +5,7 @@ nav: 400
 image: ./img/ios-sdk-custom-01.png
 pdf: true
 cover: ios
-release: https://api.github.com/repos/idlerecord/imqa-ios-sdk/releases
+release: https://api.github.com/repos/idlerecord/imqa-ios-sdk-next/releases
 ---
 
 <Gha keyword="TIP" title="서비스 키 발급">
@@ -16,18 +16,16 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 *
 IMQA iOS SDK는 iOS 애플리케이션을 위한 강력한 성능 모니터링 솔루션입니다. 이 문서는 설치 및 설정 방법에 대한 종합적인 가이드를 제공합니다.
 
 ## 필수 요구사항
-- Xcode 15.0.1이상
-- iOS 13.0 이상
-- Swift 5.9 이상
+- iOS 12.0 이상
 
 ## 설치 방법
 
 ### 방법 1: XCFramework 설치
 
 1. **프로젝트에 XCFramework 추가**
-   - IMQA iOS SDK XCFramework를 Xcode 프로젝트로 드래그 앤 드롭
+   - IMQA iOS SDK XCFramework를 Xcode 프로젝트로 넣으세요
    - "Copy items if needed" 옵션 체크
-   - 메인 타겟에 추가
+   - 메인 타겟에 추가하세요
 
 ![xcframework](./img/ios-sdk-xcframework-01.png)
 
@@ -40,26 +38,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, 
                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let endpoint = IMQA.Endpoints(
-            collectorURL: "수집기 URL"
-        )
-        
+        let endpoint = IMQA.Endpoints(collectorURL: "수집기 URL")
         let serviceKey = "서비스 키"
-        
-        let option = IMQA.Options(
-            serviceKey: serviceKey,
-            endpoints: endpoint,
-            sampleRate: 1.0
-        )
-        
-        do {
-            try IMQA
-                .setup(options: option)
-                .start()
-        } catch {
-            print("IMQA SDK 초기화 실패: \(error.localizedDescription)")
-        }
-        
+        let option = IMQA.Options(serviceKey: serviceKey,
+                                  endpoints: endpoint ,
+                                  sampleRate: 1.0)
+        IMQA
+            .setup(options: option, isDebug: true)
+        .start()
+
         return true
     }
 }
@@ -76,10 +63,16 @@ target 'YourApp' do
 end
 ```
 
-
 2. **의존성 설치**
 ```bash
 pod install
+```
+
+### 방법 3: Swift Package Manager 설치
+
+**Package 주소**
+```ruby
+https://github.com/idlerecord/imqa-ios-sdk-spm
 ```
 
 ## 설정
@@ -96,9 +89,21 @@ pod install
 ### 커스텀 사용자 ID
 ```swift
 IMQA.setUserId(id: "사용자_식별자")
+
+IMQA.getUserId()
 ```
 
-![custom user](./img/ios-sdk-custom-01.png)
+### 커스텀 로그
+ ```swift
+IMQA.customLog(level: .debug, message: "로그 내용")
+```
+
+### 클릭 이벤트를 감지
+ ```swift
+ //자동으로 수집이 됩니다. 이후 swiftUI를 대비하여 만듬
+IMQA.sendClickEvent(buttonName: "버튼 이름", buttonClassName: "버튼 클래스 이름")
+```
+
 
 ## 웹뷰 페이지 세션 연결
 
@@ -148,22 +153,21 @@ import Foundation
 4. **AppDelegate에서 IMQA를 초기화하려면 다음 코드를 추가하세요.**
 
 ```c
-IMQAEndpoits *endpoints = [[IMQAEndpoits alloc] initWithCollectorURL:@"collector 주소"];
-IMQAOptions *options = [[IMQAOptions alloc] initWithServiceKey:@"서비스 키" endpoints:endpoints sampleRate:1.0];
-NSError *setUpError = nil;
-IMQA *imqa = [IMQA setupWithOptions:options error:&setUpError];
-if (setUpError) {
-    NSLog(@"IMQA setUp 실패: %@", setUpError.localizedDescription);
-} else {
-    NSLog(@"IMQA setUp 성공: %@", imqa);
-}
+#import "AppDelegate.h"
+#import "IMQACore/IMQACore-Swift.h"
+@interface AppDelegate ()
 
-NSError *startError = nil;
-[imqa startAndReturnError:&startError];
-if (startError) {
-    NSLog(@"IMQA start 실패: %@", startError.localizedDescription);
-} else {
-    NSLog(@"IMQA 성공");
+@end
+
+@implementation AppDelegate
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Override point for customization after application launch.
+    IMQAEndpoints *endpoints = [[IMQAEndpoints alloc] initWithCollectorURL:@"collector 주소"];
+    IMQAOptions *options = [[IMQAOptions alloc] initWithServiceKey:@"서비스키" endpoints:endpoints sampleRate:1.0];
+    [[IMQA setupWithOptions:options isDebug:YES] start];
+    
+    return YES;
 }
 ```
 
