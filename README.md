@@ -1,7 +1,5 @@
 # IMQA Docs
 
-[![](docs/getting-started/gutenberg.jpg)](docs/getting-started/introduction.mdx)
+![Vercel](https://vercelbadge.vercel.app/api/eunchurn/imqa-sdk-docs)
 
-[![Deployment Documentation](https://github.com/eunchurn/imqa-sdk-docs/actions/workflows/deploy.yml/badge.svg)](https://github.com/eunchurn/imqa-sdk-docs/actions/workflows/deploy.yml) [![Deploy on Vercel and Publish Docker image](https://github.com/eunchurn/imqa-sdk-docs/actions/workflows/release.yml/badge.svg)](https://github.com/eunchurn/imqa-sdk-docs/actions/workflows/release.yml)
-
-[docs/getting-started/introduction.mdx](docs/getting-started/introduction.mdx)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Feunchurn%2Fimqa-sdk-docs)
