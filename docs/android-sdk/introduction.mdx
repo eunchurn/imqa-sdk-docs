@@ -1,6 +1,6 @@
 ---
 title: IMQA Android SDK 설치 가이드
-description: IMQA Android SDK v1.0.17 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.0.19 설치 및 설정 방법을 안내합니다.
 nav: 410
 pdf: true
 release: https://api.github.com/repos/idlerecord/the-next-android-sdk/releases
@@ -64,7 +64,7 @@ repositories {
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.0.17'
+  implementation 'io.imqa:imqa-android-sdk:1.0.19'
 }
 ```
 
@@ -72,7 +72,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.0.17")
+  implementation("io.imqa:imqa-android-sdk:1.0.19")
 }
 ```
 
@@ -87,7 +87,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.0.17-release.aar')
+  implementation files('libs/imqa-android-sdk-1.0.19-release.aar')
 }
 ```
 
@@ -95,7 +95,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.0.17-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.0.19-release.aar"))
 }
 ```
 
@@ -205,9 +205,11 @@ public class Application extends android.app.Application {
 - (option) `setSampleRate`: 샘플링 비율을 입력합니다. 샘플링 디폴트 값은 0.5(50%) 입니다.
   - 0.0~1.0 사이의 값을 입력합니다. (0.0 : 수집 안함, 1.0 : 100% 수집)
 
-### 3. HttpInterceptor 설정
+### 3. Https 설정
 
-XHR 데이터를 수집하기 위해 `io.imqa.sdk.network.interceptor.HttpInterceptor`를 설정해야 합니다.
+1. **Retrofit, OkHttp 설정**
+
+Retrofit, OkHttp 기반의 네트워크 요청의 XHR 데이터를 수집하기 위해 네트워크 요청 시 다음과 같이 HttpInterceptor를 추가해 주세요.
 
 **Kotlin**
 
@@ -235,6 +237,29 @@ Retrofit retrofit = new Retrofit.Builder()
     .client(client)
     .addConverterFactory(GsonConverterFactory.create())
     .build();
+```
+
+2. **HttpsURLConnection 설정**
+
+HttpsURLConnection 기반의 네트워크 요청의 XHR 데이터를 수집하기 위해 네트워크 요청 시 다음과 같이 추가해 주세요.
+
+**Kotlin**
+
+```kotlin
+// HttpsURLConnection 객체를 ConnectionWrapper 로 감쌈
+var url : URL = URL("https://some.host.com")
+var conn : HttpsURLConnection = 
+    ConnectionWrapper.wrap(
+        url.openConnection() as HttpsURLConnection
+    ) as HttpsURLConnection
+```
+
+**Java**
+
+```java
+// HttpsURLConnection 객체를 ConnectionWrapper 로 감쌈
+URL url = new URL("https://some.host.com");
+HttpsURLConnection conn = (HttpsURLConnection) ConnectionWrapper.wrap((HttpsURLConnection) url.openConnection());
 ```
 
 ## 검증
