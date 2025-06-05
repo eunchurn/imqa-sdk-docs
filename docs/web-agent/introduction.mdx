@@ -352,6 +352,7 @@ IMQA Web Agent는 레거시 브라우저를 제한적으로 지원합니다. [�
 | `socketio`               | `boolean`                                       | optional      | Socket.IO 계측을 활성화합니다. 기본값은 `false`입니다.                                                                                                                 |
 | `captureMetric`              | `boolean`                                       | optional      | 메트릭 수집을 활성화합니다. 기본값은 `false`입니다. (beta)                                                                                                                    |
 | `disablePreflight`              | `boolean`                                       | optional      | preflight 요청 비활성화 여부 (기본값: false) preflight는 CORS 요청을 위한 OPTIONS 요청입니다.                                                                                                              |
+| `exporterProtocol`              | `json` | `proto`                                        | optional      | exporter 프로토콜을 설정합니다. 기본값은 `json`입니다.                                                                                                      |
 
 ### 옵션 상세 설명
 
@@ -563,6 +564,45 @@ Socket.IO 계측을 활성화합니다. 기본값은 `false`이며, 활성화 �
 </Gha>
 
 preflight 요청 비활성화 여부를 설정합니다. 기본값은 `false`이며, 활성화 시 preflight 요청이 비활성화됩니다. preflight는 CORS 요청을 위한 OPTIONS 요청입니다. 보안상 필요한 경우 사용합니다.
+
+#### `exporterProtocol`
+> (`json` | `proto`, 선택)
+
+
+exporter 프로토콜을 설정합니다. 기본값은 `json`이며, `proto`로 설정할 경우 `protobuf` 프로토콜을 사용하여 데이터를 전송합니다. 이 설정은 IMQA의 수집기와의 호환성에 영향을 미칠 수 있습니다. 안정적인 데이터 전송을 위해 `json` 프로토콜을 사용하는 것이 일반적입니다.
+
+- 기본값은 `json`이며 `json` 프로토콜은 JSON 콘텐트 형식(`application/json`)으로 데이터를 전송하며, [Beacon API](https://developer.mozilla.org/en-US/docs/Web/API/Beacon_API)를 통해 전송합니다.
+- `proto`로 설정할 경우 `protobuf` 프로토콜을 사용하여 프로토 형식(`application/x-protobuf`)로 데이터를 전송하며, [Fetch API](https://developer.mozilla.org/ko/docs/Web/API/Fetch_API)통해 전송합니다.
+
+<Gha keyword="NOTE" title="Beacon API vs Fetch API">
+<h4>Beacon API</h4>
+<div className="my-4">
+  <p className="font-bold mb-4">Beacon API는 브라우저가 페이지 언로드 시에도 데이터를 전송할 수 있도록 설계된 API입니다. 이 API는 페이지가 닫히거나 이동할 때도 데이터를 안정적으로 전송할 수 있는 기능을 제공합니다.</p>
+<ul>
+  <li>1. 페이지 언로드 시에도 데이터 전송 보장: 사용자가 페이지를 닫거나 이동할 때, 일반적인 fetch/XMLHttpRequest는 네트워크 요청이 중단될 수 있습니다. `sendBeacon`은 브라우저가 백그라운드에서 전송을 끝까지 시도합니다.</li>
+  <li>2. 비동기적이고, 빠름: 로그, 분석, 트레이스, 세션 종료 이벤트 등 "꼭 서버로 보내야 하는 데이터"에 적합합니다.</li>
+  <li>3. CORS 지원: Beacon API는 CORS(Cross-Origin Resource Sharing)를 지원하여, 다른 도메인 간의 요청을 처리할 수 있습니다.</li>
+  <li>4. 데이터 크기 제한: Beacon API는 전송할 수 있는 데이터의 크기에 제한이 있습니다. 일반적으로 64KB 이하의 데이터를 전송할 수 있습니다.</li>
+  <li>5. 브라우저 호환성: 대부분의 최신 브라우저에서 지원되지만, 일부 오래된 브라우저에서는 지원하지 않을 수 있습니다.</li>
+  <li>6. 단방향 통신: Beacon API는 서버로 데이터를 전송하는 단방향 통신 방식입니다. 서버에서 응답을 받을 수 없습니다.</li>
+  <li>7. 형식제한: Beacon API는 JSON, Text 형식의 데이터를 전송합니다. 따라서, 다른 `Content-Type`은 지원하지 않습니다.</li>
+</ul>
+</div>
+<h4>Fetch API</h4>
+<div className='my-4'>
+  <p className='font-bold mb-4'>Fetch API는 네트워크 요청을 수행하기 위한 현대적인 API로, XMLHttpRequest의 대체로 사용됩니다. Fetch API는 Promise 기반으로 작동하며, 더 많은 기능과 유연성을 제공합니다.</p>
+<ul>
+  <li>1. 더 많은 기능: Fetch API는 HTTP 요청에 대한 더 많은 제어를 제공합니다. 예를 들어, 헤더 설정, 요청 메소드 변경, 응답 처리 등 다양한 기능을 지원합니다.</li>
+  <li>2. Promise 기반: Fetch API는 Promise를 반환하므로, 비동기 처리를 더 쉽게 할 수 있습니다.</li>
+  <li>3. CORS 지원: Fetch API는 CORS(Cross-Origin Resource Sharing)를 지원하여, 다른 도메인 간의 요청을 처리할 수 있습니다.</li>
+  <li>4. 데이터 크기 제한 없음: Fetch API는 전송할 수 있는 데이터의 크기에 제한이 없습니다. 따라서, 대용량 데이터를 전송할 때 유용합니다.</li>
+  <li>5. 브라우저 호환성: Fetch API는 대부분의 최신 브라우저에서 지원되지만, 일부 오래된 브라우저에서는 지원하지 않을 수 있습니다.</li>
+  <li>6. 양방향 통신: Fetch API는 서버로 데이터를 전송하고, 서버에서 응답을 받을 수 있는 양방향 통신 방식입니다.</li>
+  <li>7. 형식제한 없음: Fetch API는 JSON, Text, Blob 등 다양한 형식의 데이터를 전송할 수 있습니다. 따라서, `Content-Type`에 대한 제한이 없습니다.</li>
+</ul>
+</div>
+</Gha>
+
 
 #### `instrumentations`
 
