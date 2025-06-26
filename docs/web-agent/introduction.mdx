@@ -42,7 +42,7 @@ IMQA Web Agent는 Opentelemetry Native 기반으로 동작합니다. 이 문서�
 
 IMQA에서 제공하는 최신의 기능을 사용하려면 아래 코드를 사용하세요. 이 코드는 항상 최신 버전을 사용합니다.
 
-<Gha keyword="TIP" title="서비스 키 발급">
+<Gha keyword="TIP" title="패키지 이름과 서비스 키 발급">
 IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 새로운 서비스를 등록하고 발급된 `서비스 키`를 사용하여 설치하세요.
 </Gha>
 
@@ -58,6 +58,17 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
   });
 </script>
 ```
+
+<Gha keyword="CAUTION" title="패키지 이름 설정">
+`serviceName`은 **서비스 등록 시 입력한 패키지명과 동일**해야 하며 패키지 이름에는 **`a-z`**, **`A-Z`**, **`0-9`**, **`-`**, **`_`**, `.`만 입력할 수 있습니다.
+</Gha>
+
+
+- `collectorUrl` IMQA Collector 주소 [상세 보기](#collectorurl)
+- `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
+- `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
+- `serviceKey` 서비스 키 [상세 보기](#servicekey)
+- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
 
 #### 특정 버전
 
@@ -139,9 +150,13 @@ IMQA.init({
 </script>
 ```
 
+<Gha keyword="CAUTION" title="패키지 이름 설정">
+`serviceName`은 **서비스 등록 시 입력한 패키지명과 동일**해야 하며 패키지 이름에는 **`a-z`**, **`A-Z`**, **`0-9`**, **`-`**, **`_`**, `.`만 입력할 수 있습니다.
+</Gha>
+
 4. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
 - `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](#collectorurl)
-- `serviceName` 서비스 이름. [상세 보기](#servicename)
+- `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
 - `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
 - `serviceKey` 서비스 키 [상세 보기](#servicekey)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
@@ -214,9 +229,13 @@ const app = new Vue({
 }).$mount("#app");
 ```
 
+<Gha keyword="CAUTION" title="패키지 이름 설정">
+`serviceName`은 **서비스 등록 시 입력한 패키지명과 동일**해야 하며 패키지 이름에는 **`a-z`**, **`A-Z`**, **`0-9`**, **`-`**, **`_`**, `.`만 입력할 수 있습니다.
+</Gha>
+
 3. `collectorUrl` **, `serviceName` , `serviceVersion` , `serviceKey` 값은 필수값입니다.**
 - `collectorUrl` 주소는 내부망으로 접근할 경우 그리고 외부망에서 접근할 경우에 맞추어 URL을 설정해야 합니다. IP주소로 적용할 경우 `http://xxx.xxx.xxx.xxx:4318` 형태로 적용합니다. [상세 보기](#collectorurl)
-- `serviceName` 서비스 이름. [상세 보기](#servicename)
+- `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
 - `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
 - `serviceKey` 서비스 키 [상세 보기](#servicekey)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
@@ -326,7 +345,7 @@ IMQA Web Agent는 레거시 브라우저를 제한적으로 지원합니다. [�
 |-----------------------------|-------------------------------------------------|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `collectorUrl`              | `string`                                        | optional      | 콜렉터 주소를 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다.                                                                                                |
 | `authorizationToken`        | `string`                                        | optional      | 인증 토큰을 설정합니다.                                                                                                                                               |
-| `serviceName`               | `string`                                        | optional      | 서비스 이름을 지정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                      |
+| `serviceName`               | `string`                                        | optional      | 서비스 이름을 지정합니다. (**서비스 등록할 때의 패키지명**) 텔레메트리 데이터 저장에 필수적입니다.                                                                                                      |
 | `serviceKey`                | `string`                                        | optional      | 서비스 키를 설정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                        |
 | `serviceVersion`            | `string`                                        | optional      | 서비스 버전을 지정합니다. 텔레메트리 데이터 저장에 필수적이며, 빈 문자열이나 비문자열일 경우 경고가 발생합니다.                                                        |
 | `deploymentEnvironment`     | `string`                                        | optional      | 배포 환경을 설정합니다. `setGlobalAttributes()`를 통해 지속되는 `environment` 속성의 값을 설정할 수 있습니다.                                                      |
@@ -380,7 +399,7 @@ IMQA Web Agent는 레거시 브라우저를 제한적으로 지원합니다. [�
 
 > (`string`, 선택)
 
-IMQA에서 관리하는 서비스의 이름을 지정합니다. 이 값은 서비스를 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
+IMQA에서 관리하는 서비스의 이름을 지정합니다. 서비스 등록할 때의 패키지명이며, 이 값은 서비스를 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다. `serviceName`은 **서비스 등록 시 입력한 패키지명과 동일**해야 하며 패키지 이름에는 **`a-z`**, **`A-Z`**, **`0-9`**, **`-`**, **`_`**, `.`만 입력할 수 있습니다.
 
 <Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
   <ul>
