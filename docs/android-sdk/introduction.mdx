@@ -259,7 +259,8 @@ var conn : HttpsURLConnection =
 ```java
 // HttpsURLConnection 객체를 ConnectionWrapper 로 감쌈
 URL url = new URL("https://some.host.com");
-HttpsURLConnection conn = (HttpsURLConnection) ConnectionWrapper.wrap((HttpsURLConnection) url.openConnection());
+HttpsURLConnection conn = (HttpsURLConnection) 
+    ConnectionWrapper.wrap((HttpsURLConnection) url.openConnection());
 ```
 
 ## 검증
