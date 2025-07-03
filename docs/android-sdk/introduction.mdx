@@ -1,6 +1,6 @@
 ---
 title: IMQA Android SDK 설치 가이드
-description: IMQA Android SDK v1.0.22 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.0.23 설치 및 설정 방법을 안내합니다.
 nav: 410
 pdf: true
 release: https://api.github.com/repos/idlerecord/the-next-android-sdk/releases
@@ -40,7 +40,7 @@ Groovy 또는 Kotlin DSL을 사용하는 경우 각각 아래와 같이 Maven �
 allprojects {
   repositories {
     maven {
-      url 'https://s01.oss.sonatype.org/content/repositories/releases/'
+      url 'https://nexus.imqa.io/repository/imqa-maven-releases/'
     }
   }
 }
@@ -51,7 +51,7 @@ allprojects {
 ```kotlin
 repositories {
   maven {
-    url = uri("https://s01.oss.sonatype.org/content/repositories/releases/")
+    url = uri("https://nexus.imqa.io/repository/imqa-maven-releases/")
   }
 }
 ```
@@ -64,7 +64,7 @@ repositories {
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.0.22'
+  implementation 'io.imqa:imqa-android-sdk:1.0.23'
 }
 ```
 
@@ -72,7 +72,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.0.22")
+  implementation("io.imqa:imqa-android-sdk:1.0.23")
 }
 ```
 
@@ -87,7 +87,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.0.22-release.aar')
+  implementation files('libs/imqa-android-sdk-1.0.23-release.aar')
 }
 ```
 
@@ -95,7 +95,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.0.22-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.0.23-release.aar"))
 }
 ```
 
