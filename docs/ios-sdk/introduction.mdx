@@ -35,18 +35,26 @@ import IMQACore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    func application(_ application: UIApplication, 
-                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: 
+        [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         
         let endpoint = IMQA.Endpoints(collectorURL: "수집기 URL")
         let serviceKey = "서비스 키"
-        let option = IMQA.Options(serviceKey: serviceKey,
-                                  endpoints: endpoint ,
-                                  sampleRate: 1.0)
+        
+        let option = IMQA.Options(
+            serviceKey: serviceKey,
+            endpoints: endpoint,
+            sampleRate: 1.0
+        )
+        
         IMQA
             .setup(options: option, isDebug: true)
-        .start()
-
+            .start()
+        
         return true
     }
 }
@@ -131,7 +139,9 @@ let view = WKWebView(frame: .zero, configuration: config)
 ### 2. xib로 WKWebView를 initialize할 경우
 ```swift
 let request = URLRequest(url: URL(string: "https://example.com/")!)
-IMQA.setWebviewConfiguration(userContentController: wkWebView.configuration.userContentController)
+IMQA.setWebviewConfiguration(
+    userContentController: wkWebView.configuration.userContentController
+)
 wkWebView.load(request)
 ```
 
@@ -155,20 +165,28 @@ import Foundation
 ```c
 #import "AppDelegate.h"
 #import "IMQACore/IMQACore-Swift.h"
-@interface AppDelegate ()
 
+@interface AppDelegate ()
 @end
 
 @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
-    IMQAEndpoints *endpoints = [[IMQAEndpoints alloc] initWithCollectorURL:@"collector 주소"];
-    IMQAOptions *options = [[IMQAOptions alloc] initWithServiceKey:@"서비스키" endpoints:endpoints sampleRate:1.0];
+- (BOOL)application:(UIApplication *)application 
+    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    IMQAEndpoints *endpoints = [[IMQAEndpoints alloc] 
+        initWithCollectorURL:@"collector 주소"];
+    
+    IMQAOptions *options = [[IMQAOptions alloc] 
+        initWithServiceKey:@"서비스키" 
+        endpoints:endpoints 
+        sampleRate:1.0];
+    
     [[IMQA setupWithOptions:options isDebug:YES] start];
     
     return YES;
 }
+@end
 ```
 
 > 위 코드는 IMQA SDK를 Objective-C 프로젝트에 통합하고 초기화하는 기본 흐름을 보여줍니다.
