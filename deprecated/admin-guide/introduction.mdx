@@ -1,6 +1,6 @@
 ---
 title: IMQA 관리자 가이드
-description: IMQA 관리자 가이드 v1.0.3
+description: IMQA 관리자 가이드 v1.0.2
 nav: 210
 pdf: true
 cover: admin-guide
@@ -455,22 +455,17 @@ IMQA에서는 등록된 서비스 버전 중 더 이상 관리하지 않을 버�
 
 ## 4. 매핑 파일 관리
 
-IMQA 매핑 파일 관리를 통해 서비스~서비스 버전별 매핑 파일을 업로드하여 ProGuard, Symbolication 등이 적용된 서비스에서 클래스 명과 함수 명을 가독화할 수 있습니다. 
+IMQA 매핑 파일 관리를 통해 서비스~서비스 버전별 매핑 파일을 업로드하여 ProGuard, Symbolication 등이 적용된 서비스에서 클래스 명과 함수 명을 가독화할 수 있습니다. 매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다.
 
 <Gha keyword="NOTE" title="지원되는 난독화 종류 및 업로드 파일 크기 제한">
 <p>IMQA는 현재 서비스 유형별 아래의 역난독화를 지원하고 있습니다. 난독화 종류는 지속적으로 업데이트 예정입니다.</p>
 <ul>
-  <li>- **Android**: ProGuard, Allatori, Source Map(웹뷰)</li>
-  <li>- **iOS**: dSYM, Source Map(웹뷰)</li>
-  <li>- **Web**: Source Map</li>
+  <li>- **Android**: ProGuard</li>
+  <li>- **iOS**: dSYM</li>
+  <li>- **Web**: (현재 지원하지 않음. 업데이트 예정)</li>
 </ul>
 <p>매핑 파일 업로드 시, 200MB 이하의 매핑 파일만 업로드할 수 있습니다. 제한 용량 이상의 파일 업로드는 support@imqa.io 로 문의해 주세요.</p>
 </Gha>
-<Gha keyword="TIP" title="매핑 파일의 적용 시점">
-ProGuard, dSYM 등의 경우, 매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다.업로드 한 매핑 파일 적용에 다소 시간이 소요될 수 있으며, 스택 트레이스 조회 시점에 난독화 정보로 보여질 수 있습니다. 
-Source Map의 경우, 수집된 웹 에러 스택 트레이스 정보 조회 시 파일명이 일치하는 소스맵 파일을 즉시 적용합니다.
-</Gha>
-
 <Gha keyword="TIP" title="최신 앱 버전의 매핑 파일 관리">
 최신 앱 버전이 릴리즈 된 경우, 해당 버전의 역난독화를 위해 **신규 서비스 버전의 매핑 파일을 추가 등록**해 주세요.
 </Gha>
@@ -508,52 +503,21 @@ IMQA에서는 난독화 종류를 구분하여 매핑 파일을 관리할 수 �
 
 Android의 Build 과정에서 생성된 ProGuard 매핑 파일을 업로드할 수 있습니다. ‘mapping.txt’, ‘map.txt’ 등 `.txt` 파일을 업로드해 주세요.
 
-![gm_mapping-s-proguard.png](./img/gm_mapping-s-03.png)
+![gm_mapping-s-03.png](./img/gm_mapping-s-03.png)
 <Gha keyword="WARNING" title="매핑 파일을 통한 난독화된 정보 가독화(Decoding)">
-매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다. 업로드 한 매핑 파일 적용에 다소 시간이 소요될 수 있으며, 스택 트레이스 조회 시점에 난독화 정보로 보여질 수 있습니다. 
-</Gha>
-
-#### | Android Allatori
-
-Android의 Build 과정에서 생성된 Allatori 매핑 파일을 업로드할 수 있습니다. ‘mapping.xml’ 등 `.xml` 파일을 업로드해 주세요.
-
-![gm_mapping-s-allatori.png](./img/gm_mapping-s-08.png)
-<Gha keyword="WARNING" title="매핑 파일을 통한 난독화된 정보 가독화(Decoding)">
-매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다. 업로드 한 매핑 파일 적용에 다소 시간이 소요될 수 있으며, 스택 트레이스 조회 시점에 난독화 정보로 보여질 수 있습니다. 
+매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다. 업로드 된 매핑 파일 적용에 다소 시간이 소요될 수 있습니다.
 </Gha>
 
 #### | iOS dSYM
 
-iOS의 Build 과정에서 생성된 dSYM 파일을 업로드할 수 있습니다. ‘dSYM’ 패키지 안의 `바이너리 파일` 에 `.map` 확장자를 붙여 업로드해 주세요.
-![gm_mapping-s-dsym.png](./img/gm_mapping-s-04.png)
+iOS의 Build 과정에서 생성된 dSYM 파일을 업로드할 수 있습니다. ‘dSYM’ 패키지 안의 `바이너리 파일`을 업로드해 주세요.
+![gm_mapping-s-04.png](./img/gm_mapping-s-04.png)
 ![gm_mapping-s-05.png](./img/gm_mapping-s-05.png)
-- `.dSYM` 파일 [패키지 내용 보기] → Contents > Resources > DWARF > `(바이너리 파일)` > (사본생성) > `(바이너리 파일)` 이름 수정 > `(바이너리 파일).map` 업로드
-
-<Gha keyword="NOTE" title="(바이너리 파일).map">
-IMQA에서는 정보 보안을 위해 허용되는 확장자 외 파일 업로드를 제한하고 있습니다. dSYM 바이너리 파일의 경우, `(바이너리 파일).map` 로 확장자를 확인하고 있습니다.
-</Gha>
+- `.dSYM` 파일 [패키지 내용 보기] → Contents > Resources > DWARF > `(바이너리 파일)
 
 <Gha keyword="WARNING" title="매핑 파일을 통한 난독화된 정보 가독화(Decoding)">
-매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다. 업로드 한 매핑 파일 적용에 다소 시간이 소요될 수 있으며, 스택 트레이스 조회 시점에 난독화 정보로 보여질 수 있습니다. 
+매핑 파일 업로드 이후부터 수집되는 난독화 정보를 가독화 하여 저장합니다. 업로드 된 매핑 파일 적용에 다소 시간이 소요될 수 있습니다.
 </Gha>
-
-#### | 공통 Source Map
-
-Android, iOS 하이브리드 앱(웹뷰) 또는 Web 에서 수집된 웹 에러 스택 트레이스에서, 원본 소스 코드 위치를 파악할 수 있습니다.   
-웹 Bundler 로 생성한 js.map 파일을 단일 업로드 또는 압축한 zip 파일로 업로드할 수 있습니다. ‘index.js.map’, ‘imqa-sourcemap.zip’ 과 같이 `.map` 또는 `.zip`  파일을 업로드해 주세요.
-
-![gm_mapping-s-sourcemap.png](./img/gm_mapping-s-06.png)
-
-- `*.js.map`  업로드
--  `*.zip`  업로드
-
-![gm_mapping-s-07.png](./img/gm_mapping-s-07.png)
-
-
-<Gha keyword="WARNING" title="매핑 파일을 통한 난독화된 정보 가독화(Decoding)">
-Source Map의 경우, 수집된 웹 에러 스택 트레이스 정보 조회 시 파일명이 일치하는 소스맵 파일을 즉시 적용합니다. 
-</Gha>
-
 
 ### 매핑 파일 목록
 
