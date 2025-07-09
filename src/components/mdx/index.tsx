@@ -48,12 +48,12 @@ export const h6 = ({ id, ...props }: Omit<ComponentProps<typeof Heading>, 'Tag'>
 )
 
 export const ul = ({ className, ...props }: ComponentProps<'ul'>) => (
-  <div className={cn('my-4 mb-8', className)}>
+  <div className={cn(className)}>
     <ul className="ms-6 list-disc" {...props} />
   </div>
 )
 export const ol = ({ className, ...props }: ComponentProps<'ol'>) => (
-  <div className={cn('my-4 mb-8', className)}>
+  <div className={cn(className)}>
     <ol className="ms-6 list-decimal" {...props} />
   </div>
 )
