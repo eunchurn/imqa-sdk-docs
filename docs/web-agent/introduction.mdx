@@ -371,7 +371,8 @@ IMQA Web Agent는 레거시 브라우저를 제한적으로 지원합니다. [�
 | `socketio`               | `boolean`                                       | optional      | Socket.IO 계측을 활성화합니다. 기본값은 `false`입니다.                                                                                                                 |
 | `captureMetric`              | `boolean`                                       | optional      | 메트릭 수집을 활성화합니다. 기본값은 `false`입니다. (beta)                                                                                                                    |
 | `disablePreflight`              | `boolean`                                       | optional      | preflight 요청 비활성화 여부 (기본값: false) preflight는 CORS 요청을 위한 OPTIONS 요청입니다.                                                                                                              |
-| `exporterProtocol`              | `json` | `proto`                                        | optional      | exporter 프로토콜을 설정합니다. 기본값은 `json`입니다.                                                                                                      |
+| `exporterProtocol`              | `json` or `proto`                                        | optional      | exporter 프로토콜을 설정합니다. 기본값은 `json`입니다.                                                                                                      |
+| `screenNameOption` | `ScreenNameOption` | optional      | 화면 이름 옵션을 설정합니다. 기본값은 `{ screenNameType: "full", urlWithSearchParams: true }`입니다.                                                                                                      |
 
 ### 옵션 상세 설명
 
@@ -623,12 +624,46 @@ exporter 프로토콜을 설정합니다. 기본값은 `json`이며, `proto`로 
 </div>
 </Gha>
 
+#### `screenNameOption`
+
+> (`ScreenNameOption`, 선택)
+
+화면이름 수집 옵션 입니다.
+
+```typescript
+type ScreenNameType = 'routeOnly' | 'titleOnly' | 'full';
+
+type ScreenNameOption = {
+  screenNameType?: ScreenNameType; // default: 'full'
+  urlWithSearchParams?: boolean; // default: true
+};
+```
+- `screenNameType`은 `routeOnly`, `titleOnly`, `full` 중 하나를 선택할 수 있습니다.
+  - `routeOnly`: URL 경로만 포함
+  - `titleOnly`: 페이지 제목만 포함
+  - `full`: 페이지 제목과 URL 경로 모두 포함. 기본값은 `full`입니다.
+- `urlWithSearchParams`는 `true`일 경우 URL에 쿼리 파라미터를 포함합니다. 기본값은 `true`입니다. Query 파라미터를 포함하지 않으려면 `false`로 설정합니다.
+
+예시: 화면이름에 URL 경로만 포함하고 쿼리 파라미터는 제외하려면 아래와 같이 설정합니다.
+
+```typescript
+IMQA.init({
+  collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+  serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
+  serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+  screenNameOption: {
+    screenNameType: 'routeOnly', // URL 경로만 포함
+    urlWithSearchParams: false // 쿼리 파라미터 제외
+  }
+});
+```
 
 #### `instrumentations`
 
 > (`Instrumentations`, 선택)
 
-사용자 지정 Instrumentations 설정을 지정합니다. 기본값은 빈 객체 `{}`이며, 필요에 따라 특정 트래픽 또는 기능만을 추적하도록 설정할 수 있습니다.
+사용자 지정 Instrumentations 설정을 지정합니다. 기본값은 빈 객체 `{}`이며, 필요에 따라 특정 트래픽 또는 특정 계측을 중단하거나 사용하도록 설정할 수 있습니다.
 
 `IMQAOtelWebOptionsInstrumentations` 인터페이스는 다양한 계측 모듈의 활성화 여부 및 설정을 정의합니다. 각 속성은 특정 계측 기능을 활성화하거나 비활성화할 수 있으며, 추가적인 설정을 제공할 수 있습니다.
 
