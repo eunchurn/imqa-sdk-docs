@@ -8,7 +8,7 @@ nav: 1021
 
 ## 개요
 
-WebSocket 스키마는 IMQA 모니터링 시스템에서 WebSocket 연결과 메시지를 캡처하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 실시간 통신을 추적하도록 설계되었습니다.
+WebSocket 스키마는 IMQA 모니터링 시스템에서 WebSocket 연결과 실시간 메시지 통신을 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 WebSocket 연결 상태, 메시지 전송, 연결 오류 등을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
 
@@ -45,6 +45,11 @@ WebSocket 스키마는 IMQA 모니터링 시스템에서 WebSocket 연결과 메
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
+### 인스트루멘테이션 범위
+
+WebSocket Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-websocket`: WebSocket 연결과 메시지 통신 캡처
+
 ### WebSocket 연결 스팬
 
 WebSocket 연결 스팬은 WebSocket 연결과 메시지를 추적합니다:
@@ -52,12 +57,14 @@ WebSocket 연결 스팬은 WebSocket 연결과 메시지를 추적합니다:
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
 - `name`: 이벤트의 이름 (예: "connect", "message", "close")
-- `kind`: 스팬의 타입 (1 = INTERNAL)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK)
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 WebSocket 이벤트 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 WebSocket 이벤트 종료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0)
 
 ### WebSocket 스팬 속성
+
+각 WebSocket 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -73,8 +80,8 @@ WebSocket 연결 스팬은 WebSocket 연결과 메시지를 추적합니다:
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 (WebSocket) |
-| `span.type` | `string` | 스팬 타입 (WebSocket) |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "websocket") |
 
 ## 사용 방법
 

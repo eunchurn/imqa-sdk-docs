@@ -8,7 +8,7 @@ nav: 1018
 
 ## 개요
 
-문서 로드 후 스키마는 IMQA 모니터링 시스템에서 초기 문서 로드 후 웹 페이지 리소스 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 메인 문서가 로드된 후 발생하는 리소스 가져오기를 추적하도록 설계되어 있으며, 웹 애플리케이션의 동적 리소스 로딩 성능에 대한 통찰력을 제공합니다.
+문서 로드 후 스키마는 IMQA 모니터링 시스템에서 초기 문서 로드가 완료된 후 웹 페이지에서 발생하는 추가 리소스 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 메인 문서가 로드된 후 동적으로 발생하는 리소스 가져오기, AJAX 요청, 지연 로딩 등을 추적하도록 설계되어 있으며, 웹 애플리케이션의 사후 로딩 성능에 대한 통찰력을 제공합니다.
 
 ## 스키마 구조
 
@@ -63,23 +63,23 @@ nav: 1018
 - `kind`: 스팬의 타입 (INTERNAL = 1)
 - `startTimeUnixNano`: 에포크 이후의 리소스 가져오기 시작 시간 (나노초)
 - `endTimeUnixNano`: 에포크 이후의 리소스 가져오기 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `status`: 결과 상태 (OK = 0, ERROR = 1, UNSET = 2)
 
-### 스팬 속성
+### 문서 로드 후 스팬 속성
 
-각 문서 로드 후 스팬은 다음과 같은 공통 속성을 포함합니다:
+각 문서 로드 후 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
 | `location.href` | `string` | 현재 페이지 URL |
-| `environment` | `string` | 환경 컨텍스트 (예: "`development`", "`production`") |
+| `environment` | `string` | 환경 컨텍스트 (예: "development", "production") |
 | `deployment.environment` | `string` | 배포 환경 |
 | `screen.name` | `string` | 현재 화면이나 페이지의 이름 |
-| `screen.type` | `string` | 화면 타입 (예: "`page`") |
+| `screen.type` | `string` | 화면 타입 (예: "page") |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 현재 페이지의 전체 URL |
 | `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type` | `string` | 스팬 타입 (예: "`post-docs`") |
+| `span.type` | `string` | 스팬 타입 (예: "post-docs") |
 | `http.request.method` | `string` | 요청에 사용된 HTTP 메서드 (`GET`, `POST`) |
 | `http.response_content_length` | `integer` | 응답 컨텐츠의 크기 (바이트) |
 | `http.response_content_length_uncompressed` | `integer` | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
@@ -88,7 +88,7 @@ nav: 1018
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `event_type` | `string` | 사용자 상호작용 이벤트의 타입 (예: "`click`") |
+| `event_type` | `string` | 사용자 상호작용 이벤트의 타입 (예: "click") |
 | `target_element` | `string` | 상호작용된 HTML 요소 타입 |
 | `target_xpath` | `string` | 상호작용된 요소의 XPath |
 | `http.url` | `string` | 상호작용이 발생한 페이지의 URL |
@@ -113,11 +113,31 @@ nav: 1018
 
 ## 사용 방법
 
-이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 초기 문서 로드 후 로드된 리소스의 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 다음과 같은 메트릭을 모니터링하여 로드 후 리소스 성능을 추적하는 데 도움이 됩니다:
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 문서 로드 후 리소스 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 다음과 같은 메트릭을 모니터링하여 로드 후 리소스 성능을 추적하는 데 도움이 됩니다:
 
 - 초기 페이지 로드 후 가져온 리소스
 - 동적으로 로드된 리소스의 로딩 시간
 - 리소스 크기
+
+### 계측 설정
+
+> (`boolean` 또는 `InstrumentationConfig`, 선택)
+
+문서 로드 후 리소스 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 초기 문서 로드 완료 후 발생하는 리소스 로딩 이벤트가 자동으로 계측됩니다.
+
+```typescript
+interface InstrumentationConfig {
+  enabled?: boolean;
+}
+```
+
+## 예시
+
+유효한 문서 로드 후 Telemetry 객체는 다음과 같은 내용을 포함합니다:
+
+- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
+- 문서 로드 후 리소스 가져오기를 나타내는 하나 이상의 스팬
+- 각 스팬은 리소스 로딩 타이밍과 크기에 대한 상세 정보를 포함
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다. 문서 로드 후 이벤트는 초기 페이지 표시 후 웹 애플리케이션의 동작 방식에 대한 통찰력을 제공하여 동적 콘텐츠 로딩과 AJAX 요청의 성능 문제를 식별하는 데 도움이 됩니다.
 

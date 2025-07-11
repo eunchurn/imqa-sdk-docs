@@ -9,11 +9,11 @@ nav: 1015
 
 ## 개요
 
-브라우저 LongTask 스키마는 브라우저에서 실행되는 LongTask를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 성능 문제를 추적하도록 설계되었습니다.
+브라우저 Long Task 스키마는 IMQA 모니터링 시스템에서 브라우저의 메인 스레드를 50ms 이상 차단하는 긴 작업을 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 성능 병목 현상과 사용자 경험 저하를 야기할 수 있는 장기 실행 작업을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON 스키마 사양을 따릅니다. 브라우저 LongTask Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 브라우저 Long Task Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
@@ -46,21 +46,26 @@ nav: 1015
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
-### 스팬
+### 인스트루멘테이션 범위
 
-각 스팬은 브라우저에서 실행되는 단일 LongTask를 나타내며, 다음과 같은 내용을 포함합니다:
+브라우저 Long Task Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-browser-longtask`: 브라우저에서 발생하는 긴 작업 캡처
+
+### Long Task 스팬
+
+각 스팬은 브라우저에서 실행되는 단일 Long Task를 나타내며, 다음과 같은 내용을 포함합니다:
 
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
-- `name`: 작업의 이름 (일반적으로 "`longtask`")
-- `kind`: 스팬의 타입 (1 = INTERNAL)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `name`: 작업의 이름 (일반적으로 "longtask")
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 Long Task 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 Long Task 종료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0, ERROR = 1, UNSET = 2)
 
-### 스팬 속성
+### Long Task 스팬 속성
 
-각 스팬은 다음과 같은 속성을 포함합니다:
+각 Long Task 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -71,48 +76,45 @@ nav: 1015
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 식별자 ("`browser-longtask`") |
-| `span.type` | `string` | 스팬 타입 ("longtask") |
-| `longtask.name` | `string` | LongTask의 소스 (예: "`self`") |
-| `longtask.entry_type` | `string` | 엔트리 타입 (일반적으로 "`longtask`") |
-| `longtask.duration` | `integer` | LongTask의 지속 시간 (밀리초) |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "longtask") |
+| `longtask.name` | `string` | Long Task의 소스 (예: "self") |
+| `longtask.entry_type` | `string` | 엔트리 타입 (일반적으로 "longtask") |
+| `longtask.duration` | `integer` | Long Task의 지속 시간 (밀리초) |
 | `longtask.attribution.name` | `string` | 속성 소스의 이름 |
 | `longtask.attribution.entry_type` | `string` | 속성 엔트리의 타입 |
 | `longtask.attribution.start_time` | `integer` | 속성 시작 시간 |
 | `longtask.attribution.duration` | `integer` | 속성 지속 시간 |
-| `longtask.attribution.container_type` | `string` | 컨테이너 타입 (예: "`window`") |
+| `longtask.attribution.container_type` | `string` | 컨테이너 타입 (예: "window") |
 | `longtask.attribution.container_src` | `string` | 컨테이너의 소스 |
 | `longtask.attribution.container_id` | `string` | 컨테이너의 ID |
 | `longtask.attribution.container_name` | `string` | 컨테이너의 이름 |
 
 ## 사용 방법
 
-이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 LongTask Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 Long Task Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
 
 ### 계측 설정
 
 > (`boolean` 또는 `InstrumentationConfig`, 선택)
 
-브라우저 LongTask 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 긴 시간 동안 실행되는 작업이 자동으로 계측됩니다.
-
-자세한 계측 정보는 [@imqa/instrumentation-browser-longtask](../instrumentations/instrumentation-browser-longtask.mdx) 참조
+브라우저 Long Task 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 50ms 이상 실행되는 긴 작업이 자동으로 계측됩니다.
 
 ```typescript
-export interface InstrumentationConfig {
-    enabled?: boolean;
+interface InstrumentationConfig {
+  enabled?: boolean;
 }
 ```
-
 - `enabled`: 계측을 활성화할지 여부를 설정합니다. 기본값은 `true`입니다.
 
 ## 예시
 
-유효한 브라우저 LongTask Telemetry 객체는 다음과 같은 내용을 포함합니다:
+유효한 브라우저 Long Task Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
 - 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- LongTask를 나타내는 하나 이상의 스팬
+- Long Task를 나타내는 하나 이상의 스팬
 - 작업 지속 시간과 속성에 대한 상세 정보를 포함하는 각 스팬
 
-LongTask는 50ms 이상 실행되는 작업으로, 사용자 경험 저하를 초래할 수 있습니다. 이러한 작업을 모니터링하면 웹 애플리케이션의 성능 병목 현상을 식별하는 데 도움이 됩니다.
+Long Task는 50ms 이상 실행되는 작업으로, 사용자 경험 저하를 초래할 수 있습니다. 이러한 작업을 모니터링하면 웹 애플리케이션의 성능 병목 현상을 식별하는 데 도움이 됩니다.
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

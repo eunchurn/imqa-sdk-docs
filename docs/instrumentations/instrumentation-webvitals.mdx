@@ -8,11 +8,11 @@ nav: 1022
 
 ## 개요
 
-WebVitals 스키마는 IMQA 모니터링 시스템에서 웹 성능 메트릭을 캡처하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 핵심 성능 지표를 추적하도록 설계되었습니다.
+WebVitals 스키마는 IMQA 모니터링 시스템에서 웹 성능의 핵심 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 웹 애플리케이션의 Core Web Vitals(LCP, FID, CLS) 및 기타 성능 메트릭을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 웹 성능 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. WebVitals Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
@@ -45,6 +45,11 @@ WebVitals 스키마는 IMQA 모니터링 시스템에서 웹 성능 메트릭을
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
+### 인스트루멘테이션 범위
+
+WebVitals Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-webvitals`: Core Web Vitals 및 기타 성능 메트릭 캡처
+
 ### WebVitals 스팬
 
 WebVitals 스팬은 웹 성능 지표를 캡처합니다:
@@ -52,12 +57,14 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
 - `name`: 성능 지표의 이름 (예: "LCP", "FID", "CLS")
-- `kind`: 스팬의 타입 (1 = INTERNAL)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포치 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK)
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 메트릭 측정 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 메트릭 측정 완료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0)
 
 ### WebVitals 스팬 속성
+
+각 WebVitals 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -71,8 +78,8 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 (WebVitals) |
-| `span.type` | `string` | 스팬 타입 (WebVitals) |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "webvitals") |
 
 ## 사용 방법
 
@@ -83,8 +90,6 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 > (`boolean`, 선택)
 
 Web Vitals 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 Core Web Vitals 지표가 자동으로 계측됩니다.
-
-자세한 계측 정보는 [@imqa/instrumentation-webvitals](../instrumentations/instrumentation-webvitals.mdx) 참조
 
 ```typescript
 interface InstrumentationConfig {

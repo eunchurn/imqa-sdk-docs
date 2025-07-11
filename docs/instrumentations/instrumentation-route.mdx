@@ -8,7 +8,7 @@ nav: 1019
 
 ## 개요
 
-라우트 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 라우트 변경 이벤트를 캡처하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 클라이언트 측 동작을 추적하는 일련의 구성 요소의 일부입니다.
+라우트 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 클라이언트 측 라우트 변경 이벤트를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 싱글 페이지 애플리케이션(SPA)에서 발생하는 페이지 네비게이션과 라우트 전환을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
 
@@ -45,6 +45,11 @@ nav: 1019
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
+### 인스트루멘테이션 범위
+
+라우트 Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-route`: 클라이언트 측 라우트 변경 이벤트 캡처
+
 ## 라우트 범위
 
 라우트 범위는 싱글 페이지 애플리케이션의 다른 라우트 간의 네비게이션 이벤트를 캡처합니다.
@@ -52,7 +57,7 @@ nav: 1019
 ### 범위 정의
 ```json
 "scope": {
-  "name": "route",
+  "name": "@imqa/instrumentation-route",
   "version": "1"
 }
 ```
@@ -65,12 +70,14 @@ nav: 1019
 - `spanId`: 스팬의 고유 식별자
 - `parentSpanId`: 부모 스팬의 식별자 (적용될 경우)
 - `name`: "routeChange"
-- `kind`: 스팬의 타입 (1 = INTERNAL)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK)
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 라우트 변경 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 라우트 변경 완료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0)
 
 ### 라우트 변경 스팬 속성
+
+각 라우트 변경 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -81,8 +88,8 @@ nav: 1019
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 (사용자 상호작용) |
-| `span.type` | `string` | 스팬 타입 (사용자 상호작용) |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "route") |
 | `prev.href` | `string` | 라우트 변경 전 이전 페이지 URL |
 
 ## 스키마 간의 관계
@@ -96,6 +103,18 @@ nav: 1019
 ## 사용 방법
 
 이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 라우트 변경을 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+
+### 계측 설정
+
+> (`boolean` 또는 `InstrumentationConfig`, 선택)
+
+라우트 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클라이언트 측 라우트 변경 이벤트가 자동으로 계측됩니다.
+
+```typescript
+interface InstrumentationConfig {
+  enabled?: boolean;
+}
+```
 
 ## 예시
 

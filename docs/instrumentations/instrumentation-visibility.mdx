@@ -45,6 +45,11 @@ Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시�
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
+### 인스트루멘테이션 범위
+
+Page Visibility Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-page-visibility`: 페이지 가시성 상태 변화 캡처
+
 ### 스팬 (Spans)
 
 각 스팬은 페이지 가시성 상태 변화 이벤트를 나타냅니다. 포함되는 항목은 다음과 같습니다:
@@ -52,10 +57,10 @@ Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시�
 - `traceId`: 추적 식별자 (trace 고유 ID)
 - `spanId`: 스팬 고유 ID
 - `name`: 작업 이름 (일반적으로 `"visibility"`)
-- `kind`: 스팬 유형 (`INTERNAL` = 1)
+- `kind`: 스팬 유형 (INTERNAL = 1)
 - `startTimeUnixNano`: 이벤트 발생 시점 (나노초 단위 유닉스 시간)
 - `endTimeUnixNano`: 즉시 발생하는 이벤트의 경우 시작 시간과 동일
-- `status`: 상태 코드 (0 = `OK`, 1 = `ERROR`, 2 = `UNSET`)
+- `status`: 상태 코드 (OK = 0, ERROR = 1, UNSET = 2)
 
 ### 스팬 속성 (Span Attributes)
 
@@ -70,7 +75,8 @@ Page Visibility 스키마는 IMQA 모니터링 시스템에서 페이지 가시�
 | `screen.type`        | `string` | 화면/페이지 유형 (예: `"page"`)                    |
 | `session.id`         | `string` | 사용자 세션 ID                                      |
 | `url.full`           | `string` | 전체 URL                                           |
-| `span.type`          | `string` | 스팬 유형 (항상 `"visibility"`)                    |
+| `component`          | `string` | 인스트루멘테이션 컴포넌트 이름                      |
+| `span.type`          | `string` | 스팬 유형 (항상 "visibility")                    |
 | `hidden`             | `boolean` | 페이지가 숨김 상태인지 여부 (`true` = 숨김, `false` = 보임) |
 
 ## 사용 방법

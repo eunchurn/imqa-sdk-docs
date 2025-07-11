@@ -8,18 +8,11 @@ nav: 1014
 
 ## 개요
 
-Error 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 Error와 예외를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 클라이언트 측 Error를 추적하도록 설계되었습니다.
-
-## 관련 스키마
-
-Error 스키마는 다른 Telemetry 스키마들과 함께 작동합니다:
-
-- [라우트 스키마](./route-schema.md) - 라우트 변경 이벤트를 캡처
-- [사용자 상호작용 스키마](./user-interaction-schema.md) - 클릭과 같은 사용자 이벤트를 캡처
+브라우저 예외 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 JavaScript 오류와 예외를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 클라이언트 측에서 발생하는 런타임 오류, 처리되지 않은 예외, 콘솔 에러 등을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
 
-스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. Error Telemetry 데이터의 구조화된 형식을 정의합니다.
+스키마는 JSON 문서로, JSON Schema Draft 2020-12 사양을 따릅니다. 브라우저 예외 Telemetry 데이터의 구조화된 형식을 정의하며, 다음과 같은 주요 구성요소를 포함합니다:
 
 ### ResourceSpans
 
@@ -52,34 +45,39 @@ Error 스키마는 다른 Telemetry 스키마들과 함께 작동합니다:
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
-## Error 범위
+### 인스트루멘테이션 범위
 
-Error 범위는 애플리케이션 실행 중 발생하는 Error와 예외를 캡처합니다.
+브라우저 예외 Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-browser-exception`: 브라우저에서 발생하는 JavaScript 오류 및 예외 캡처
+
+## 브라우저 예외 범위
+
+브라우저 예외 범위는 애플리케이션 실행 중 발생하는 JavaScript 오류와 예외를 캡처합니다.
 
 ### 범위 정의
 ```json
 "scope": {
-  "name": "@imqa/errors",
+  "name": "@imqa/instrumentation-browser-exception",
   "version": "1"
 }
 ```
 
-### Error 스팬
+### 브라우저 예외 스팬
 
-Error 스팬은 사용자 상호작용 중 발생하는 Error를 캡처합니다:
+브라우저 예외 스팬은 웹 애플리케이션에서 발생하는 JavaScript 오류를 캡처합니다:
 
 - `traceId`: 트레이스의 고유 식별자
 - `spanId`: 스팬의 고유 식별자
 - `parentSpanId`: 부모 스팬의 식별자
-- `name`: Error 타입 (예: "`console.error`")
-- `kind`: 스팬의 타입 (1 = `INTERNAL`)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (2 = `ERROR`)
+- `name`: 예외 유형 (예: "console.error", "unhandledrejection", "error")
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 오류 발생 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 오류 처리 완료 시간 (나노초)
+- `status`: 결과 상태 (ERROR = 2)
 
-### Error 스팬 속성
+### 브라우저 예외 스팬 속성
 
-Error 스팬은 다음과 같은 속성을 포함합니다:
+각 브라우저 예외 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -90,41 +88,58 @@ Error 스팬은 다음과 같은 속성을 포함합니다:
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 컴포넌트 (Error) |
-| `span.type` | `string` | 스팬 타입 (Error) |
-| `error` | boolean | Error 플래그 |
-| `exception.type` | `string` | 예외 타입 |
-| `exception.message` | `string` | Error 메시지 |
-| `exception.stacktrace` | `string` | Error 스택 트레이스 |
-| `error.stack` | `string` | Error 스택 트레이스 |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
+| `span.type` | `string` | 스팬 타입 (예: "exception") |
+| `error` | `boolean` | 오류 플래그 (항상 `true`) |
+| `exception.type` | `string` | 예외 타입 (예: "ReferenceError", "TypeError") |
+| `exception.message` | `string` | 오류 메시지 |
+| `exception.stacktrace` | `string` | 오류 스택 트레이스 |
+| `error.stack` | `string` | 오류 스택 트레이스 (대체 형식) |
 
-### Error 이벤트
+#### 추가 예외 관련 속성
 
-Error 스팬은 다음과 같은 추가 정보를 포함할 수 있는 예외 이벤트를 포함할 수 있습니다:
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `error.source` | `string` | 오류 발생 소스 (예: "script", "event", "promise") |
+| `error.filename` | `string` | 오류가 발생한 파일명 |
+| `error.lineno` | `integer` | 오류가 발생한 라인 번호 |
+| `error.colno` | `integer` | 오류가 발생한 컬럼 번호 |
+
+### 이벤트
+
+브라우저 예외 스팬은 예외 발생 시점의 상세 정보를 나타내는 이벤트를 포함합니다:
+
+#### 예외 이벤트
 
 | 이벤트 속성 | 타입 | 설명 |
 |-----------------|------|-------------|
-| `exception.message` | `string` | Error 메시지 |
+| `exception.message` | `string` | 오류 메시지 |
 | `exception.parsed_stacktrace` | `string` | 파싱된 스택 트레이스의 JSON 표현 |
 | `exception.type` | `string` | 예외 타입 |
 
-## 다른 스키마와의 관계
+## 스키마 간의 관계
 
-Error는 종종 다른 Telemetry 데이터와 관련이 있습니다:
+브라우저 예외는 종종 다른 추적된 이벤트와 관련이 있습니다:
 
-1. Error는 클릭과 같은 **사용자 상호작용**에 의해 트리거될 수 있습니다
-2. Error는 싱글 페이지 애플리케이션의 **라우트 변경** 중 발생할 수 있습니다
-3. Error 스팬은 일반적으로 트리거된 사용자 상호작용이나 라우트 변경 스팬을 연결하는 부모SpanId를 포함합니다
+1. **사용자 상호작용** (클릭과 같은)이 예외를 트리거할 수 있습니다
+2. 사용자 상호작용이나 **라우트 변경** 중에 예외가 발생할 수 있습니다
+3. 예외 스팬은 일반적으로 트리거된 사용자 상호작용이나 라우트 변경을 연결하는 부모SpanId를 포함합니다
 
 ## 사용 방법
 
-이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 Error 추적을 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 브라우저 예외를 위한 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
 
 ### 계측 설정
 
-> (`boolean`, 선택)
+> (`boolean` 또는 `InstrumentationConfig`, 선택)
 
-브라우저에서 발생하는 오류 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 전역 오류 핸들러가 활성화되어 애플리케이션에서 발생하는 오류가 자동으로 계측됩니다.
+브라우저 예외 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 전역 오류 핸들러가 활성화되어 애플리케이션에서 발생하는 JavaScript 오류와 처리되지 않은 예외가 자동으로 계측됩니다.
+
+```typescript
+interface InstrumentationConfig {
+  enabled?: boolean;
+}
+```
 
 <Gha keyword="WARNING" title="오류 계측">
   이 기능은 브라우저에서 발생하는 오류를 계측합니다. 따라서, 서버 혹은 엣지 환경(SSR을 사용하는 경우)에서 발생하는 오류는 계측되지 않습니다. 서버 측에서 발생하는 오류를 계측하려면 별도의 서버측 에이전트를 사용해야 합니다. 이는 IMQA에서 제공하는 기능이 아닙니다.
@@ -132,11 +147,11 @@ Error는 종종 다른 Telemetry 데이터와 관련이 있습니다:
 
 ## 예시
 
-유효한 Error Telemetry 객체는 다음과 같은 내용을 포함합니다:
+유효한 브라우저 예외 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
 - 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- 발생한 예외를 상세히 설명하는 Error 스팬
-- 스택 트레이스 및 기타 진단 정보
+- 발생한 JavaScript 예외를 상세히 설명하는 브라우저 예외 스팬
+- 스택 트레이스, 파일명, 라인 번호 등의 진단 정보
 - 관련 사용자 상호작용 또는 라우트 변경 스팬을 연결하는 링크
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

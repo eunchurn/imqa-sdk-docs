@@ -45,7 +45,12 @@ Fetch API 스키마는 IMQA 모니터링 시스템에서 Fetch API 요청 데이
 | `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
 | `session.id` | 사용자 세션 식별자 |
 
-### 스팬
+### 인스트루멘테이션 범위
+
+Fetch API Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/instrumentation-fetch`: Fetch API를 통한 HTTP 요청 캡처
+
+### Fetch API 스팬
 
 각 스팬은 단일 Fetch API 요청/응답을 나타내며, 다음과 같은 내용을 포함합니다:
 
@@ -54,13 +59,13 @@ Fetch API 스키마는 IMQA 모니터링 시스템에서 Fetch API 요청 데이
 - `parentSpanId`: 부모 스팬의 식별자 (적용될 경우)
 - `name`: 작업의 이름
 - `kind`: 스팬의 타입 (CLIENT = 3)
-- `startTimeUnixNano`: 에포크 이후의 시작 시간 (나노초)
-- `endTimeUnixNano`: 에포크 이후의 종료 시간 (나노초)
-- `status`: 결과 상태 (0 = OK, 1 = ERROR, 2 = UNSET)
+- `startTimeUnixNano`: 에포크 이후의 Fetch 요청 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 Fetch 요청 완료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0, ERROR = 1, UNSET = 2)
 
-### 스팬 속성
+### Fetch API 스팬 속성
 
-각 스팬은 다음과 같은 속성을 포함합니다:
+각 Fetch API 스팬은 다음과 같은 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
@@ -73,7 +78,7 @@ Fetch API 스키마는 IMQA 모니터링 시스템에서 Fetch API 요청 데이
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://imqa.io/1.jpg?hmac=fk" ) |
-| `component` | `string` | 요청을 수행하는 컴포넌트 |
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
 | `span.type` | `string` | 스팬 타입 (예: "fetch") |
 | `http.response_content_length` | integer | 응답 본문의 크기 (바이트) |
 | `http.status_code` | `integer` | HTTP 상태 코드 |
@@ -84,7 +89,7 @@ Fetch API 스키마는 IMQA 모니터링 시스템에서 Fetch API 요청 데이
 
 ## 사용 방법
 
-이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
+이 스키마는 IMQA 모니터링 시스템으로 Telemetry 데이터를 처리하고 저장하기 전에 Fetch API Telemetry 데이터를 검증하는 데 사용됩니다. 이는 모든 필수 필드가 올바르게 포함되어 있는지 확인합니다.
 
 ### 계측 설정
 
