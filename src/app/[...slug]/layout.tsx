@@ -97,7 +97,8 @@ export default async function Layoutt({ params, children }: Props) {
                   rel="noopener noreferrer"
                   className={cn(
                     'mb-2 text-base hover:underline',
-                    'font-mono text-on-surface-variant/50',
+                    'font-mono',
+                    'text-on-surface-variant/20',
                   )}
                   href={doc.sourcecodeURL || '#no-sourcecode-url'}
                 >
@@ -111,7 +112,7 @@ export default async function Layoutt({ params, children }: Props) {
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn('mb-2 text-base hover:underline', 'text-on-surface-variant/50')}
+                  className={cn('mb-2 text-base hover:underline', 'text-on-surface-variant/20')}
                   href={currentPage.editURL || '#no-edit-url'}
                 >
                   수정하기
@@ -130,7 +131,7 @@ export default async function Layoutt({ params, children }: Props) {
                 <label
                   className={cn(
                     'mb-2 text-xs font-bold uppercase leading-4',
-                    'text-on-surface-variant/50',
+                    'text-on-surface-variant/20',
                   )}
                 >
                   이전
@@ -142,12 +143,7 @@ export default async function Layoutt({ params, children }: Props) {
             )}
             {!!nextPage && (
               <div className="ml-auto text-right">
-                <label
-                  className={cn(
-                    'mb-2 text-xs font-bold uppercase leading-4',
-                    'text-on-surface-variant/50',
-                  )}
-                >
+                <label className={cn('mb-2 text-xs font-bold uppercase leading-4', '250')}>
                   다음
                 </label>
                 <div className="text-xl">

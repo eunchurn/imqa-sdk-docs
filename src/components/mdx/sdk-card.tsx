@@ -1,6 +1,7 @@
 import React from 'react'
 // import { CuboidIcon } from 'lucide-react'
 import { BrowserIcon } from '@/components/ui/icons'
+import cn from '@/lib/cn'
 import Link from 'next/link'
 
 // import { useRouter } from 'next/navigation'
@@ -25,12 +26,12 @@ export function SDKCard({
   return (
     <Link
       href={link}
-      className="bg-card text-card-foreground group relative overflow-hidden rounded-lg border-2 shadow-sm transition-all duration-300 hover:border-primary"
+      className="text-card-foreground group bg-background-light relative overflow-hidden rounded-lg border-2 shadow-sm transition-all duration-300 hover:border-primary"
     >
       <div className="flex h-full flex-col p-6">
         <div className="mb-4 flex items-center gap-4">
-          <div className={`rounded-lg p-3 ${color} bg-opacity-10`}>
-            <Icon className={`h-8 w-8 ${color}`} />
+          <div className={cn(['rounded-lg p-3', 'bg-opacity-10', color])}>
+            <Icon className={cn('h-8 w-8', color)} />
           </div>
           <h2 className="text-foreground text-2xl font-semibold">{title}</h2>
         </div>
