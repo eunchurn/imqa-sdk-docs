@@ -91,42 +91,68 @@ const MDX_BASEURL = process.env.MDX_BASEURL
 // }
 
 async function getReleases(releaseUrl?: string): Promise<string | undefined> {
-  if (releaseUrl) {
-    try {
-      // const { data } = await axios.get<ReleaseList>(releaseUrl, {
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Accept: 'application/vnd.github+json',
-      //     'X-GitHub-Api-Version': '2022-11-28',
-      //     Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
-      //   },
-      // })
-      // console.log(data)
-      const response = await fetch(releaseUrl, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          Authorization: `Bearer ${process.env.IDLERECORD_API_RELEASE_TOKEN}`,
-        },
-      })
-      if (!response.ok) {
-        console.error(`HTTP error! status: ${response.status}`)
-        return
-      }
-      const data = (await response.json()) as ReleaseList
-      const source = data.reduce((acc, cur) => {
-        if (!cur) return acc
-        const { tag_name, name, body } = cur
-        const releaseName = name || tag_name
-        const releaseBody = body || ''
-        return `${acc}\n### ${releaseName}\n ${releaseBody}`
-      }, '')
-      return source
-    } catch (error) {
-      console.error('Error fetching release data:', error)
+  if (!releaseUrl) return undefined
+
+  try {
+    const token = process.env.IDLERECORD_API_RELEASE_TOKEN
+    if (!token) {
+      console.warn('IDLERECORD_API_RELEASE_TOKEN not found, skipping release fetch')
+      return undefined
     }
+
+    const response = await fetch(releaseUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        Authorization: `Bearer ${token}`,
+        'User-Agent': 'IMQA-SDK-Docs/1.0',
+      },
+      // Add timeout and caching for better performance
+      next: {
+        revalidate: 3600, // Cache for 1 hour
+        tags: ['github-releases'],
+      },
+    })
+
+    if (!response.ok) {
+      console.error(`GitHub API error! status: ${response.status}, url: ${releaseUrl}`)
+
+      // Handle rate limiting
+      if (response.status === 403) {
+        const rateLimitReset = response.headers.get('X-RateLimit-Reset')
+        console.error(`Rate limit exceeded. Reset at: ${rateLimitReset}`)
+      }
+
+      return undefined
+    }
+
+    const data = (await response.json()) as ReleaseList
+
+    if (!Array.isArray(data)) {
+      console.error('Invalid response format from GitHub API')
+      return undefined
+    }
+
+    const source = data.reduce((acc, cur) => {
+      if (!cur) return acc
+      const { tag_name, name, body } = cur
+      const releaseName = name || tag_name
+      const releaseBody = body || ''
+      return `${acc}\n### ${releaseName}\n ${releaseBody}`
+    }, '')
+
+    return source
+  } catch (error) {
+    console.error('Error fetching release data:', error)
+
+    // In development, you might want to return mock data
+    if (process.env.NODE_ENV === 'development') {
+      return '### Mock Release v1.0.0\nMock release notes for development'
+    }
+
+    return undefined
   }
 }
 

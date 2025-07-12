@@ -8,14 +8,41 @@ const nextConfig = {
   images: {
     // domains: ['codesandbox.io'],
     unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.github.com',
+      },
+    ],
   },
   basePath,
   distDir,
   // output,
   output: 'standalone',
-  serverExternalPackages: ['@sparticuz/chromium'],
+  serverExternalPackages: ['@sparticuz/chromium', '@octokit/core'],
   trailingSlash: false,
   transpilePackages: ['next-mdx-remote'],
+  // Enable experimental features for better SSR performance
+  // experimental: {
+  //   serverComponentsExternalPackages: ['@octokit/core'],
+  // },
+  // Add headers for better caching
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=3600, s-maxage=3600' }],
+      },
+    ]
+  },
 }
 
 export default nextConfig

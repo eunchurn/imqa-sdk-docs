@@ -69,7 +69,7 @@
     "sanitize-html": "^2.17.0"
   },
   "scripts": {
-    "dev": "NODE_OPTIONS='--inspect' MDX=docs next",
+    "dev": "MDX=docs next",
     "start": "node .next/standalone/server.js",
     "build": "MDX=docs next build",
     "github:build": "MDX=docs OUTPUT=export BASE_PATH=/imqa-sdk-docs next build",

@@ -22,15 +22,7 @@ export async function Contributors({
   className,
   ...props
 }: { owner: string; repo: string; limit: number } & ComponentProps<'ul'>) {
-  const contributors = (
-    await cachedFetchContributors(owner, repo).catch(
-      (err) =>
-        Array.from({ length: 100 }).map(() => ({
-          login: 'jdoe',
-          html_url: 'https://github.com/jdoe',
-        })) as Awaited<ReturnType<typeof cachedFetchContributors>>,
-    )
-  ).slice(0, limit)
+  const contributors = (await cachedFetchContributors(owner, repo)).slice(0, limit)
 
   return (
     <div>
@@ -46,14 +38,40 @@ export async function Contributors({
 }
 
 async function fetchContributors(owner: string, repo: string) {
-  const res = await octokit.request(`GET /repos/{owner}/{repo}/collaborators`, {
-    owner,
-    repo,
-    headers: {
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  })
-  return res.data
+  try {
+    if (!process.env.CONTRIBUTORS_PAT) {
+      console.warn('CONTRIBUTORS_PAT not found, using fallback data')
+      return Array.from({ length: 5 }).map((_, i) => ({
+        login: `contributor${i + 1}`,
+        html_url: `https://github.com/contributor${i + 1}`,
+        avatar_url: `https://github.com/identicons/contributor${i + 1}.png`,
+      }))
+    }
+
+    const res = await octokit.request(`GET /repos/{owner}/{repo}/collaborators`, {
+      owner,
+      repo,
+      headers: {
+        'X-GitHub-Api-Version': '2022-11-28',
+        'User-Agent': 'IMQA-SDK-Docs/1.0',
+      },
+      request: {
+        // Add timeout
+        timeout: 10000,
+      },
+    })
+
+    return res.data
+  } catch (error: any) {
+    console.error(`Error fetching contributors for ${owner}/${repo}:`, error?.message || error)
+
+    // Return fallback data instead of throwing
+    return Array.from({ length: 5 }).map((_, i) => ({
+      login: `contributor${i + 1}`,
+      html_url: `https://github.com/contributor${i + 1}`,
+      avatar_url: `https://github.com/identicons/contributor${i + 1}.png`,
+    }))
+  }
 }
 const cachedFetchContributors = cache(fetchContributors)
 
