@@ -1,18 +1,4 @@
 {
-  "buildCommand": "pnpm build",
-  "devCommand": "pnpm dev",
-  "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "outputDirectory": ".next",
-  "regions": ["icn1"],
-  "functions": {
-    "src/app/api/**/*.ts": {
-      "maxDuration": 30
-    },
-    "src/app/**/page.tsx": {
-      "maxDuration": 30
-    }
-  },
   "crons": [
     {
       "path": "/api/revalidate-cache",
