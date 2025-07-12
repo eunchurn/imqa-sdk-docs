@@ -6,10 +6,10 @@
   "outputDirectory": ".next",
   "regions": ["icn1"],
   "functions": {
-    "src/app/**/*.tsx": {
+    "src/app/api/**/*.ts": {
       "maxDuration": 30
     },
-    "src/utils/**/*.tsx": {
+    "src/app/**/page.tsx": {
       "maxDuration": 30
     }
   },
