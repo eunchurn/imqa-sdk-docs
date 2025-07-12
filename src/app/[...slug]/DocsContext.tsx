@@ -30,6 +30,7 @@ export type Doc = {
   tableOfContents: DocToC[]
   pdf?: boolean
   cover?: CoverKind
+  toc?: boolean
   // releases?: ReleaseList
   // releaseJsx?: ReactNode
 }

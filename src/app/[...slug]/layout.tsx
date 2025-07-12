@@ -174,7 +174,7 @@ export default async function Layoutt({ params, children }: Props) {
             </article>
           </LayoutContent>
           <LayoutNav className="pt-8">{nav}</LayoutNav>
-          <LayoutAside className="pt-8">{toc}</LayoutAside>
+          {doc.toc ? <LayoutAside className="pt-8">{toc}</LayoutAside> : null}
         </Layout>
       </DocsContext>
     </>

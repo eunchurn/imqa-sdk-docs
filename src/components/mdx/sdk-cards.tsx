@@ -37,7 +37,7 @@ export const SDKCards = async () => (
         </p>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3">
+      <div className="grid gap-8 lg:grid-cols-1 xl:grid-cols-3 2xl:grid-cols-3">
         {sdks.map((sdk) => (
           <SDKCard key={sdk.title} {...sdk} />
         ))}

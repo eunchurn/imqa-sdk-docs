@@ -1,3 +1,5 @@
+'use client'
+import { useDocs } from '@/app/[...slug]/DocsContext'
 import cn from '@/lib/cn'
 import { ComponentProps } from 'react'
 
@@ -23,6 +25,7 @@ import { ComponentProps } from 'react'
 // see: tailwind.config.ts for grid-areas-* values
 
 export function Layout({ className, ...props }: ComponentProps<'div'>) {
+  const { doc } = useDocs()
   return (
     <div
       className={cn(
@@ -30,7 +33,9 @@ export function Layout({ className, ...props }: ComponentProps<'div'>) {
         [
           'grid-cols-[1fr] grid-rows-[var(--header-height)_1fr] grid-areas-layout-1col',
           'lg:grid-cols-[var(--side-w)_1fr] lg:grid-areas-layout-2cols',
-          'xl:grid-cols-[var(--side-w)_1fr_var(--side-w)] xl:grid-areas-layout-3cols',
+          doc.toc
+            ? 'xl:grid-cols-[var(--side-w)_1fr_var(--side-w)] xl:grid-areas-layout-3cols'
+            : 'xl:grid-cols-[var(--side-w)_1fr] xl:grid-areas-layout-2cols',
         ],
         className,
       )}

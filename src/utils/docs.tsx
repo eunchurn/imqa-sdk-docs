@@ -365,6 +365,7 @@ async function _getDocs(
         tableOfContents: filteredTableOfContents(tableOfContents),
         pdf: frontmatter.pdf,
         cover: frontmatter.cover,
+        toc: frontmatter.toc === undefined ? true : false,
         // releases,
         // releaseJsx: releases ? await getReleaseJsx(releases) : undefined,
       }
