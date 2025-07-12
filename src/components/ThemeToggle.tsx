@@ -19,7 +19,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
 
   if (!mounted) {
     return (
-      <div className={cn('hidden size-9 items-center justify-center lg:flex', className)}>
+      <div className={cn(className || 'hidden size-9 items-center justify-center lg:flex')}>
         <div className="size-4" />
       </div>
     )
@@ -32,7 +32,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   return (
     <button
       onClick={toggleTheme}
-      className={cn('hidden size-9 items-center justify-center lg:flex', className)}
+      className={cn(className || 'hidden size-9 items-center justify-center lg:flex')}
       aria-label="테마 변경"
       title={theme === 'dark' ? '라이트 모드로 변경' : '다크 모드로 변경'}
     >
