@@ -78,7 +78,7 @@ export default function RootLayout(props: RootLayoutProps) {
           'scrollbar-thin',
         )}
       >
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           {children}
           <Toaster />
         </ThemeProvider>

@@ -23,7 +23,7 @@ const sdks = [
     description:
       '웹 애플리케이션 전반에서 사용자 행동을 추적하고 분석할 수 있도록 Opentelemetry Native IMQA Web Agent를 배포하세요.',
     icon: BrowserIcon,
-    color: 'bg-white',
+    color: 'bg-surface-container-high',
     link: '/web-agent/introduction',
   },
 ]

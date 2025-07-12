@@ -3,6 +3,7 @@ import * as React from 'react'
 import { Layout, LayoutAside, LayoutContent, LayoutHeader, LayoutNav } from '@/components/Layout'
 import { Nav } from '@/components/Nav'
 import Search from '@/components/Search'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { Toc } from '@/components/mdx/Toc'
 import cn from '@/lib/cn'
 import { getData } from '@/utils/docs'
@@ -58,6 +59,7 @@ export default async function Layoutt({ params, children }: Props) {
       <Search className="grow" />
 
       <div className="flex">
+        <ThemeToggle />
         {[
           { key: 1, href: process.env.GITHUB, icon: <VscGithubAlt /> },
           { key: 2, href: process.env.DISCORD, icon: <PiDiscordLogoLight /> },
@@ -74,6 +76,7 @@ export default async function Layoutt({ params, children }: Props) {
             )}
           </React.Fragment>
         ))}
+
         {/* <ToggleTheme className="hidden size-9 items-center justify-center sm:flex" /> */}
 
         <Menu className="z-100 bg-zinc-50 absolute inset-0 top-[--header-height] h-[calc(100dvh-var(--header-height))] w-full overflow-auto lg:hidden">
