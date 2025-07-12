@@ -8,6 +8,42 @@ nav: 1018
 
 ## 개요
 
+문서 로드 후 계측은 웹 페이지의 초기 로딩 완료 이후에 발생하는 지연 로딩 및 동적 콘텐츠 로딩을 추적하는 기능을 제공합니다. 지연 로딩 이미지, 동적 스크립트, AJAX 콘텐츠 등 사용자 상호작용에 따라 추가로 로딩되는 리소스들을 모니터링할 수 있습니다.
+
+## 주요 기능
+
+### 지연 로딩 추적
+- Lazy loading 이미지 및 콘텐츠 모니터링
+- Intersection Observer 기반 로딩 추적
+- 사용자 스크롤에 따른 콘텐츠 로딩
+
+### 동적 리소스 모니터링
+- 동적으로 생성되는 스크립트 및 스타일시트
+- AJAX로 로딩되는 콘텐츠 추적
+- 사용자 액션에 따른 리소스 로딩
+
+### 성능 최적화 지원
+- 지연 로딩 효과 측정
+- 리소스 로딩 우선순위 분석
+- 사용자 경험 개선을 위한 데이터
+
+## 계측 범위
+
+문서 로드 후 계측은 다음과 같은 이벤트를 추적합니다:
+
+- **지연 로딩**: 뷰포트 진입 시 로딩되는 이미지/콘텐츠
+- **동적 스크립트**: 런타임에 추가되는 JavaScript 파일
+- **AJAX 콘텐츠**: 비동기로 로딩되는 HTML 콘텐츠
+- **사용자 트리거**: 클릭, 호버 등에 의한 리소스 로딩
+
+## 주요 속성description: '@imqa/instrumentation-post-doc-load-resource'
+nav: 1018
+---
+
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Finstrumentation-post-doc-load-resource?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Finstrumentation-post-doc-load-resource?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Finstrumentation-post-doc-load-resource?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Finstrumentation-post-doc-load-resource?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Finstrumentation-post-doc-load-resource?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Finstrumentation-post-doc-load-resource)
+
+## 개요
+
 문서 로드 후 스키마는 IMQA 모니터링 시스템에서 초기 문서 로드가 완료된 후 웹 페이지에서 발생하는 추가 리소스 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 메인 문서가 로드된 후 동적으로 발생하는 리소스 가져오기, AJAX 요청, 지연 로딩 등을 추적하도록 설계되어 있으며, 웹 애플리케이션의 사후 로딩 성능에 대한 통찰력을 제공합니다.
 
 ## 스키마 구조

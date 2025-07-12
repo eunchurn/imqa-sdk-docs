@@ -1,6 +1,7 @@
 'use client'
 
 import cn from '@/lib/cn'
+import Image from 'next/image'
 import { Card, CardContent } from './card'
 
 interface CoverProps {
@@ -134,26 +135,53 @@ export function Cover({ kind }: CoverProps) {
             </p> */}
           </div>
 
-          <img
+          <Image
             className={cn(['absolute bottom-[25%] left-[10%] h-auto', typoWidth])}
             alt="sdk-typo"
             src={typo}
+            width={800}
+            height={200}
+            unoptimized
           />
 
           <div className="absolute left-[10%] top-[6%] w-[23%]">
             <div className="relative">
-              <img className="absolute left-[44%] top-1 h-[10px] w-[10px]" alt="Vector" src={x} />
+              <Image
+                className="absolute left-[44%] top-1 h-[10px] w-[10px]"
+                alt="Vector"
+                src={x}
+                width={10}
+                height={10}
+                unoptimized
+              />
 
               <div className="relative w-full">
-                <img className="absolute right-0 top-[3px] h-auto w-[47%]" alt="svg" src={onycom} />
+                <Image
+                  className="absolute right-0 top-[3px] h-auto w-[47%]"
+                  alt="svg"
+                  src={onycom}
+                  width={200}
+                  height={50}
+                  unoptimized
+                />
 
                 <div className="absolute left-0 w-[37%]">
-                  <img className="h-auto w-[21%]" alt="q" src={q} />
+                  <Image
+                    className="h-auto w-[21%]"
+                    alt="q"
+                    src={q}
+                    width={50}
+                    height={50}
+                    unoptimized
+                  />
 
-                  <img
+                  <Image
                     className="absolute right-0 top-[2px] h-auto w-[65%]"
                     alt="imqa"
                     src={imqa}
+                    width={150}
+                    height={50}
+                    unoptimized
                   />
                 </div>
               </div>
@@ -167,10 +195,13 @@ export function Cover({ kind }: CoverProps) {
               'bg-cover bg-center',
             ])}
           >
-            <img
+            <Image
               className={cn(['absolute top-[3%] h-[96%] w-full', clipOffset])}
               alt="clip"
               src={clip}
+              width={1000}
+              height={600}
+              unoptimized
             />
           </div>
         </CardContent>

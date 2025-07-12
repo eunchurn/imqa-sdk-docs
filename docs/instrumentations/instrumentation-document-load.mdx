@@ -8,6 +8,42 @@ nav: 1011
 
 ## 개요
 
+문서 로드 계측은 웹 페이지의 초기 로딩 프로세스를 자동으로 추적하고 분석하는 기능을 제공합니다. HTML 문서 로딩부터 DOM 구성, 리소스 로딩까지의 전체 과정을 실시간으로 모니터링하여 페이지 로딩 성능을 최적화할 수 있는 데이터를 제공합니다.
+
+## 주요 기능
+
+### 로딩 단계별 추적
+- HTML 문서 다운로드 시간 측정
+- DOM 파싱 및 구성 시간 추적
+- 리소스 로딩 병목 지점 식별
+
+### 성능 메트릭 수집
+- Navigation Timing API 기반 정밀 측정
+- 서버 응답 시간 및 네트워크 지연
+- 브라우저 렌더링 성능 분석
+
+### 최적화 인사이트
+- 로딩 성능 개선점 도출
+- 리소스 우선순위 최적화 지원
+- 사용자 경험 개선을 위한 데이터
+
+## 계측 범위
+
+문서 로드 계측은 다음과 같은 로딩 이벤트를 추적합니다:
+
+- **네비게이션 시작**: 페이지 요청 시작 시점
+- **서버 응답**: HTML 문서 다운로드 완료
+- **DOM 파싱**: HTML 파싱 및 DOM 트리 구성
+- **리소스 로딩**: CSS, JS, 이미지 등 추가 리소스
+
+## 주요 속성ption: '@imqa/instrumentation-document-load'
+nav: 1011
+---
+
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Finstrumentation-document-load?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Finstrumentation-document-load?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Finstrumentation-document-load?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Finstrumentation-document-load?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Finstrumentation-document-load?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Finstrumentation-document-load)
+
+## 개요
+
 문서 로드 스키마는 IMQA 모니터링 시스템에서 웹 페이지의 초기 로딩 성능 지표를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 HTML 문서의 전체 로드 수명 주기를 추적하도록 설계되었으며, DNS 조회, 연결 설정, 문서 다운로드, DOM 구성, 리소스 가져오기 등 페이지 로드의 모든 단계를 포괄적으로 모니터링합니다.
 
 ## 스키마 구조

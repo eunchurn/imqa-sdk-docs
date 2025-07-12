@@ -8,6 +8,42 @@ nav: 1016
 
 ## 개요
 
+콘솔 계측은 웹 애플리케이션에서 JavaScript 콘솔에 출력되는 로그, 경고, 오류 메시지를 자동으로 캡처하고 모니터링하는 기능을 제공합니다. console.log, console.warn, console.error 등의 콘솔 API 호출을 실시간으로 수집하여 애플리케이션의 디버깅과 모니터링을 지원합니다.
+
+## 주요 기능
+
+### 콘솔 메시지 캡처
+- console.log, warn, error, info 등 모든 콘솔 출력 추적
+- 메시지 내용 및 컨텍스트 정보 수집
+- 호출 스택 및 소스 위치 추적
+
+### 로그 레벨 분류
+- 로그 레벨별 메시지 분류 및 필터링
+- 오류 및 경고 메시지 우선 모니터링
+- 개발/프로덕션 환경별 로그 레벨 관리
+
+### 디버깅 지원
+- 실시간 로그 모니터링 및 알림
+- 오류 발생 컨텍스트 추적
+- 프로덕션 환경 디버깅 지원
+
+## 계측 범위
+
+콘솔 계측은 다음과 같은 콘솔 출력을 추적합니다:
+
+- **로그 메시지**: console.log를 통한 일반 로그
+- **경고 메시지**: console.warn을 통한 경고
+- **오류 메시지**: console.error를 통한 오류
+- **디버그 정보**: console.debug, console.info 등
+
+## 주요 속성on: '@imqa/instrumentation-console'
+nav: 1016
+---
+
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Finstrumentation-console?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Finstrumentation-console?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Finstrumentation-console?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Finstrumentation-console?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Finstrumentation-console?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Finstrumentation-console)
+
+## 개요
+
 콘솔 계측 스키마는 IMQA 모니터링 시스템에서 브라우저 console API를 통해 출력되는 로그를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 `console.log`, `console.error`, `console.warn` 등의 콘솔 로깅 활동을 추적하도록 설계되어 있으며, 개발자가 프로덕션 환경에서 애플리케이션의 동작을 모니터링하고 디버깅할 수 있도록 합니다.
 
 ## 스키마 구조

@@ -8,6 +8,42 @@ nav: 1019
 
 ## 개요
 
+라우트 계측은 단일 페이지 애플리케이션(SPA)에서 클라이언트 사이드 라우팅과 페이지 네비게이션을 자동으로 추적하는 기능을 제공합니다. React Router, Vue Router, Angular Router 등의 라우팅 라이브러리와 연동하여 페이지 전환, 로딩 시간, 네비게이션 패턴을 실시간으로 모니터링할 수 있습니다.
+
+## 주요 기능
+
+### 자동 라우트 추적
+- SPA 라우트 변경 자동 감지
+- 페이지 전환 시간 측정
+- 라우트별 로딩 성능 분석
+
+### 네비게이션 패턴 분석
+- 사용자 페이지 이동 경로 추적
+- 인기 페이지 및 이탈률 분석
+- 네비게이션 플로우 최적화 지원
+
+### 성능 모니터링
+- 라우트별 렌더링 시간
+- 코드 스플리팅 효과 측정
+- 번들 로딩 성능 분석
+
+## 계측 범위
+
+라우트 계측은 다음과 같은 네비게이션을 추적합니다:
+
+- **프로그래매틱 네비게이션**: JavaScript를 통한 라우트 변경
+- **브라우저 네비게이션**: 뒤로 가기, 앞으로 가기, 새로고침
+- **링크 클릭**: 내부 링크를 통한 페이지 이동
+- **외부 네비게이션**: 외부 사이트로의 이동 (이탈)
+
+## 주요 속성iption: '@imqa/instrumentation-route'
+nav: 1019
+---
+
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Finstrumentation-user-interaction?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Finstrumentation-user-interaction?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Finstrumentation-user-interaction?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Finstrumentation-user-interaction?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Finstrumentation-user-interaction?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Finstrumentation-user-interaction)
+
+## 개요
+
 라우트 스키마는 IMQA 모니터링 시스템에서 웹 애플리케이션의 클라이언트 측 라우트 변경 이벤트를 캡처하고 보고하는 구조를 정의합니다. 이 스키마는 OpenTelemetry 형식을 사용하여 싱글 페이지 애플리케이션(SPA)에서 발생하는 페이지 네비게이션과 라우트 전환을 추적하도록 설계되었습니다.
 
 ## 스키마 구조
