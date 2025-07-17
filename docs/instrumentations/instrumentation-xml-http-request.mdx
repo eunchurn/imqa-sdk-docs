@@ -133,6 +133,9 @@ interface XMLHttpRequestInstrumentationConfig extends InstrumentationConfig {
 - `measureRequestSize`: 요청 크기를 측정합니다. 기본값은 `false`입니다.
 - `advancedNetworkCapture`: 고급 네트워크 캡처를 활성화합니다. 기본값은 `false`입니다.
 
+<Gha keyword="WARNING" title="네트워크 캡처 활성화">
+네트워크 캡처를 활성화하면 IMQA가 네트워크 요청을 수집합니다. 이 기능을 활성화 하면 성능 모니터링 및 디버깅에 유용하지만, `body`와 `header`에 담긴 민감한 정보가 함께 계측합니다. 개인 정보 보호 및 보안 요구 사항을 준수해야 합니다. 사용하기 전에 관련 법률 및 규정을 확인하세요.
+</Gha>
 
 ## 예시
 

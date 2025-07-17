@@ -420,7 +420,7 @@ window.IMQA.init({
 | `captureMetric`              | `boolean`                                       | optional      | 메트릭 수집을 활성화합니다. 기본값은 `false`입니다. (beta)                                                                                                                    |
 | `disablePreflight`              | `boolean`                                       | optional      | preflight 요청 비활성화 여부 (기본값: false) preflight는 CORS 요청을 위한 OPTIONS 요청입니다.                                                                                                              |
 | `exporterProtocol`              | `json` or `proto`                                        | optional      | exporter 프로토콜을 설정합니다. 기본값은 `json`입니다.                                                                                                      |
-| `screenNameOption` | `ScreenNameOption` | optional      | 화면 이름 옵션을 설정합니다. 기본값은 `{ screenNameType: "full", urlWithSearchParams: true }`입니다.                                                                                                      |
+| `screenNameOption` | `ScreenNameOption` | optional      | 화면 이름 옵션을 설정합니다. 기본값은 `{ screenNameType: "routeOnly", urlWithSearchParams: false }`입니다.                                                                                                      |
 
 ### 옵션 상세 설명
 
@@ -682,17 +682,17 @@ exporter 프로토콜을 설정합니다. 기본값은 `json`이며, `proto`로 
 type ScreenNameType = 'routeOnly' | 'titleOnly' | 'full';
 
 type ScreenNameOption = {
-  screenNameType?: ScreenNameType; // default: 'full'
-  urlWithSearchParams?: boolean; // default: true
+  screenNameType?: ScreenNameType; // default: 'routeOnly'
+  urlWithSearchParams?: boolean; // default: false
 };
 ```
 - `screenNameType`은 `routeOnly`, `titleOnly`, `full` 중 하나를 선택할 수 있습니다.
   - `routeOnly`: URL 경로만 포함
   - `titleOnly`: 페이지 제목만 포함
-  - `full`: 페이지 제목과 URL 경로 모두 포함. 기본값은 `full`입니다.
-- `urlWithSearchParams`는 `true`일 경우 URL에 쿼리 파라미터를 포함합니다. 기본값은 `true`입니다. Query 파라미터를 포함하지 않으려면 `false`로 설정합니다.
+  - `full`: 페이지 제목과 URL 경로 모두 포함. 기본값은 `routeOnly`입니다.
+- `urlWithSearchParams`는 `true`일 경우 URL에 쿼리 파라미터를 포함합니다. 기본값은 `false`입니다. Query 파라미터를 포함하려면 `true`로 설정합니다.
 
-예시: 화면이름에 URL 경로만 포함하고 쿼리 파라미터는 제외하려면 아래와 같이 설정합니다.
+예시: 화면이름에 타이틀만 포함하고 쿼리 파라미터는 추가하려면 아래와 같이 설정합니다.
 
 ```typescript
 IMQA.init({
@@ -701,8 +701,8 @@ IMQA.init({
   serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
   serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
   screenNameOption: {
-    screenNameType: 'routeOnly', // URL 경로만 포함
-    urlWithSearchParams: false // 쿼리 파라미터 제외
+    screenNameType: 'titleOnly', // 타이틀만 포함
+    urlWithSearchParams: true // 쿼리 파라미터 추가
   }
 });
 ```
@@ -1074,16 +1074,46 @@ IMQA.recordException(error: any, attributes?: Attributes): void
 
 ### `recordLog`
 
-사용자 지정 로그를 기록합니다.
+사용자 정의 로그를 기록합니다.
 
 - **매개변수:**
-    - `message` (`string`): 사용자 지정 로그 메시지
-    - `attributes` (`Attributes`, 선택 사항): 추가 속성
+    - `message` (`string`): 사용자 정의 로그 메시지
+    - `attributes` (`Record<string, string>`, 선택 사항): 사용자 정의 추가 속성
 
 ```ts
-IMQA.recordLog(message: string, attributes?: Attributes): void
+IMQA.recordLog(message: string, attributes?: Record<string, string>): void
 ```
 
+사용방법: 특정 이벤트에 대한 기록을 하고 싶은 경우 (예: API 사용량 초과, 사용자 행동 등) `recordLog` 함수를 호출하여 로그를 기록할 수 있습니다. 이 로그는 IMQA 대시보드에서 검색 및 필터링할 수 있습니다.
+
+```tsx
+IMQA.recordLog('API 사용량 초과', {
+  userId: 'user_123',
+  url: 'https://api.imqa.io/usage',
+})
+```
+
+### `setScreenAttribute`
+
+```ts
+IMQA.setScreenAttribute(name: string): void
+```
+
+화면 이름을 설정합니다. IMQA는 화면 이름을 자동으로 수집합니다. 그러나 특정 화면에 대한 추가 정보를 제공하고 싶다면 `setScreenAttribute` 함수를 사용하여 화면 속성을 설정할 수 있습니다. 이 함수는 화면 이름을 설정하고, 현재 URL을 전역 변수에 기록합니다. 이 매서드는 다이내믹 메서드입니다. 즉, URL(`location.href`)이 변경되지 않는 한 이 메서드로 설정한 화면 이름으로 페이지 성능을 계측하게 됩니다. URL이 변경되면 화면 옵션(`screenNameOption`)에 따라 화면 이름이 자동으로 리셋됩니다. 따라서 지속적으로 화면 이름을 유지하려면 URL이 변경되거나 화면이 변경되는 즉시 이 메서드를 호출해야 효율적인 페이지의 성능을 계측합니다.
+
+계측된 화면별 성능 데이터는 IMQA 화면 분석화면에서 유니크한 화면 이름으로 활용합니다. 자세한 내용은 **사용자 가이드**의 화면 분석 섹션을 참고하세요.
+
+```ts
+/**
+ * `setScreenAttribute` 함수는 전달된 속성 값을 저장하고, 마지막 URL을 전역 변수에 기록합니다.
+ *
+ * @param {string} attribute - `attribute` 매개변수는 화면(screen)에 설정하고자 하는 속성을 나타내는 문자열입니다.
+ */
+function setScreenAttribute(attribute: string) {
+  savedScreenAttribute = attribute;
+  lastUrl = window?.location?.href;
+}
+```
 
 ### `enableAdvancedNetworkCapture`
 
