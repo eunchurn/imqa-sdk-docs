@@ -548,6 +548,43 @@ Intercom과의 연동을 비활성화합니다. 기본값은 `false`이며, 활�
 이 기능은 현재 개발 중이며 추후에 활성화될 예정입니다.
 </Gha>
 
+#### `sessionStorage`
+
+> (`StorageType`, 선택)
+
+```typescript
+type StorageType = 'cookie' | 'localStorage';
+```
+
+세션ID 저장소의 타입을 설정합니다. 기본값은 `cookie`이며, `localStorage`로 변경할 수 있습니다. 이 설정은 세션 데이터의 저장 방식을 결정합니다. 일반적으로 `cookie`를 사용하며, 브라우저 쿠키를 사용할 수 없는 하이브리드앱의 웹뷰의 경우 `localStorage`를 사용합니다.
+
+<Gha keyword="WARNING" title="모바일 웹뷰 설정">
+  이 기능을 `localStorage` 옵션을 사용할 경우 웹뷰 브라우저의 `localStorage` 저장소가 활성화되어 있어야 합니다. 
+  안드로이드의 경우
+  ```java
+  webview.settings.domStorageEnabled = true
+  ```
+  iOS의 경우 기본적으로 활성화 되어있으나 명시적으로 허용해야하는 경우
+  ```swift
+let config = WKWebViewConfiguration()
+config.websiteDataStore = WKWebsiteDataStore.default()
+let webView = WKWebView(frame: .zero, configuration: config)
+  ```
+  설정을 통해 활성화할 수 있습니다.
+</Gha>
+
+사용 방법
+```typescript
+IMQA.init({
+  collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+  serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
+  serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
+  serviceKey: '{{SERVICE_KEY}}',
+  sessionStorage: 'localStorage' // or 'cookie'
+});
+```
+
+
 #### `ignoreClass`
 
 > (`string`, 선택)
