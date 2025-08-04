@@ -18,7 +18,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['jeyBrainsMonoLight', 'Nanum Gothic Coding', ...defaultTheme.fontFamily.mono],
+        mono: ['jetBrainsMonoLight', 'Nanum Gothic Coding', ...defaultTheme.fontFamily.mono],
       },
       keyframes: {
         'collapsible-down': {
