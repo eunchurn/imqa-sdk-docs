@@ -86,7 +86,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.0.25-release.aar')
+  implementation files('libs/imqa-android-sdk-1.0.26-release.aar')
 }
 ```
 
@@ -94,7 +94,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.0.25-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.0.26-release.aar"))
 }
 ```
 
@@ -261,6 +261,36 @@ URL url = new URL("https://some.host.com");
 HttpsURLConnection conn = (HttpsURLConnection) 
     ConnectionWrapper.wrap((HttpsURLConnection) url.openConnection());
 ```
+
+3. **Ktor(OkHttp) 설정**   
+
+Ktor의 OkHttp 엔진을 사용하는 경우 네트워크 요청의 XHR 데이터를 수집하기 위해 네트워크 요청 시 다음과 같이 추가해 주세요.
+
+**Kotlin**
+
+```kotlin
+val client = HttpClient(OkHttp) {
+    engine {
+        config {
+            //타임아웃 등 기존 세팅
+            connectTimeout(2, TimeUnit.SECONDS)
+            readTimeout(2, TimeUnit.SECONDS)
+            writeTimeout(2, TimeUnit.SECONDS)
+
+            //Interceptor 추가
+            addInterceptor(HttpInterceptor())
+        }
+    }
+    install(Logging)
+
+    install(ContentNegotiation) {
+        json(Json { ignoreUnknownKeys = true })
+    }
+}
+```
+
+
+
 
 ## 검증
 
