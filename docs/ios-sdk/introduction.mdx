@@ -187,6 +187,29 @@ import Foundation
 }
 @end
 ```
+5. **SwiftUI Render추적하려면 다음 코드를 추가해주세요.**
+
+```swift
+import IMQACore
+    func scene(_ scene: UIScene, 
+        willConnectTo session: UISceneSession, 
+        options connectionOptions: UIScene.ConnectionOptions) {
+        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
+        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
+        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
+        
+        // Use a UIHostingController as window root view controller
+        if let windowScene = scene as? UIWindowScene {
+            let window = UIWindow(windowScene: windowScene)
+            window.rootViewController = UIHostingController(rootView: 
+            LandmarkList()
+            .imqaTrackLifecycle(viewName: nil) // SwiftUI Render 추적
+            .environmentObject(UserData()))
+            self.window = window
+            window.makeKeyAndVisible()
+        }
+    }
+```
 
 > 위 코드는 IMQA SDK를 Objective-C 프로젝트에 통합하고 초기화하는 기본 흐름을 보여줍니다.
 
