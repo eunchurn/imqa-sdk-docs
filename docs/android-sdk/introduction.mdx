@@ -374,7 +374,8 @@ IMQA.getCustomAttributes().setupUserId("customer-user-id");
 > `IMQA.sendClickEvent(view: View, isNetworkRequest: Boolean = false)`
 > - view : 클릭 대상, isNetworkRequest : 데이터 조회 여부
 
-단순히 화면 이동을 위한 버튼 클릭 시 이벤트 알림을 다음과 같이 전송할 수 있습니다.
+단순히 화면 이동을 위한 버튼 클릭 시 이벤트 알림을 다음과 같이 전송할 수 있습니다.  
+클릭이벤트 자동 수집 옵션인 options.setUserEventEnable(true) 활성화시 중복으로 이벤트가 수집될 수 있습니다.
 
 **Kotlin**
 
