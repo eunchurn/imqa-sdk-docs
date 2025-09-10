@@ -47,7 +47,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let option = IMQA.Options(
             serviceKey: serviceKey,
             endpoints: endpoint,
-            sampleRate: 1.0
+            sampleRate: 1.0,
+            isDeviceIdEnable: true //기기 ID 활성화 여부 (선택 사항, 기본값: true
         )
         
         IMQA
@@ -176,10 +177,11 @@ import Foundation
     IMQAEndpoints *endpoints = [[IMQAEndpoints alloc] 
         initWithCollectorURL:@"collector 주소"];
     
-    IMQAOptions *options = [[IMQAOptions alloc] 
-        initWithServiceKey:@"서비스키" 
-        endpoints:endpoints 
-        sampleRate:1.0];
+    IMQAOptions * options = [[IMQAOptions alloc] 
+        initWithServiceKey:@"비스키"
+        endpoints:endpoints
+        sampleRate:1.0
+        isDeviceIdEnable:YES]; //기기 ID 활성화 여부 (선택 사항, 기본값: true
     
     [[IMQA setupWithOptions:options isDebug:YES] start];
     
