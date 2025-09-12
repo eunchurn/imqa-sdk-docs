@@ -112,6 +112,19 @@ IMQA.customLog(level: .debug, message: "로그 내용")
 IMQA.sendClickEvent(buttonName: "버튼 이름", buttonClassName: "버튼 클래스 이름")
 ```
 
+### XHR시 HTTPRequestHeader를 수집여부
+
+```swift
+IMQA.setRequestHeaderCapture(isCapture: Bool)
+```
+
+### XHR시 HTTPRequestBody를 수집여부
+
+```swift
+IMQA.setRequestBodyCapture(isCapture: Bool)
+```
+
+
 
 ## 웹뷰 페이지 세션 연결
 
@@ -127,6 +140,7 @@ Web에서 session을 공유할지 여부를 설정합니다. true로 설정하�
 ```swift
 IMQA.setSharedSession(session: Bool)
 ```
+
 
 WebView data 수집하려면 WKWebView에 javascript 를 추가해야 합니다. 두가지 방법이 있습니다.
 
