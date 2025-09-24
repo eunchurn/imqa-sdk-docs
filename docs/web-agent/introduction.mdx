@@ -40,6 +40,7 @@ IMQA Web Agent는 Opentelemetry Native 기반으로 동작합니다. 이 문서�
   - 사용자 지역
 - 수동 계측 지원
   - 커스텀 데이터 수집 지원(커스텀 로그, 커스텀 에러)
+  - 사용자 이벤트 추적 및 분석 (@imqa/user-event)
 - 세션 리플레이 (Session Replay) 기능 (*beta*)
   - DOM 변경 사항 기록
   - 사용자 입력 및 상호작용 기록
@@ -1238,6 +1239,126 @@ setAreaCodeAttribute(areaCode: string): void
 
 - **매개변수:**
     - `areaCode` (`string`): 지역 코드
+
+
+### `userEvent`
+
+사용자 이벤트를 추적하고 분석하기 위한 API입니다. 특정 사용자 행동이나 비즈니스 로직의 시작과 끝을 측정하여 전체 duration을 계측할 수 있습니다.
+
+#### `userEvent.start`
+
+```ts
+IMQA.userEvent.start(name?: string, attributes?: Attributes): string
+```
+
+사용자 이벤트를 시작하고 고유한 이벤트 ID를 반환합니다. 이 시점부터 발생하는 모든 계측(fetch, console, exception 등)이 이 이벤트의 컨텍스트로 그룹화됩니다.
+
+- **매개변수:**
+  - `name` (`string`, optional): 이벤트 이름 (기본값: `user-event-[randomId]`)
+  - `attributes` (`Attributes`, optional): 이벤트에 추가할 커스텀 속성
+- **반환값:** 이벤트의 고유 식별자 (`string`)
+
+#### `userEvent.end`
+
+```ts
+IMQA.userEvent.end(id: string, attributes?: Attributes): void
+```
+
+지정된 ID의 사용자 이벤트를 완료하고 span을 기록합니다. 전체 duration이 자동으로 계산되어 기록됩니다.
+
+- **매개변수:**
+  - `id` (`string`, required): `start()`에서 반환된 이벤트 ID
+  - `attributes` (`Attributes`, optional): 이벤트 완료 시 추가할 속성
+
+#### `userEvent.getActive`
+
+```ts
+IMQA.userEvent.getActive(): UserEventInstance | undefined
+```
+
+현재 활성화된 사용자 이벤트 정보를 반환합니다.
+
+- **반환값:** 활성 이벤트 인스턴스 또는 `undefined`
+
+#### `userEvent.cancel`
+
+```ts
+IMQA.userEvent.cancel(id: string): void
+```
+
+지정된 ID의 사용자 이벤트를 취소합니다. span을 기록하지 않습니다.
+
+- **매개변수:**
+  - `id` (`string`, required): 취소할 이벤트 ID
+
+#### 사용 예시
+
+```javascript
+// 버튼 클릭 이벤트 추적
+function handleButtonClick() {
+  // 이벤트 시작
+  const eventId = IMQA.userEvent.start('button-click', {
+    'button.name': 'submit',
+    'page.url': window.location.href,
+  });
+
+  // 비즈니스 로직 실행
+  performBusinessLogic()
+    .then(result => {
+      // 성공 시 이벤트 완료
+      IMQA.userEvent.end(eventId, {
+        'action.result': 'success',
+        'items.count': result.count,
+      });
+    })
+    .catch(error => {
+      // 에러 시 이벤트 완료
+      IMQA.userEvent.end(eventId, {
+        'action.result': 'error',
+        'error.message': error.message,
+      });
+    });
+}
+
+// 폼 제출 이벤트 추적
+function handleFormSubmit() {
+  const eventId = IMQA.userEvent.start('form-submission', {
+    'form.type': 'contact',
+    'form.fields': 'name,email,message',
+  });
+
+  try {
+    validateForm();
+    submitForm();
+
+    IMQA.userEvent.end(eventId, {
+      'submission.result': 'success',
+    });
+  } catch (error) {
+    IMQA.userEvent.end(eventId, {
+      'submission.result': 'error',
+      'error.type': error.constructor.name,
+    });
+    throw error;
+  }
+}
+
+// 이벤트 취소 예시
+function handleCancellableOperation() {
+  const eventId = IMQA.userEvent.start('file-upload');
+
+  // 사용자가 취소한 경우
+  if (userCancelled) {
+    IMQA.userEvent.cancel(eventId);
+    return;
+  }
+
+  // 정상 처리
+  uploadFile().then(() => {
+    IMQA.userEvent.end(eventId);
+  });
+}
+```
 
 ### `getSessionId`
 
