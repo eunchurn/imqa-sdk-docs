@@ -16,7 +16,7 @@ WebVitals 계측은 웹 애플리케이션의 핵심 성능 지표인 Core Web V
 
 ### Core Web Vitals 측정
 - **LCP**: 최대 콘텐츠풀 페인트 시간 측정
-- **FID**: 첫 번째 입력 지연 시간 측정  
+- **FID**: 첫 번째 입력 지연 시간 측정
 - **CLS**: 누적 레이아웃 이동 점수 계산
 - **INP**: 다음 페인트까지의 상호작용 지연 시간
 
@@ -25,6 +25,11 @@ WebVitals 계측은 웹 애플리케이션의 핵심 성능 지표인 Core Web V
 - **FCP**: 첫 번째 콘텐츠풀 페인트
 - **TTI**: 상호작용 가능 시간
 - **TBT**: 총 차단 시간
+
+### Histogram Metrics 지원
+- Web Vitals 데이터를 OpenTelemetry Histogram Metric으로 전송
+- Span과 Metric 동시 전송으로 다양한 분석 지원
+- 각 메트릭별 분포도 및 백분위수 분석 가능
 
 ### 실시간 성능 모니터링
 - 성능 임계값 기반 알림
@@ -85,9 +90,12 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `metric.name` | `string` | 성능 지표의 이름 (`LCP`, `FID`, `CLS` 등) |
-| `metric.value` | `integer` | 지표의 값 (밀리초 또는 비율) |
-| `metric.rating` | `string` | 지표의 등급 (`good`, `needs-improvement`, `poor`) |
+| `web-vital.name` | `string` | 성능 지표의 이름 (`fcp`, `ttfb`, `fid`, `cls`, `lcp`, `inp`) |
+| `web-vital.value` | `number` | 지표의 값 (밀리초 또는 비율) |
+| `web-vital.delta` | `number` | 이전 값과의 차이 |
+| `web-vital.navigation_type` | `string` | 네비게이션 타입 |
+| `web-vital.rating` | `string` | 지표의 등급 (`good`, `needs-improvement`, `poor`) |
+| `imqa.span.type` | `string` | 스팬 타입 (`webvitals`) |
 | `location.href` | `string` | 현재 페이지 URL |
 | `environment` | `string` | 환경 이름 |
 | `deployment.environment` | `string` | 배포 환경 |
@@ -96,7 +104,6 @@ WebVitals 스팬은 웹 성능 지표를 캡처합니다:
 | `session.id` | `string` | 사용자 세션 식별자 |
 | `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
 | `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type` | `string` | 스팬 타입 (예: "webvitals") |
 
 ## 사용 방법
 
@@ -115,12 +122,46 @@ interface InstrumentationConfig {
 ```
 - `enabled`: 계측을 활성화할지 여부를 설정합니다. 기본값은 `true`입니다.
 
+### Histogram Metric 속성
+
+Web Vitals 데이터는 Span과 함께 Histogram Metric으로도 전송됩니다. Histogram Metric은 다음과 같은 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `imqa.span.type` | `string` | 메트릭 타입 (`webvitals`) |
+| `web-vital.name` | `string` | 성능 지표의 이름 |
+| `web-vital.delta` | `number` | 이전 값과의 차이 |
+| `web-vital.navigation_type` | `string` | 네비게이션 타입 |
+| `web-vital.rating` | `string` | 지표의 등급 |
+
+Histogram Metric은 다음과 같은 이점을 제공합니다:
+- 메트릭 값의 분포 분석
+- P50, P75, P90, P95, P99 백분위수 계산
+- 시간별 추이 분석
+- 다양한 차원별 집계 분석
+
 ## 예시
 
 유효한 WebVitals Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
 - 서비스, 브라우저 및 환경을 식별하는 리소스 정보
 - `LCP`, `FID`, `CLS`와 같은 웹 성능 지표를 캡처하는 WebVitals 스팬
+- 동일한 속성을 가진 Histogram Metric으로 전송되는 성능 데이터
 - 지표의 값과 등급을 포함하는 성능 메트릭
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
+
+### 구현 예시
+
+```typescript
+// Web Vitals 계측이 활성화되면 자동으로 수행됨
+// 각 메트릭은 Span과 Histogram Metric으로 동시 전송
+
+// FCP (First Contentful Paint) 측정 시
+// - Span: web-vital.name='fcp', web-vital.value=1500, web-vital.rating='good'
+// - Metric: histogram 'webvitals' with value=1500
+
+// LCP (Largest Contentful Paint) 측정 시
+// - Span: web-vital.name='lcp', web-vital.value=2500, web-vital.rating='needs-improvement'
+// - Metric: histogram 'webvitals' with value=2500
+```

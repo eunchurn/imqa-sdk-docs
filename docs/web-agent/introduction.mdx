@@ -640,6 +640,18 @@ Trace Header를 전파할 대상 도메인 또는 정규식 목록을 지정합�
 
 Web Vitals 계측을 활성화합니다. 기본값은 `false`이며, 활성화 시 Core Web Vitals 지표가 자동으로 계측됩니다. 이 기능은 웹 성능을 모니터링하는 데 유용합니다.
 
+Web Vitals 데이터는 두 가지 형태로 전송됩니다:
+- **Span**: 개별 이벤트로 기록되어 상세한 추적 정보 제공
+- **Histogram Metric**: OpenTelemetry Metric으로 전송되어 분포도 및 백분위수 분석 지원
+
+지원되는 메트릭:
+- FCP (First Contentful Paint)
+- TTFB (Time to First Byte)
+- FID (First Input Delay)
+- CLS (Cumulative Layout Shift)
+- LCP (Largest Contentful Paint)
+- INP (Interaction to Next Paint)
+
 #### `websocket`
 
 > (`boolean`, 선택)
