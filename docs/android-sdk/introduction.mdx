@@ -249,7 +249,7 @@ HttpURLConnection 기반의 네트워크 요청의 XHR 데이터를 수집하기
 **Kotlin**
 
 ```kotlin
-// HttpURLConnection 객체를 ConnectionWrapper 로 감쌈
+// HttpURLConnection(HttpsURLConnection) 객체를 ConnectionWrapper 로 감쌈
 var url : URL = URL("https://some.host.com")
 var conn = ConnectionWrapper.wrap(url.openConnection() as HttpURLConnection)
 ```
@@ -257,7 +257,7 @@ var conn = ConnectionWrapper.wrap(url.openConnection() as HttpURLConnection)
 **Java**
 
 ```java
-// HttpsURLConnection 객체를 ConnectionWrapper 로 감쌈
+// HttpsURLConnection(HttpsURLConnection) 객체를 ConnectionWrapper 로 감쌈
 URL url = new URL("https://some.host.com");
 HttpURLConnection conn = 
     ConnectionWrapper.wrap((HttpURLConnection) url.openConnection());
