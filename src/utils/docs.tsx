@@ -164,15 +164,17 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
       if (!cur) return acc
       const { tag_name, name, body } = cur
       const releaseName = name || tag_name
-      let releaseBody = body || ''
-
-      // Clean up release body to prevent MDX parsing issues
-      releaseBody = releaseBody
-        // Escape HTML-like syntax that might confuse MDX
-        .replace(/</g, '\\<')
-        .replace(/>/g, '\\>')
-        // Handle standalone forward slashes that might cause issues
-        .replace(/(?<!https?:)\/(?![\/\w])/g, '\\/') // Escape standalone slashes not in URLs
+      const releaseBody = body || ''
+      // if (releaseUrl.startsWith('https://api.github.com/repos/eunchurn')) {
+      //   fs.writeFileSync(`./releases/${releaseName}.md`, releaseBody)
+      // }
+      // // Clean up release body to prevent MDX parsing issues
+      // releaseBody = releaseBody
+      //   // Escape HTML-like syntax that might confuse MDX
+      //   .replace(/</g, '\\<')
+      //   .replace(/>/g, '\\>')
+      //   // Handle standalone forward slashes that might cause issues
+      //   .replace(/(?<!https?:)\/(?![\/\w])/g, '\\/') // Escape standalone slashes not in URLs
 
       return `${acc}\n### ${releaseName}\n${releaseBody}`
     }, '')
