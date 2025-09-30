@@ -94,27 +94,52 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
   if (!releaseUrl) return undefined
 
   try {
-    const token = process.env.IDLERECORD_API_RELEASE_TOKEN
-    if (!token) {
-      console.warn('IDLERECORD_API_RELEASE_TOKEN not found, skipping release fetch')
-      return undefined
-    }
-
-    const response = await fetch(releaseUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/vnd.github+json',
-        'X-GitHub-Api-Version': '2022-11-28',
-        Authorization: `Bearer ${token}`,
-        'User-Agent': 'IMQA-SDK-Docs/1.0',
-      },
-      // Add timeout and caching for better performance
-      next: {
-        revalidate: 3600, // Cache for 1 hour
-        tags: ['github-releases'],
-      },
-    })
+    const response = await (() => {
+      if (releaseUrl.startsWith('https://api.github.com/repos/idlerecord')) {
+        const token = process.env.IDLERECORD_API_RELEASE_TOKEN
+        if (!token) {
+          console.warn('IDLERECORD_API_RELEASE_TOKEN not found, skipping release fetch')
+          return undefined
+        }
+        return fetch(releaseUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            Authorization: `Bearer ${token}`,
+            'User-Agent': 'IMQA-SDK-Docs/1.0',
+          },
+          // Add timeout and caching for better performance
+          next: {
+            revalidate: 3600, // Cache for 1 hour
+            tags: ['github-releases'],
+          },
+        })
+      } else if (releaseUrl.startsWith('https://api.github.com/repos/eunchurn')) {
+        const token = process.env.IMQA_JS_RELEASE_TOKEN
+        if (!token) {
+          console.warn('IMQA_JS_RELEASE_TOKEN not found, skipping release fetch')
+          return undefined
+        }
+        return fetch(releaseUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            Authorization: `Bearer ${token}`,
+            'User-Agent': 'IMQA-SDK-Docs/1.0',
+          },
+          // Add timeout and caching for better performance
+          next: {
+            revalidate: 3600, // Cache for 1 hour
+            tags: ['github-releases'],
+          },
+        })
+      }
+    })()
+    if (!response) return undefined
 
     if (!response.ok) {
       console.error(`GitHub API error! status: ${response.status}, url: ${releaseUrl}`)
@@ -139,8 +164,17 @@ async function getReleases(releaseUrl?: string): Promise<string | undefined> {
       if (!cur) return acc
       const { tag_name, name, body } = cur
       const releaseName = name || tag_name
-      const releaseBody = body || ''
-      return `${acc}\n### ${releaseName}\n ${releaseBody}`
+      let releaseBody = body || ''
+
+      // Clean up release body to prevent MDX parsing issues
+      releaseBody = releaseBody
+        // Escape HTML-like syntax that might confuse MDX
+        .replace(/</g, '\\<')
+        .replace(/>/g, '\\>')
+        // Handle standalone forward slashes that might cause issues
+        .replace(/(?<!https?:)\/(?![\/\w])/g, '\\/') // Escape standalone slashes not in URLs
+
+      return `${acc}\n### ${releaseName}\n${releaseBody}`
     }, '')
 
     return source
@@ -346,7 +380,6 @@ async function _getDocs(
         },
       }).catch((error) => {
         console.error('Error compiling MDX:', error)
-        console.log(releases)
         return { content: '' }
       })
 
