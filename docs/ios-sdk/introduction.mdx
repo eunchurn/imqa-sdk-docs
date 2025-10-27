@@ -48,7 +48,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             serviceKey: serviceKey,
             endpoints: endpoint,
             sampleRate: 1.0,
-            isDeviceIdEnable: true //기기 ID 활성화 여부 (선택 사항, 기본값: true
+            isDeviceIdEnable: true, //기기 ID 활성화 여부 (선택 사항, 기본값: true
+            onOffSDKUrl: "",        //sdk 수집여부 api url 입력 (선택 사항 기본값: "" -> 수집함)
+            namespace: "namespace", //namespace (대시보드에 서비스추가시 입력한 namespace를 추가해주세요
+            deployEnvironment: .development //배포 환경 설정 (선택 사항, 기본값: .production
         )
         
         IMQA
@@ -195,6 +198,9 @@ import Foundation
         initWithServiceKey:@"비스키"
         endpoints:endpoints
         sampleRate:1.0
+        onOffSDKUrl: ""  //sdk 수집여부 api url 입력 (선택 사항 기본값: "" -> 수집함)
+        namespace: "namespace" //namespace (대시보드에 서비스추가시 입력한 namespace를 추가해주세요
+        deployEnvironment: IMQADeployEnvironment.development //배포 환경 설정 (선택 사항, 기본값: .production
         isDeviceIdEnable:YES]; //기기 ID 활성화 여부 (선택 사항, 기본값: true
     
     [[IMQA setupWithOptions:options isDebug:YES] start];
