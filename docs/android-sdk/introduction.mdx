@@ -169,6 +169,10 @@ class Application : android.app.Application() {
         options.setCollectorURL("여기에 url을 입력해주세요.")
         options.setServiceKey("여기에 service key를 입력해주세요.")
         options.setSampleRate("샘플링 비율(0.0~1.0) 값을 입력해주세요.") // default=0.5
+        //대시보드 서비스 추가시 입력한 namespace를 넣어주세요
+        options.setServiceNameSpace("Namespace")
+        //배포 환경 설정 (선택 사항, 기본값: .PRODUCTION)
+        //options.setEnvironment(Environment.DEVELOPMENT)
         // 클릭이벤트 자동 수집 설정 (default=false)
         //options.setUserEventEnable(true)
 
@@ -194,6 +198,10 @@ public class Application extends android.app.Application {
         options.setCollectorURL("여기에 url을 입력해주세요.");
         options.setServiceKey("여기에 service key를 입력해주세요.");
         options.setSampleRate("샘플링 비율(0.0~1.0) 값을 입력해주세요."); // default=0.5
+        //대시보드 서비스 추가시 입력한 namespace를 넣어주세요
+        options.setServiceNameSpace("Namespace"); 
+        //배포 환경 설정 (선택 사항, 기본값: .PRODUCTION)
+        //options.setEnvironment(Environment.DEVELOPMENT);        
         // 클릭이벤트 자동 수집 설정 (default=false)
         //options.setUserEventEnable(true)
         
