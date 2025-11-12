@@ -48,12 +48,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             serviceKey: serviceKey,
             endpoints: endpoint,
             sampleRate: 1.0,
-            isDeviceIdEnable: true, //기기 ID 활성화 여부 (선택 사항, 기본값: true
-            onOffSDKUrl: "",        //sdk 수집여부 api url 입력 (선택 사항 기본값: "" -> 수집함)
-            namespace: "namespace", //namespace (대시보드에 서비스추가시 입력한 namespace를 추가해주세요
-            deployEnvironment: .development //배포 환경 설정 (선택 사항, 기본값: .production
+            isDeviceIdEnable: true, 
+            onOffSDKUrl: "",        
+            namespace: "namespace", 
+            deployEnvironment: .development 
         )
-        
+        //serviceKey : 고유 서비스 키
+        //endpoints collectorURL: 프로덕션 환경 URL
+        //sampleRate 샘플링 비율 (0.0 ~ 1.0)
+        //isDeviceIdEnable 기기 ID 활성화 여부 (선택 사항, 기본값: true
+        //namespace (선택 사항, 기본값: nil 보내지 않음)
+        //onOffSDKUrl 수집여부 api url 입력 (선택 사항 기본값: nil -> 수집함)
+        //deployEnvironment 배포 환경 설정 (선택 사항, 기본값: .production
+
         IMQA
             .setup(options: option, isDebug: true)?
             .start()
@@ -109,22 +116,18 @@ IMQA.getUserId()
 IMQA.customLog(level: .debug, message: "로그 내용")
 ```
 
-### 클릭 이벤트를 감지
- ```swift
- //자동으로 수집이 됩니다. 이후 swiftUI를 대비하여 만듬
-IMQA.sendClickEvent(buttonName: "버튼 이름", buttonClassName: "버튼 클래스 이름")
-```
-
 ### XHR시 HTTPRequestHeader를 수집여부
 
 ```swift
 IMQA.setRequestHeaderCapture(isCapture: Bool)
+// true: 수집함, false: 수집안함 default: false
 ```
 
 ### XHR시 HTTPRequestBody를 수집여부
 
 ```swift
 IMQA.setRequestBodyCapture(isCapture: Bool)
+// true: 수집함, false: 수집안함 default: false
 ```
 
 
@@ -198,10 +201,17 @@ import Foundation
         initWithServiceKey:@"비스키"
         endpoints:endpoints
         sampleRate:1.0
-        onOffSDKUrl: ""  //sdk 수집여부 api url 입력 (선택 사항 기본값: "" -> 수집함)
-        namespace: "namespace" //namespace (대시보드에 서비스추가시 입력한 namespace를 추가해주세요
-        deployEnvironment: IMQADeployEnvironment.development //배포 환경 설정 (선택 사항, 기본값: .production
-        isDeviceIdEnable:YES]; //기기 ID 활성화 여부 (선택 사항, 기본값: true
+        onOffSDKUrl: ""  
+        namespace: "namespace" 
+        deployEnvironment: IMQADeployEnvironment.development 
+        isDeviceIdEnable:YES];
+    //serviceKey : 고유 서비스 키
+    //endpoints collectorURL: 프로덕션 환경 URL
+    //sampleRate 샘플링 비율 (0.0 ~ 1.0)
+    //isDeviceIdEnable 기기 ID 활성화 여부 (선택 사항, 기본값: true
+    //namespace (선택 사항, 기본값: nil 보내지 않음)
+    //onOffSDKUrl 수집여부 api url 입력 (선택 사항 기본값: nil -> 수집함)
+    //deployEnvironment 배포 환경 설정 (선택 사항, 기본값: .production
     
     [[IMQA setupWithOptions:options isDebug:YES] start];
     
