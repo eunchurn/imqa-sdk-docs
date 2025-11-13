@@ -1,0 +1,464 @@
+---
+title: 사용자 이벤트 추적
+description: '@imqa/user-event'
+nav: 1021
+pdf: true
+cover: web
+---
+
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Fuser-event?style=flat-square&logo=npm&color=%238ef7c1) ![NPM Last Update](https://img.shields.io/npm/last-update/%40imqa%2Fuser-event?color=%238ef7c1) ![NPM Unpacked Size](https://img.shields.io/npm/unpacked-size/%40imqa%2Fuser-event?color=%238ef7c1) ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/%40imqa%2Fuser-event?color=%238ef7c1) ![NPM Downloads](https://img.shields.io/npm/dw/%40imqa%2Fuser-event?color=%238ef7c1) ![NPM Type Definitions](https://img.shields.io/npm/types/%40imqa%2Fuser-event)
+
+## 개요
+
+사용자 이벤트 추적은 웹 애플리케이션에서 발생하는 특정 비즈니스 로직이나 사용자 행동의 시작과 완료를 측정하여 전체 duration을 계측하는 기능을 제공합니다. 자동 계측으로 포착하기 어려운 커스텀 사용자 여정이나 복잡한 워크플로우를 추적하여 사용자 경험과 비즈니스 프로세스를 심층적으로 분석할 수 있습니다.
+
+## 주요 기능
+
+### 커스텀 이벤트 추적
+- 비즈니스 로직의 시작과 완료 지점 명시적 지정
+- 전체 duration 자동 계산 및 기록
+- 고유한 이벤트 ID를 통한 이벤트 관리
+
+### 컨텍스트 그룹화
+- 이벤트 실행 중 발생하는 모든 계측(fetch, console, exception 등)을 자동으로 그룹화
+- 사용자 이벤트와 연관된 모든 활동을 단일 컨텍스트로 추적
+- 분산 추적을 통한 전체 플로우 가시성 확보
+
+### 유연한 이벤트 관리
+- 이벤트 시작, 완료, 취소 기능
+- 이벤트별 커스텀 속성 추가
+- 활성 이벤트 상태 조회
+
+### 성능 분석
+- 사용자 여정의 각 단계별 소요 시간 측정
+- 비즈니스 프로세스의 병목 구간 식별
+- 사용자 행동 패턴 분석
+
+## 계측 범위
+
+사용자 이벤트 추적은 다음과 같은 시나리오에서 활용됩니다:
+
+- **폼 제출 워크플로우**: 입력부터 검증, 제출까지의 전체 프로세스
+- **파일 업로드**: 파일 선택, 업로드, 완료까지의 과정
+- **검색 및 필터링**: 검색어 입력부터 결과 표시까지
+- **장바구니 및 결제**: 상품 선택부터 결제 완료까지
+- **다단계 마법사**: 여러 단계로 구성된 사용자 입력 프로세스
+- **비동기 작업**: 긴 실행 시간이 필요한 백그라운드 작업
+
+## 주요 속성
+
+| 속성 | 설명 |
+|-----------|-------------|
+| `service.name` | Telemetry를 생성하는 서비스의 이름 |
+| `service.version` | 서비스 버전 |
+| `service.namespace` | 서비스 네임스페이스 |
+| `deployment.environment.name` | 배포 환경 |
+| `telemetry.sdk.language` | Telemetry SDK의 프로그래밍 언어 |
+| `telemetry.sdk.name` | Telemetry SDK의 이름 |
+| `telemetry.sdk.version` | Telemetry SDK의 버전 |
+| `process.runtime.name` | 런타임 이름 (예: "browser") |
+| `os.name` | 운영체제 이름 |
+| `os.version` | 운영체제 버전 |
+| `imqa.browser.device` | 디바이스 타입 |
+| `imqa.browser.name` | 브라우저 이름 |
+| `imqa.browser.version` | 브라우저 전체 버전 |
+| `imqa.browser.version_major` | 브라우저 메이저 버전 |
+| `service.key` | 서비스 식별 키 |
+| `imqa.agent.version` | IMQA 에이전트 버전 |
+| `rum.version` | RUM (Real User Monitoring) 버전 |
+| `rum.scriptInstance` | RUM 스크립트 인스턴스 식별자 |
+| `session.id` | 사용자 세션 식별자 |
+
+### 인스트루멘테이션 범위
+
+사용자 이벤트 Telemetry는 주로 다음과 같은 인스트루멘테이션 범위를 통해 캡처됩니다:
+- `@imqa/user-event`: 커스텀 사용자 이벤트 및 비즈니스 로직 추적
+
+## API 레퍼런스
+
+### `userEvent.start()`
+
+사용자 이벤트를 시작하고 고유한 이벤트 ID를 반환합니다.
+
+```typescript
+IMQA.userEvent.start(name?: string, attributes?: Attributes): string
+```
+
+**매개변수:**
+- `name` (`string`, optional): 이벤트 이름 (기본값: `user-event-[randomId]`)
+- `attributes` (`Attributes`, optional): 이벤트에 추가할 커스텀 속성
+
+**반환값:** 
+- 이벤트의 고유 식별자 (`string`)
+
+**예시:**
+```javascript
+const eventId = IMQA.userEvent.start('checkout-process', {
+  'cart.items': 3,
+  'user.type': 'premium'
+});
+```
+
+### `userEvent.end()`
+
+지정된 ID의 사용자 이벤트를 완료하고 span을 기록합니다. 전체 duration이 자동으로 계산됩니다.
+
+```typescript
+IMQA.userEvent.end(id: string, attributes?: Attributes): void
+```
+
+**매개변수:**
+- `id` (`string`, required): `start()`에서 반환된 이벤트 ID
+- `attributes` (`Attributes`, optional): 이벤트 완료 시 추가할 속성
+
+**예시:**
+```javascript
+IMQA.userEvent.end(eventId, {
+  'checkout.result': 'success',
+  'order.id': 'ORD-12345'
+});
+```
+
+### `userEvent.getActive()`
+
+현재 활성화된 사용자 이벤트 정보를 반환합니다.
+
+```typescript
+IMQA.userEvent.getActive(): UserEventInstance | undefined
+```
+
+**반환값:** 
+- 활성 이벤트 인스턴스 또는 `undefined`
+
+**예시:**
+```javascript
+const activeEvent = IMQA.userEvent.getActive();
+if (activeEvent) {
+  console.log('Active event:', activeEvent);
+}
+```
+
+### `userEvent.cancel()`
+
+지정된 ID의 사용자 이벤트를 취소합니다. span을 기록하지 않습니다.
+
+```typescript
+IMQA.userEvent.cancel(id: string): void
+```
+
+**매개변수:**
+- `id` (`string`, required): 취소할 이벤트 ID
+
+**예시:**
+```javascript
+IMQA.userEvent.cancel(eventId);
+```
+
+## 사용 예시
+
+### 버튼 클릭 이벤트 추적
+
+```javascript
+function handleButtonClick() {
+  // 이벤트 시작
+  const eventId = IMQA.userEvent.start('button-click', {
+    'button.name': 'submit',
+    'page.url': window.location.href,
+  });
+
+  // 비즈니스 로직 실행
+  performBusinessLogic()
+    .then(result => {
+      // 성공 시 이벤트 완료
+      IMQA.userEvent.end(eventId, {
+        'action.result': 'success',
+        'items.count': result.count,
+      });
+    })
+    .catch(error => {
+      // 에러 시 이벤트 완료
+      IMQA.userEvent.end(eventId, {
+        'action.result': 'error',
+        'error.message': error.message,
+      });
+    });
+}
+```
+
+### 폼 제출 이벤트 추적
+
+```javascript
+function handleFormSubmit() {
+  const eventId = IMQA.userEvent.start('form-submission', {
+    'form.type': 'contact',
+    'form.fields': 'name,email,message',
+  });
+
+  try {
+    validateForm();
+    submitForm();
+
+    IMQA.userEvent.end(eventId, {
+      'submission.result': 'success',
+    });
+  } catch (error) {
+    IMQA.userEvent.end(eventId, {
+      'submission.result': 'error',
+      'error.type': error.constructor.name,
+    });
+    throw error;
+  }
+}
+```
+
+### 파일 업로드 with 취소 기능
+
+```javascript
+function handleFileUpload(file) {
+  const eventId = IMQA.userEvent.start('file-upload', {
+    'file.name': file.name,
+    'file.size': file.size,
+    'file.type': file.type,
+  });
+
+  // 사용자가 취소한 경우
+  cancelButton.onclick = () => {
+    IMQA.userEvent.cancel(eventId);
+    uploadRequest.abort();
+  };
+
+  // 정상 처리
+  uploadFile(file)
+    .then(response => {
+      IMQA.userEvent.end(eventId, {
+        'upload.result': 'success',
+        'upload.url': response.url,
+      });
+    })
+    .catch(error => {
+      IMQA.userEvent.end(eventId, {
+        'upload.result': 'error',
+        'error.message': error.message,
+      });
+    });
+}
+```
+
+### 다단계 워크플로우 추적
+
+```javascript
+class CheckoutProcess {
+  constructor() {
+    this.eventId = null;
+  }
+
+  startCheckout() {
+    this.eventId = IMQA.userEvent.start('checkout-workflow', {
+      'cart.total': this.getCartTotal(),
+      'cart.items.count': this.getCartItemCount(),
+    });
+  }
+
+  processPayment() {
+    if (!this.eventId) return;
+    
+    // 이벤트가 활성화되어 있으면 여기서 발생하는 모든 fetch, console 등이 자동으로 그룹화됨
+    return paymentAPI.charge(this.paymentInfo)
+      .then(result => {
+        this.completeCheckout(result);
+      })
+      .catch(error => {
+        this.failCheckout(error);
+      });
+  }
+
+  completeCheckout(result) {
+    if (!this.eventId) return;
+    
+    IMQA.userEvent.end(this.eventId, {
+      'checkout.result': 'success',
+      'order.id': result.orderId,
+      'payment.method': result.paymentMethod,
+      'total.amount': result.amount,
+    });
+    
+    this.eventId = null;
+  }
+
+  failCheckout(error) {
+    if (!this.eventId) return;
+    
+    IMQA.userEvent.end(this.eventId, {
+      'checkout.result': 'error',
+      'error.code': error.code,
+      'error.message': error.message,
+    });
+    
+    this.eventId = null;
+  }
+
+  cancelCheckout() {
+    if (!this.eventId) return;
+    
+    IMQA.userEvent.cancel(this.eventId);
+    this.eventId = null;
+  }
+}
+```
+
+### 검색 기능 추적
+
+```javascript
+function handleSearch(query) {
+  const eventId = IMQA.userEvent.start('search-operation', {
+    'search.query': query,
+    'search.type': 'full-text',
+  });
+
+  searchAPI.search(query)
+    .then(results => {
+      IMQA.userEvent.end(eventId, {
+        'search.result.count': results.length,
+        'search.duration': results.metadata.duration,
+        'search.result': 'success',
+      });
+    })
+    .catch(error => {
+      IMQA.userEvent.end(eventId, {
+        'search.result': 'error',
+        'error.type': error.name,
+      });
+    });
+}
+```
+
+## 사용자 이벤트 스팬
+
+사용자 이벤트 스팬은 커스텀 사용자 이벤트를 나타내며, 다음과 같은 내용을 포함합니다:
+
+- `traceId`: 트레이스의 고유 식별자
+- `spanId`: 스팬의 고유 식별자
+- `parentSpanId`: 부모 스팬의 식별자 (적용될 경우)
+- `name`: 이벤트 이름 (예: "button-click", "checkout-process")
+- `kind`: 스팬의 타입 (INTERNAL = 1)
+- `startTimeUnixNano`: 에포크 이후의 이벤트 시작 시간 (나노초)
+- `endTimeUnixNano`: 에포크 이후의 이벤트 완료 시간 (나노초)
+- `status`: 결과 상태 (OK = 0)
+
+### 사용자 이벤트 스팬 속성
+
+각 사용자 이벤트 스팬은 다음과 같은 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `event.name` | `string` | 이벤트 이름 |
+| `event.id` | `string` | 이벤트 고유 식별자 |
+| `location.href` | `string` | 현재 페이지 URL |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `component` | `string` | 컴포넌트 이름 (`@imqa/user-event`) |
+| `span.type` | `string` | 스팬 타입 (`user-event`) |
+| *커스텀 속성* | *다양함* | `start()` 및 `end()`에서 추가한 커스텀 속성 |
+
+## 모범 사례
+
+### 1. 의미 있는 이벤트 이름 사용
+
+```javascript
+// 좋은 예
+IMQA.userEvent.start('checkout-payment-processing');
+IMQA.userEvent.start('product-search');
+IMQA.userEvent.start('user-profile-update');
+
+// 나쁜 예
+IMQA.userEvent.start('event1');
+IMQA.userEvent.start('click');
+IMQA.userEvent.start('process');
+```
+
+### 2. 적절한 속성 추가
+
+```javascript
+// 좋은 예 - 분석에 유용한 컨텍스트 제공
+IMQA.userEvent.start('product-purchase', {
+  'product.id': 'PROD-123',
+  'product.category': 'electronics',
+  'product.price': 299.99,
+  'user.tier': 'premium'
+});
+
+// 나쁜 예 - 민감한 정보나 불필요한 데이터
+IMQA.userEvent.start('product-purchase', {
+  'credit.card.number': '1234-5678-9012-3456', // 절대 금지
+  'user.password': 'secret123' // 절대 금지
+});
+```
+
+### 3. 에러 처리
+
+```javascript
+function trackUserAction() {
+  let eventId;
+  
+  try {
+    eventId = IMQA.userEvent.start('user-action');
+    // 비즈니스 로직
+    performAction();
+    IMQA.userEvent.end(eventId, { result: 'success' });
+  } catch (error) {
+    if (eventId) {
+      IMQA.userEvent.end(eventId, {
+        result: 'error',
+        'error.message': error.message
+      });
+    }
+    throw error;
+  }
+}
+```
+
+### 4. 메모리 관리
+
+```javascript
+// 이벤트 ID를 적절히 관리하고 완료되지 않은 이벤트 방지
+class UserEventManager {
+  constructor() {
+    this.activeEvents = new Map();
+  }
+
+  start(name, attributes) {
+    const id = IMQA.userEvent.start(name, attributes);
+    this.activeEvents.set(id, { name, startTime: Date.now() });
+    return id;
+  }
+
+  end(id, attributes) {
+    if (this.activeEvents.has(id)) {
+      IMQA.userEvent.end(id, attributes);
+      this.activeEvents.delete(id);
+    }
+  }
+
+  cleanup() {
+    // 오래된 이벤트 정리 (예: 5분 이상)
+    const now = Date.now();
+    for (const [id, event] of this.activeEvents) {
+      if (now - event.startTime > 5 * 60 * 1000) {
+        IMQA.userEvent.cancel(id);
+        this.activeEvents.delete(id);
+      }
+    }
+  }
+}
+```
+
+## 주의사항
+
+- 사용자 이벤트는 IMQA가 초기화된 후에만 사용할 수 있습니다
+- 이벤트 ID는 고유하며, 한 번만 종료하거나 취소할 수 있습니다
+- 민감한 개인 정보를 속성으로 추가하지 마세요
+- 장시간 실행되는 이벤트는 적절히 관리하여 메모리 누수를 방지하세요
+- `cancel()`을 호출하면 span이 기록되지 않으므로, 실제로 취소된 경우에만 사용하세요. 또한 취소한 경우에 이벤트 구간에 계측된 다른 계측 span들은 기록이 됩니다. 이때 rootless span이 생성될 수 있음을 유의하세요

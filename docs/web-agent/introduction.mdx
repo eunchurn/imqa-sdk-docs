@@ -103,6 +103,8 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
       serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
       serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
       serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+      serviceNamespace: '{{SERVICE_NAMESPACE}}',
+      deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
     });
 </script>
 ```
@@ -127,7 +129,9 @@ IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
   serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
-  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}',
+  serviceNamespace: '{{SERVICE_NAMESPACE}}',
+  deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
 });
 ```
 
@@ -162,7 +166,9 @@ IMQA.init({
     collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
     serviceName: '{{NAME_OF_YOUR_SERVICE}}',
     serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
-    serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+    serviceKey: '{{KEY_OF_YOUR_SERVICE}}',
+    serviceNamespace: '{{SERVICE_NAMESPACE}}',
+    deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
   });
 </script>
 ```
@@ -176,7 +182,10 @@ IMQA.init({
 - `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
 - `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
 - `serviceKey` 서비스 키 [상세 보기](#servicekey)
-- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
+- `serviceNamespace` 서비스 네임스페이스 [상세 보기](#servicenamespace)
+- `deploymentEnvironment` 배포 환경 [상세 보기](#deploymentenvironment)
+
+- 위에 언급한 6건의 설정값 이외의 추가 설정 옵션은 아래 문서를 참조해주세요.
 
 [설정 옵션](#설정-(options))
 
@@ -213,7 +222,9 @@ IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_SERVICE}}',
   serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
-  serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+  serviceKey: '{{KEY_OF_YOUR_SERVICE}}',
+  serviceNamespace: '{{SERVICE_NAMESPACE}}',
+  deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
 });
 
 createRoot(document.getElementById("root")!).render(
@@ -236,7 +247,9 @@ IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_SERVICE}}',
   serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
-  serviceKey: '{{KEY_OF_YOUR_SERVICE}}'
+  serviceKey: '{{KEY_OF_YOUR_SERVICE}}',
+  serviceNamespace: '{{SERVICE_NAMESPACE}}',
+  deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
 });
 
 const app = new Vue({
@@ -255,7 +268,10 @@ const app = new Vue({
 - `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
 - `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
 - `serviceKey` 서비스 키 [상세 보기](#servicekey)
-- 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
+- `serviceNamespace` 서비스 네임스페이스 [상세 보기](#servicenamespace)
+- `deploymentEnvironment` 배포 환경 [상세 보기](#deploymentenvironment)
+
+- 위에 언급한 6건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
 
 
 4. 모든 준비가 완료되었습니다. 이후 모든 계측은 자동으로 수행됩니다. 계측을 수행중인 중에 커스텀하게 데이터를 수집하거나 앱이 실행되는 중에 발생한 비즈니스 로직에 의한 계측 결과를 추가할 수 있도록 하려면 [IMQA Web Agent API 문서](#api)를 참조해주세요.
@@ -354,7 +370,9 @@ IMQA.init({
   collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
   serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
-  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+  serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}',
+  serviceNamespace: '{{SERVICE_NAMESPACE}}',
+  deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
   // 기타 설정...
 });
 ```
@@ -376,6 +394,8 @@ window.IMQA.init({
   serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
   serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
   serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+  serviceNamespace: '{{SERVICE_NAMESPACE}}',
+  deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
   // 기타 설정...
 });
 </script>
@@ -395,13 +415,13 @@ window.IMQA.init({
 Vite를 사용하는 프로젝트에서 빌드 후 소스맵을 자동으로 IMQA 서버로 업로드할 수 있습니다. 이를 통해 프로덕션 환경에서 발생한 에러의 원본 소스코드 위치를 정확하게 추적할 수 있습니다.
 
 #### 주요 기능
-- ✅ Vite 빌드 완료 후 소스맵 자동 업로드
-- ✅ 멀티파트 폼 데이터로 파일 업로드
-- ✅ 포함/제외 패턴으로 파일 필터링
-- ✅ gzip 압축 지원
-- ✅ 동시 업로드 제한 및 재시도 로직
-- ✅ CI 환경 감지
-- ✅ 업로드 후 로컬 소스맵 파일 삭제 옵션
+- Vite 빌드 완료 후 소스맵 자동 업로드
+- 멀티파트 폼 데이터로 파일 업로드
+- 포함/제외 패턴으로 파일 필터링
+- gzip 압축 지원
+- 동시 업로드 제한 및 재시도 로직
+- CI 환경 감지
+- 업로드 후 로컬 소스맵 파일 삭제 옵션
 
 #### 설치
 
@@ -526,6 +546,7 @@ export default defineConfig({
 | `serviceName`               | `string`                                        | optional      | 서비스 이름을 지정합니다. (**서비스 등록할 때의 패키지명**) 텔레메트리 데이터 저장에 필수적입니다.                                                                                                      |
 | `serviceKey`                | `string`                                        | optional      | 서비스 키를 설정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                        |
 | `serviceVersion`            | `string`                                        | optional      | 서비스 버전을 지정합니다. 텔레메트리 데이터 저장에 필수적이며, 빈 문자열이나 비문자열일 경우 경고가 발생합니다.                                                        |
+| `serviceNamespace`          | `string`                                        | optional      | 서비스 네임스페이스를 설정합니다. 여러 서비스(Android, iOS, Web 등)를 통합하여 모니터링할 경우 필요하며 비어있는 경우 `service.namespace`를 보내지 않습니다.                                               |
 | `deploymentEnvironment`     | `string`                                        | optional      | 배포 환경을 설정합니다. `setGlobalAttributes()`를 통해 지속되는 `environment` 속성의 값을 설정할 수 있습니다.                                                      |
 | `defaultAttributes`         | `Attributes`                                    | optional      | 기본 리소스 속성을 설정합니다. 모든 Span에 추가되는 전역 속성으로 사용됩니다.                                                                                        |
 | `samplingProbability`       | `number \| string`                              | optional      | 샘플링 확률을 설정합니다. 0에서 1 사이의 값으로 지정하며, 기본값은 `1`입니다.                                                                                         |
@@ -573,6 +594,16 @@ export default defineConfig({
 > (`string`, 선택)
 
 콜렉터에 인증할 때 사용할 토큰을 설정합니다. 보안이 필요한 경우 사용합니다.
+
+#### `serviceNamespace`
+
+> (`string`, 선택)
+
+서비스 네임스페이스를 설정합니다. 여러 서비스(Android, iOS, Web 등)를 통합하여 모니터링할 경우 필요합니다. 비어있는 경우 `service.namespace`를 보내지 않습니다.
+
+<Gha keyword="TIP" title="IMQA v4.0.0 이상과 연동">
+  IMQA v4.0.0 이상에서는 `serviceNamespace`를 사용하여 동일한 서비스 네임스페이스 내에서 여러 플랫폼(Android, iOS, Web 등)의 데이터를 통합하여 모니터링할 수 있습니다. 이를 통해 전체적인 서비스 상태를 한눈에 파악할 수 있습니다.
+</Gha>
 
 #### `serviceName`
 
@@ -1271,6 +1302,28 @@ IMQA.recordLog('API 사용량 초과', {
   url: 'https://api.imqa.io/usage',
 })
 ```
+
+### `userEvent`
+
+사용자 이벤트를 추적하고 분석하기 위한 API입니다. 특정 사용자 행동이나 비즈니스 로직의 시작과 끝을 측정하여 전체 duration을 계측할 수 있습니다.
+
+```ts
+userEvent: {
+  start(name?: string, attributes?: Attributes): string;
+  end(id: string, attributes?: Attributes): void;
+  getActive(): UserEventInstance | undefined;
+  cancel(id: string): void;
+}
+```
+
+사용자 이벤트는 다음과 같은 주요 메서드를 제공합니다:
+
+- `start()`: 사용자 이벤트를 시작하고 고유한 이벤트 ID 반환
+- `end()`: 지정된 ID의 이벤트를 완료하고 span 기록
+- `getActive()`: 현재 활성화된 이벤트 정보 반환
+- `cancel()`: 지정된 ID의 이벤트를 취소 (span 기록 안 함)
+
+자세한 사용 방법은 [user event instrumentation](/instrumentations/instrumentation-user-event) 섹션을 참조하세요.
 
 ### `setScreenAttribute`
 
