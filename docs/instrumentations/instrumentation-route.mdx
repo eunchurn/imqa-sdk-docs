@@ -10,33 +10,78 @@ cover: web
 
 ## 개요
 
-라우트 계측은 단일 페이지 애플리케이션(SPA)에서 클라이언트 사이드 라우팅과 페이지 네비게이션을 자동으로 추적하는 기능을 제공합니다. React Router, Vue Router, Angular Router 등의 라우팅 라이브러리와 연동하여 페이지 전환, 로딩 시간, 네비게이션 패턴을 실시간으로 모니터링할 수 있습니다.
+라우트 계측은 단일 페이지 애플리케이션(SPA)에서 클라이언트 사이드 라우팅과 페이지 네비게이션을 자동으로 추적하는 기능을 제공합니다. History API와 hashchange 이벤트를 모니터링하여 페이지 전환, 로딩 시간, 네비게이션 패턴을 실시간으로 모니터링하며, React Router, Vue Router, Angular Router 등 모든 라우팅 라이브러리와 호환됩니다.
 
 ## 주요 기능
+
+### History API 기반 추적
+- `pushState`, `replaceState` 이벤트 자동 감지
+- `popstate` 이벤트 (뒤로 가기/앞으로 가기) 추적
+- `hashchange` 이벤트 지원
+- 라우팅 라이브러리에 독립적인 범용 추적
 
 ### 자동 라우트 추적
 - SPA 라우트 변경 자동 감지
 - 페이지 전환 시간 측정
 - 라우트별 로딩 성능 분석
+- 이전 URL 자동 기록
+
+### 컨텍스트 보존 및 연결
+- OpenTelemetry 컨텍스트 전파
+- 사용자 상호작용과의 자동 연결
+- 부모 스팬과의 관계 유지
+- 라우트 변경 중 발생한 이벤트 그룹화
 
 ### 네비게이션 패턴 분석
 - 사용자 페이지 이동 경로 추적
 - 인기 페이지 및 이탈률 분석
 - 네비게이션 플로우 최적화 지원
+- 이전 페이지 정보 자동 수집
 
 ### 성능 모니터링
 - 라우트별 렌더링 시간
 - 코드 스플리팅 효과 측정
 - 번들 로딩 성능 분석
+- Post Document Load 이벤트와 연동
 
 ## 계측 범위
 
 라우트 계측은 다음과 같은 네비게이션을 추적합니다:
 
+### 1. History API 이벤트
+
+#### pushState
+- `history.pushState()`를 통한 프로그래매틱 네비게이션
+- React Router, Vue Router 등의 `push()` 메서드
+- 새로운 히스토리 엔트리 생성
+- URL 변경과 함께 라우트 변경 스팬 생성
+
+#### replaceState
+- `history.replaceState()`를 통한 URL 교체
+- 현재 히스토리 엔트리 수정
+- 라우터의 `replace()` 메서드
+- 리다이렉션 추적
+
+#### popstate
+- 브라우저 뒤로 가기 버튼
+- 브라우저 앞으로 가기 버튼
+- `history.back()`, `history.forward()` 호출
+- 히스토리 네비게이션 추적
+
+### 2. Hash 기반 라우팅
+
+#### hashchange
+- `window.location.hash` 변경
+- 해시 기반 라우터 지원
+- 레거시 SPA 라우팅 패턴
+- `#/page` 형태의 URL 변경
+
+### 3. 추적되는 네비게이션 패턴
+
 - **프로그래매틱 네비게이션**: JavaScript를 통한 라우트 변경
-- **브라우저 네비게이션**: 뒤로 가기, 앞으로 가기, 새로고침
-- **링크 클릭**: 내부 링크를 통한 페이지 이동
-- **외부 네비게이션**: 외부 사이트로의 이동 (이탈)
+- **브라우저 네비게이션**: 뒤로 가기, 앞으로 가기
+- **링크 클릭**: 내부 링크를 통한 페이지 이동 (사용자 상호작용과 연결)
+- **리다이렉션**: 자동 페이지 전환
 
 ## 주요 속성
 
@@ -98,20 +143,40 @@ cover: web
 
 ### 라우트 변경 스팬 속성
 
-각 라우트 변경 스팬은 다음과 같은 속성을 포함합니다:
+각 라우트 변경 스팬(`routeChange`)은 다음과 같은 속성을 포함합니다:
+
+#### 필수 속성
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
+| `imqa.rum.component` | `string` | 계측 컴포넌트 이름 (`@imqa/instrumentation-route`) |
+| `imqa.span.type` | `string` | 스팬 타입 (항상 `route`) |
 | `location.href` | `string` | 라우트 변경 후 현재 페이지 URL |
-| `environment` | `string` | 환경 이름 |
-| `deployment.environment` | `string` | 배포 환경 |
-| `screen.name` | `string` | 화면/페이지 이름 |
+| `prev.href` | `string` | 라우트 변경 전 이전 페이지 URL |
+
+#### 컨텍스트 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `screen.name` | `string` | 화면/페이지 이름 (새로운 라우트 기준) |
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
-| `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type` | `string` | 스팬 타입 (예: "route") |
-| `prev.href` | `string` | 라우트 변경 전 이전 페이지 URL |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+| `url.full` | `string` | 전체 URL (쿼리 파라미터 포함) |
+
+#### 네비게이션 타입 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `navigation.type` | `string` | 네비게이션 타입 (`pushState`, `replaceState`, `popstate`, `hashchange`) |
+| `navigation.trigger` | `string` | 네비게이션 트리거 (`programmatic`, `browser`, `user`) |
+
+#### 부모 컨텍스트 연결
+
+- 사용자 상호작용(링크 클릭 등) 후 발생한 라우트 변경은 자동으로 연결
+- `parentSpanId`를 통해 트리거된 이벤트와 관계 유지
+- 사용자 이벤트 컨텍스트 내에서 발생한 라우트 변경 자동 그룹화
 
 ## 스키마 간의 관계
 
@@ -127,21 +192,465 @@ cover: web
 
 ### 계측 설정
 
-> (`boolean` 또는 `InstrumentationConfig`, 선택)
+> (`boolean` 또는 `IMQARouteInstrumentationConfig`, 선택)
 
-라우트 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클라이언트 측 라우트 변경 이벤트가 자동으로 계측됩니다.
+라우트 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클라이언트 측 라우트 변경 이벤트가 자동으로 계측됩니다. `IMQARouteInstrumentationConfig`를 제공하여 화면 이름 생성 방식을 커스터마이징할 수 있습니다.
 
 ```typescript
-interface InstrumentationConfig {
+interface IMQARouteInstrumentationConfig extends InstrumentationConfig {
   enabled?: boolean;
+  screenNameOption?: ScreenNameOption;
 }
 ```
 
-## 예시
+**설정 옵션:**
+
+- **`enabled`** (`boolean`, optional): 계측 활성화 여부 (기본값: `true`)
+
+- **`screenNameOption`** (`ScreenNameOption`, optional): 화면 이름 생성 방식 설정
+  - `screenNameType`: 화면 이름 생성 방식 (`'full'`, `'routeOnly'`, `'pathOnly'`)
+  - `urlWithSearchParams`: 쿼리 파라미터 포함 여부 (기본값: `false`)
+
+**기본 설정:**
+
+```javascript
+{
+  enabled: true,
+  screenNameOption: {
+    screenNameType: 'routeOnly',
+    urlWithSearchParams: false
+  }
+}
+```
+
+## 사용 예시
+
+### 기본 설정
+
+라우트 계측은 기본적으로 활성화되며 별도 설정 없이 사용할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-spa-app',
+  serviceKey: 'your-service-key',
+  // 라우트 계측은 기본적으로 활성화됨
+});
+```
+
+### 화면 이름 커스터마이징
+
+화면 이름 생성 방식을 설정할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-spa-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    route: {
+      enabled: true,
+      screenNameOption: {
+        screenNameType: 'routeOnly', // 경로만 사용
+        urlWithSearchParams: false   // 쿼리 파라미터 제외
+      }
+    }
+  }
+});
+```
+
+**screenNameType 옵션:**
+- `'full'`: 전체 URL 사용
+- `'routeOnly'`: 경로만 사용 (기본값)
+- `'pathOnly'`: 도메인 제외 경로만 사용
+
+### React Router 통합
+
+React Router와 자동으로 작동합니다:
+
+```javascript
+// React Router v6
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/products/:id" element={<Product />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+// 모든 라우트 변경이 자동으로 추적됨
+```
+
+### Vue Router 통합
+
+Vue Router와도 자동으로 작동합니다:
+
+```javascript
+// Vue Router v4
+import { createRouter, createWebHistory } from 'vue-router';
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: '/', component: Home },
+    { path: '/about', component: About },
+    { path: '/products/:id', component: Product }
+  ]
+});
+
+// 모든 라우트 변경이 자동으로 추적됨
+```
+
+## 고급 기능
+
+### History API 자동 패칭
+
+라우트 계측은 History API 메서드를 자동으로 패치하여 모든 라우트 변경을 감지합니다:
+
+```javascript
+// 내부적으로 다음 메서드들이 패치됨
+const originalPushState = history.pushState;
+const originalReplaceState = history.replaceState;
+
+history.pushState = function(...args) {
+  // 라우트 변경 스팬 생성
+  const result = originalPushState.apply(this, args);
+  // 이벤트 발생
+  return result;
+};
+```
+
+### 이벤트 리스너 자동 등록
+
+```javascript
+// popstate 이벤트 (뒤로/앞으로 가기)
+window.addEventListener('popstate', (event) => {
+  // 라우트 변경 스팬 생성
+});
+
+// hashchange 이벤트 (해시 라우팅)
+window.addEventListener('hashchange', (event) => {
+  // 라우트 변경 스팬 생성
+});
+```
+
+### 컨텍스트 보존
+
+사용자 상호작용에서 트리거된 라우트 변경은 자동으로 연결됩니다:
+
+```javascript
+// 링크 클릭 -> 라우트 변경
+<a href="/products">제품 보기</a>
+// 클릭 이벤트가 먼저 기록되고, 라우트 변경이 그 자식으로 기록됨
+
+// 스팬 계층 구조:
+// userInteraction: click
+// └── routeChange: /products
+```
+
+### Post Document Load와 연동
+
+라우트 변경 후 로드되는 리소스는 자동으로 라우트 변경 컨텍스트와 연결됩니다:
+
+```javascript
+// 라우트 변경
+history.pushState(null, '', '/products');
+
+// 이후 로드되는 리소스들
+// - 이미지
+// - 스크립트
+// - 스타일시트
+// 모두 routeChange 스팬의 컨텍스트에서 추적됨
+
+// 스팬 계층 구조:
+// routeChange: /products
+// ├── resourceFetch: product-image.jpg
+// ├── resourceFetch: analytics.js
+// └── resourceFetch: style.css
+```
+
+### 이전 URL 자동 기록
+
+각 라우트 변경 시 이전 URL이 자동으로 기록됩니다:
+
+```javascript
+// /home -> /products 이동
+{
+  name: "routeChange",
+  attributes: {
+    "location.href": "https://example.com/products",
+    "prev.href": "https://example.com/home",
+    "screen.name": "/products"
+  }
+}
+```
+
+## 실제 사용 시나리오
+
+### 1. SPA 네비게이션 추적
+
+```javascript
+// React 예시
+function ProductList() {
+  const navigate = useNavigate();
+  
+  const handleProductClick = (productId) => {
+    // 이 네비게이션이 자동으로 추적됨
+    navigate(`/products/${productId}`);
+  };
+  
+  return (
+    <div>
+      {products.map(product => (
+        <button onClick={() => handleProductClick(product.id)}>
+          {product.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+**생성되는 스팬:**
+```javascript
+{
+  name: "routeChange",
+  attributes: {
+    "imqa.span.type": "route",
+    "location.href": "https://example.com/products/123",
+    "prev.href": "https://example.com/products",
+    "navigation.type": "pushState",
+    "screen.name": "/products/123"
+  }
+}
+```
+
+### 2. 뒤로 가기/앞으로 가기 추적
+
+```javascript
+// 브라우저 버튼 또는 프로그래매틱 네비게이션
+history.back();
+history.forward();
+
+// popstate 이벤트로 자동 추적
+```
+
+**생성되는 스팬:**
+```javascript
+{
+  name: "routeChange",
+  attributes: {
+    "imqa.span.type": "route",
+    "navigation.type": "popstate",
+    "navigation.trigger": "browser",
+    "location.href": "https://example.com/previous-page",
+    "prev.href": "https://example.com/current-page"
+  }
+}
+```
+
+### 3. 사용자 이벤트와 함께 라우트 추적
+
+```javascript
+// 사용자 이벤트 내에서 라우트 변경
+const eventId = IMQA.userEvent.start('checkout-process');
+
+try {
+  // 사용자 정보 입력
+  await collectUserInfo();
+  
+  // 결제 페이지로 이동 (자동으로 eventId와 연결됨)
+  navigate('/checkout/payment');
+  
+  // 결제 처리
+  await processPayment();
+  
+  // 완료 페이지로 이동 (자동으로 eventId와 연결됨)
+  navigate('/checkout/complete');
+  
+  IMQA.userEvent.end(eventId, { result: 'success' });
+} catch (error) {
+  IMQA.userEvent.end(eventId, { result: 'error' });
+}
+```
+
+**스팬 계층 구조:**
+```
+userEvent: checkout-process
+├── routeChange: /checkout/payment
+│   ├── resourceFetch: payment-form.js
+│   └── resourceFetch: payment-styles.css
+├── routeChange: /checkout/complete
+│   └── resourceFetch: success-icon.svg
+```
+
+### 4. 해시 기반 라우팅
+
+```javascript
+// 레거시 해시 라우터
+window.location.hash = '#/products';
+
+// hashchange 이벤트로 자동 추적
+```
+
+**생성되는 스팬:**
+```javascript
+{
+  name: "routeChange",
+  attributes: {
+    "imqa.span.type": "route",
+    "navigation.type": "hashchange",
+    "location.href": "https://example.com/#/products",
+    "prev.href": "https://example.com/#/home"
+  }
+}
+```
+
+### 5. 프로그래매틱 리다이렉션
+
+```javascript
+// 인증 체크 후 리다이렉션
+function checkAuth() {
+  if (!isAuthenticated()) {
+    // 로그인 페이지로 리다이렉션
+    history.replaceState(null, '', '/login');
+    // replaceState로 추적됨
+  }
+}
+```
+
+## 라우팅 라이브러리 호환성
+
+### React Router
+- **v5**: `BrowserRouter`, `HashRouter` 완벽 지원
+- **v6**: 최신 API 완벽 지원
+- History API 기반으로 자동 추적
+
+### Vue Router
+- **v3**: `history` 모드, `hash` 모드 지원
+- **v4**: 최신 API 완벽 지원
+- Navigation Guards와 함께 동작
+
+### Angular Router
+- `@angular/router` 완벽 지원
+- `RouterModule` 설정과 무관하게 동작
+- `NavigationStart`, `NavigationEnd` 자동 추적
+
+### Next.js
+- `next/router` 완벽 지원
+- App Router와 Pages Router 모두 지원
+- 서버 사이드 네비게이션은 제외 (클라이언트만)
+
+### 기타 라우터
+- History API를 사용하는 모든 라우터 지원
+- 커스텀 라우터 구현도 자동 추적
+- 라이브러리에 의존하지 않는 범용 계측
+
+## 성능 분석 활용
+
+### 1. 라우트별 로딩 시간 분석
+
+```javascript
+// 각 라우트의 로딩 시간 비교
+{
+  "/home": { avgDuration: 500, count: 100 },
+  "/products": { avgDuration: 1200, count: 80 },
+  "/checkout": { avgDuration: 2000, count: 50 }
+}
+```
+
+**인사이트:**
+- `/checkout`이 가장 느림 → 최적화 필요
+- 코드 스플리팅 효과 측정
+- Lazy loading 전략 검증
+
+### 2. 사용자 플로우 분석
+
+```javascript
+// 가장 많이 사용되는 네비게이션 경로
+[
+  "/home → /products → /products/:id → /cart",
+  "/home → /about → /contact",
+  "/products → /products/:id → /cart → /checkout"
+]
+```
+
+**활용:**
+- 주요 사용자 여정 파악
+- 이탈 지점 식별
+- UX 개선 방향 결정
+
+### 3. 성능 병목 식별
+
+```javascript
+// 특정 라우트에서 많은 리소스 로딩
+routeChange: /products
+├── resourceFetch: products.json (500ms)
+├── resourceFetch: product-1.jpg (300ms)
+├── resourceFetch: product-2.jpg (300ms)
+├── ... (20개의 이미지)
+└── total: 3500ms
+```
+
+**개선 방안:**
+- 이미지 lazy loading 적용
+- 번들 크기 최적화
+- 캐싱 전략 개선
+
+## 주의사항
+
+### History API 패칭
+- History API 메서드를 패치하므로 다른 라이브러리와 충돌 가능성 있음
+- IMQA를 다른 모니터링 도구보다 먼저 초기화하는 것을 권장
+- 패치된 메서드는 원본 동작을 유지하므로 기능에 영향 없음
+
+### 서버 사이드 렌더링
+- 클라이언트 측 라우트 변경만 추적됩니다
+- Next.js, Nuxt.js 등의 서버 측 네비게이션은 추적되지 않음
+- 하이드레이션 후의 클라이언트 네비게이션은 정상 추적
+
+### 성능 영향
+- History API 패치와 이벤트 리스너의 오버헤드는 무시할 수 있는 수준
+- 라우트 변경 시에만 스팬 생성
+- 정상적인 네비게이션 성능에 영향 없음
+
+### 외부 네비게이션
+- 외부 사이트로의 이동은 추적되지 않습니다
+- 같은 도메인 내의 라우트 변경만 추적
+- `window.location.href = 'https://external.com'`은 제외
+
+## Telemetry 데이터 구조
 
 유효한 라우트 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
-- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- 애플리케이션의 다른 부분 간의 네비게이션을 추적하는 라우트 변경 스팬
+### 리소스 정보
+- 서비스, 브라우저 및 환경 식별
+- 세션 및 사용자 컨텍스트
+
+### Span 데이터
+- **routeChange 스팬**: 각 라우트 변경에 대한 스팬
+- **imqa.span.type**: "route"로 식별
+- **navigation 정보**: 네비게이션 타입과 트리거
+
+### URL 정보
+- 현재 URL (`location.href`)
+- 이전 URL (`prev.href`)
+- 화면 이름 (`screen.name`)
+
+### 컨텍스트 연결
+- 사용자 상호작용과의 연결
+- 사용자 이벤트와의 그룹화
+- Post Document Load 리소스와의 연결
+
+### 타이밍 정보
+- 라우트 변경 시작 시간
+- 라우트 변경 완료 시간
+- 전체 duration
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

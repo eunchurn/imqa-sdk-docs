@@ -17,26 +17,59 @@ cover: web
 ### 자동 오류 감지
 - JavaScript 런타임 오류 자동 캡처
 - 처리되지 않은 Promise rejection 감지
+- `console.error` 호출 자동 추적
 - 전역 오류 핸들러를 통한 예외 수집
+- 문서 레벨 오류 이벤트 감지
 
 ### 상세한 오류 정보
 - 오류 메시지와 스택 트레이스
 - 오류 발생 파일과 라인 정보
 - 브라우저 및 환경 컨텍스트
+- 오류 발생 요소의 XPath 정보
+- 리소스 로딩 실패 상세 정보
+
+### 컨텍스트 보존
+- OpenTelemetry 컨텍스트 전파를 통한 오류 추적
+- 부모 Span과의 자동 연결
+- 사용자 이벤트 컨텍스트 내에서 발생한 오류 그룹화
+- 비동기 함수의 unhandled rejection에서도 컨텍스트 보존
 
 ### 실시간 모니터링
 - 오류 발생 즉시 데이터 전송
 - 사용자 세션과 연계된 오류 추적
 - 오류 패턴 및 트렌드 분석 지원
+- Span과 Log의 자동 상관관계 설정
 
 ## 계측 범위
 
 브라우저 예외 계측은 다음과 같은 오류 유형을 감지합니다:
 
-- **JavaScript 런타임 오류**: 구문 오류, 참조 오류, 타입 오류 등
-- **Promise Rejection**: 처리되지 않은 비동기 오류
-- **Resource Loading 오류**: 이미지, 스크립트 등 리소스 로딩 실패
-- **사용자 정의 오류**: 개발자가 직접 발생시키는 오류
+### 1. Console Error (`console.error`)
+- `console.error()` 호출 자동 추적
+- 호출 시점의 스택 트레이스 캡처
+- Error 객체 인자의 스택 트레이스 보존
+- 여러 인자를 하나의 메시지로 결합
+
+### 2. Unhandled Promise Rejection
+- 처리되지 않은 Promise rejection 자동 감지
+- `async/await` 함수의 unhandled rejection 추적
+- 비동기 컨텍스트 보존
+- rejection reason의 상세 정보 캡처
+
+### 3. Global Error Handler (`window.onerror`)
+- JavaScript 런타임 오류 자동 캡처
+- 구문 오류, 참조 오류, 타입 오류 등
+- 오류 발생 위치(파일, 라인, 컬럼) 정보
+
+### 4. Document Error Events
+- 리소스 로딩 실패 감지
+- 이미지, 스크립트 등의 로딩 오류
+- 오류 발생 요소의 XPath 정보
+- 대상 요소의 `src` 속성 캡처
+
+### 5. 사용자 정의 오류
+- 개발자가 직접 발생시키는 오류
+- `IMQA.recordException()` API를 통한 수동 오류 기록
 
 ## 주요 속성
 
@@ -96,31 +129,59 @@ cover: web
 
 각 브라우저 예외 스팬은 다음과 같은 속성을 포함합니다:
 
+#### 공통 속성
+
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
+| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 (항상 `error`) |
+| `span.type` | `string` | 스팬 타입 (항상 `error`) |
+| `error` | `boolean` | 오류 플래그 (항상 `true`) |
+| `exception.type` | `string` | 예외 타입 (예: "ReferenceError", "TypeError", "error") |
+| `exception.message` | `string` | 오류 메시지 (최대 1024자) |
+| `exception.stacktrace` | `string` | 오류 스택 트레이스 (최대 4096자) |
+| `error.stack` | `string` | 오류 스택 트레이스 (대체 형식) |
 | `location.href` | `string` | 현재 페이지 URL |
-| `environment` | `string` | 환경 이름 |
-| `deployment.environment` | `string` | 배포 환경 |
 | `screen.name` | `string` | 화면/페이지 이름 |
 | `screen.type` | `string` | 화면/페이지 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
-| `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type` | `string` | 스팬 타입 (예: "exception") |
-| `error` | `boolean` | 오류 플래그 (항상 `true`) |
-| `exception.type` | `string` | 예외 타입 (예: "ReferenceError", "TypeError") |
-| `exception.message` | `string` | 오류 메시지 |
-| `exception.stacktrace` | `string` | 오류 스택 트레이스 |
-| `error.stack` | `string` | 오류 스택 트레이스 (대체 형식) |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
 
-#### 추가 예외 관련 속성
+#### 오류 소스별 추가 속성
+
+##### Console Error 속성
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `error.source` | `string` | 오류 발생 소스 (예: "script", "event", "promise") |
-| `error.filename` | `string` | 오류가 발생한 파일명 |
-| `error.lineno` | `integer` | 오류가 발생한 라인 번호 |
-| `error.colno` | `integer` | 오류가 발생한 컬럼 번호 |
+| `error.object` | `string` | 오류 객체 타입 (예: "String") |
+| `exception.type` | `string` | "error" 또는 Error 객체의 실제 타입 |
+
+##### Document Error Event 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `target_element` | `string` | 오류가 발생한 HTML 요소 태그명 |
+| `target_xpath` | `string` | 오류가 발생한 요소의 XPath |
+| `target_src` | `string` | 실패한 리소스의 URL (해당되는 경우) |
+| `exception.type` | `string` | 이벤트 타입 (예: "error") |
+| `exception.message` | `string` | "event error" |
+
+#### Log 레코드 속성
+
+각 예외와 함께 생성되는 Log 레코드는 다음 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `imqa.span.type` | `string` | "error" |
+| `imqa.session.id` | `string` | 사용자 세션 식별자 |
+| `imqa.screen.name` | `string` | 화면/페이지 이름 |
+| `exception.type` | `string` | 예외 타입 |
+| `exception.message` | `string` | 오류 메시지 |
+| `exception.stacktrace` | `string` | 오류 스택 트레이스 (해당되는 경우) |
+| `span.id` | `string` | 연결된 Span의 ID |
+| `trace.id` | `string` | 연결된 Trace의 ID |
+| `severityText` | `string` | "error" |
+| `severityNumber` | `integer` | 17 (ERROR 레벨) |
 
 ### 이벤트
 
@@ -134,13 +195,63 @@ cover: web
 | `exception.parsed_stacktrace` | `string` | 파싱된 스택 트레이스의 JSON 표현 |
 | `exception.type` | `string` | 예외 타입 |
 
-## 스키마 간의 관계
+## 컨텍스트 전파 및 상관관계
+
+### OpenTelemetry 컨텍스트 보존
+
+브라우저 예외 계측은 OpenTelemetry의 컨텍스트 전파 메커니즘을 사용하여 오류와 다른 추적 이벤트 간의 관계를 자동으로 유지합니다:
+
+```javascript
+// 현재 활성 컨텍스트를 가져와서 span 생성 시 부모 관계 유지
+const activeContext = context.active();
+const span = this.tracer.startSpan(source, { startTime: now }, activeContext);
+
+// span context를 명시적으로 설정
+const spanContext = trace.setSpanContext(activeContext, span.spanContext());
+
+// context를 명시적으로 설정하여 recordException 실행
+context.with(spanContext, () => {
+  recordException(err, {
+    tracer: this.tracer,
+    span,
+  });
+});
+```
+
+### 스키마 간의 관계
 
 브라우저 예외는 종종 다른 추적된 이벤트와 관련이 있습니다:
 
 1. **사용자 상호작용** (클릭과 같은)이 예외를 트리거할 수 있습니다
 2. 사용자 상호작용이나 **라우트 변경** 중에 예외가 발생할 수 있습니다
-3. 예외 스팬은 일반적으로 트리거된 사용자 상호작용이나 라우트 변경을 연결하는 부모SpanId를 포함합니다
+3. **사용자 이벤트** 컨텍스트 내에서 발생한 예외는 자동으로 그룹화됩니다
+4. 예외 스팬은 일반적으로 트리거된 사용자 상호작용이나 라우트 변경을 연결하는 `parentSpanId`를 포함합니다
+5. **비동기 함수**의 unhandled rejection도 올바른 컨텍스트와 연결됩니다
+
+### Span과 Log의 상관관계
+
+각 예외에 대해 Span과 Log 레코드가 함께 생성되며, 다음 속성을 통해 상관관계가 유지됩니다:
+
+```javascript
+// Log 레코드에 span과 trace 정보 포함
+this.logger.emit({
+  timestamp: now,
+  severityText: 'error',
+  severityNumber: 17,
+  body: stringifyValue(err),
+  attributes: {
+    'span.id': span.spanContext().spanId,
+    'trace.id': span.spanContext().traceId,
+    // ... 기타 속성
+  },
+  context: spanContext,
+});
+```
+
+이를 통해:
+- 동일한 `trace.id`로 관련된 모든 이벤트를 추적
+- `span.id`를 사용하여 Span과 Log를 직접 연결
+- 사용자 여정 전체에 걸친 오류 분석 가능
 
 ## 사용 방법
 
@@ -162,13 +273,235 @@ interface InstrumentationConfig {
   이 기능은 브라우저에서 발생하는 오류를 계측합니다. 따라서, 서버 혹은 엣지 환경(SSR을 사용하는 경우)에서 발생하는 오류는 계측되지 않습니다. 서버 측에서 발생하는 오류를 계측하려면 별도의 서버측 에이전트를 사용해야 합니다. 이는 IMQA에서 제공하는 기능이 아닙니다.
 </Gha>
 
-## 예시
+## 사용 예시
+
+### 자동 오류 감지
+
+브라우저 예외 계측을 활성화하면 다양한 오류가 자동으로 캡처됩니다:
+
+```javascript
+// 1. console.error 호출
+console.error('API request failed', error);
+// → 자동으로 추적되며 스택 트레이스 포함
+
+// 2. 처리되지 않은 Promise rejection
+async function fetchData() {
+  throw new Error('Network error');
+}
+fetchData(); // rejection이 처리되지 않음
+// → 자동으로 추적되며 컨텍스트 보존
+
+// 3. 런타임 오류
+function buggyFunction() {
+  const x = undefined;
+  x.toString(); // TypeError 발생
+}
+// → 자동으로 추적
+
+// 4. 리소스 로딩 오류
+<img src="invalid-url.jpg" />
+// → 자동으로 추적되며 요소 정보 포함
+```
+
+### 수동 오류 기록
+
+`IMQA.recordException()` API를 사용하여 수동으로 오류를 기록할 수 있습니다:
+
+```javascript
+try {
+  performRiskyOperation();
+} catch (error) {
+  // 오류를 수동으로 기록
+  IMQA.recordException(error, {
+    'operation.name': 'risky-operation',
+    'user.action': 'button-click',
+    'severity': 'high'
+  });
+  
+  // 오류를 다시 던지거나 처리
+  handleError(error);
+}
+```
+
+### 사용자 이벤트 컨텍스트에서의 오류 추적
+
+```javascript
+// 사용자 이벤트 시작
+const eventId = IMQA.userEvent.start('checkout-process');
+
+try {
+  // 이 블록 내에서 발생하는 모든 오류는 자동으로 eventId와 연결됩니다
+  await validatePayment();
+  await processOrder();
+  await sendConfirmation();
+  
+  IMQA.userEvent.end(eventId, { result: 'success' });
+} catch (error) {
+  // 오류가 자동으로 checkout-process 컨텍스트와 연결됨
+  console.error('Checkout failed:', error);
+  IMQA.userEvent.end(eventId, { result: 'error' });
+}
+```
+
+### 비동기 함수의 오류 추적
+
+```javascript
+async function loadUserData(userId) {
+  const eventId = IMQA.userEvent.start('load-user-data', {
+    'user.id': userId
+  });
+
+  try {
+    const user = await fetchUser(userId);
+    const profile = await fetchProfile(userId);
+    const preferences = await fetchPreferences(userId);
+    
+    IMQA.userEvent.end(eventId, { 
+      result: 'success',
+      'data.loaded': true 
+    });
+    
+    return { user, profile, preferences };
+  } catch (error) {
+    // 비동기 오류도 올바른 컨텍스트와 함께 추적됨
+    IMQA.recordException(error, {
+      'user.id': userId,
+      'operation': 'load-user-data'
+    });
+    
+    IMQA.userEvent.end(eventId, { 
+      result: 'error',
+      'error.type': error.name 
+    });
+    
+    throw error;
+  }
+}
+```
+
+### 스택 트레이스 캡처
+
+```javascript
+// console.error를 사용한 스택 트레이스 캡처
+function debugFunction() {
+  // Error 객체를 전달하면 스택 트레이스가 자동으로 캡처됨
+  console.error(new Error('Debug point reached'));
+}
+
+// 또는 여러 인자와 함께
+console.error('Operation failed:', error, 'Additional context:', data);
+// → 모든 인자가 결합되어 하나의 메시지로 기록됨
+```
+
+## 고급 기능
+
+### 스택 트레이스 제한
+
+스택 트레이스와 메시지는 다음과 같이 제한됩니다:
+- 스택 트레이스: 최대 4096자
+- 오류 메시지: 최대 1024자
+
+```javascript
+const STACK_LIMIT = 4096;
+const MESSAGE_LIMIT = 1024;
+
+// 긴 스택 트레이스나 메시지는 자동으로 잘립니다
+span.setAttribute('exception.message', limitLen(msg, MESSAGE_LIMIT));
+span.setAttribute('exception.stacktrace', limitLen(err.stack, STACK_LIMIT));
+```
+
+### Error 객체 감지
+
+계측은 다양한 형태의 오류를 지능적으로 처리합니다:
+
+```javascript
+// Error 객체
+console.error(new TypeError('Invalid type'));
+// → exception.type: "TypeError"
+
+// 문자열
+console.error('Something went wrong');
+// → exception.type: "error", error.object: "String"
+
+// 여러 인자
+console.error('Error:', error, 'Context:', data);
+// → 모든 인자가 결합됨
+
+// Error 객체 배열
+console.error([error1, error2]);
+// → 첫 번째 Error 객체의 스택 트레이스 사용
+```
+
+### 리소스 로딩 오류 상세 정보
+
+```javascript
+// 이미지 로딩 실패 시 캡처되는 정보:
+{
+  "exception.type": "error",
+  "exception.message": "event error",
+  "target_element": "IMG",
+  "target_xpath": "/html/body/div[1]/img[2]",
+  "target_src": "https://example.com/invalid-image.jpg"
+}
+
+// 스크립트 로딩 실패 시도 유사한 정보 캡처
+```
+
+### 컨텍스트 기반 오류 그룹화
+
+```javascript
+// 메인 워크플로우 시작
+const mainEventId = IMQA.userEvent.start('data-processing');
+
+try {
+  // 서브 태스크 1
+  const subTask1Id = IMQA.userEvent.start('validation');
+  await validateData(); // 여기서 오류 발생 시 validation 컨텍스트로 기록
+  IMQA.userEvent.end(subTask1Id);
+  
+  // 서브 태스크 2
+  const subTask2Id = IMQA.userEvent.start('transformation');
+  await transformData(); // 여기서 오류 발생 시 transformation 컨텍스트로 기록
+  IMQA.userEvent.end(subTask2Id);
+  
+  IMQA.userEvent.end(mainEventId);
+} catch (error) {
+  // 모든 오류는 적절한 컨텍스트와 함께 추적됨
+  IMQA.userEvent.end(mainEventId, { result: 'error' });
+}
+```
+
+## 주의사항
+
+### 서버 사이드 오류
+- 이 계측은 브라우저에서 발생하는 오류만 캡처합니다
+- SSR(Server-Side Rendering) 환경의 서버 측 오류는 별도의 서버 에이전트가 필요합니다
+- IMQA는 서버 측 오류 계측을 제공하지 않습니다
+
+### 성능 영향
+- 오류 발생 시에만 동작하므로 정상 동작 시 성능 영향은 미미합니다
+- 스택 트레이스는 자동으로 제한되어 과도한 데이터 전송을 방지합니다
+- `console.error` 계측은 원본 함수를 래핑하지만 성능 저하는 무시할 수 있는 수준입니다
+
+### 민감한 정보
+- 오류 메시지와 스택 트레이스에 민감한 정보가 포함되지 않도록 주의하세요
+- 사용자 비밀번호, 토큰, API 키 등이 오류 메시지에 포함되지 않도록 합니다
+- 필요한 경우 오류 메시지를 필터링하는 로직을 추가할 수 있습니다
+
+### 브라우저 호환성
+- 대부분의 최신 브라우저에서 지원됩니다
+- `Error.captureStackTrace`는 V8 엔진(Chrome, Edge)에서만 지원됩니다
+- 다른 브라우저에서는 대체 방법을 사용하여 스택 트레이스를 캡처합니다
+
+## Telemetry 데이터 구조
 
 유효한 브라우저 예외 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
-- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- 발생한 JavaScript 예외를 상세히 설명하는 브라우저 예외 스팬
-- 스택 트레이스, 파일명, 라인 번호 등의 진단 정보
-- 관련 사용자 상호작용 또는 라우트 변경 스팬을 연결하는 링크
+- **리소스 정보**: 서비스, 브라우저 및 환경을 식별
+- **Span 데이터**: 발생한 JavaScript 예외를 상세히 설명
+- **Log 레코드**: Span과 연결된 로그 정보
+- **진단 정보**: 스택 트레이스, 파일명, 라인 번호 등
+- **컨텍스트 링크**: 관련 사용자 상호작용 또는 라우트 변경 스팬과의 연결
+- **상관관계 ID**: `span.id`와 `trace.id`를 통한 Span-Log 연결
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.

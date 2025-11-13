@@ -18,25 +18,63 @@ cover: web
 - HTML 문서 다운로드 시간 측정
 - DOM 파싱 및 구성 시간 추적
 - 리소스 로딩 병목 지점 식별
+- 개별 리소스별 타이밍 정보 수집
 
 ### 성능 메트릭 수집
 - Navigation Timing API 기반 정밀 측정
+- Resource Timing API를 통한 리소스별 성능 데이터
 - 서버 응답 시간 및 네트워크 지연
+- Server-Timing 헤더 정보 자동 캡처
 - 브라우저 렌더링 성능 분석
+
+### 서버 추적 통합
+- Server-Timing 헤더를 통한 분산 추적
+- 서버 측과 클라이언트 측 성능 데이터 연결
+- TraceParent 정보 자동 추출 및 연결
+
+### 리소스 필터링
+- 특정 리소스 타입 제외 (beacon, fetch, XMLHttpRequest)
+- URL 패턴 기반 리소스 무시
+- 불필요한 계측 오버헤드 최소화
 
 ### 최적화 인사이트
 - 로딩 성능 개선점 도출
 - 리소스 우선순위 최적화 지원
 - 사용자 경험 개선을 위한 데이터
+- 화면 크기 및 참조 페이지 정보
 
 ## 계측 범위
 
 문서 로드 계측은 다음과 같은 로딩 이벤트를 추적합니다:
 
+### 1. 문서 로드 (documentLoad)
 - **네비게이션 시작**: 페이지 요청 시작 시점
 - **서버 응답**: HTML 문서 다운로드 완료
 - **DOM 파싱**: HTML 파싱 및 DOM 트리 구성
-- **리소스 로딩**: CSS, JS, 이미지 등 추가 리소스
+- **이벤트 처리**: DOMContentLoaded, Load 이벤트
+- **추가 메타데이터**: 
+  - 문서 참조자 (referrer)
+  - 화면 해상도 (screen.xy)
+  - 사용자 에이전트
+
+### 2. 문서 가져오기 (documentFetch)
+- 초기 HTML 문서 다운로드
+- Server-Timing 헤더 정보
+- TraceParent를 통한 서버 추적 연결
+- HTTP 메서드 (기본값: GET)
+
+### 3. 리소스 가져오기 (resourceFetch)
+다음 리소스 타입을 추적합니다:
+- **CSS 스타일시트**
+- **JavaScript 파일**
+- **이미지** (PNG, JPG, SVG 등)
+- **폰트 파일**
+- **기타 리소스**
+
+다음 리소스 타입은 **제외**됩니다:
+- `beacon`: 분석 비콘
+- `fetch`: Fetch API 호출 (별도 계측)
+- `xmlhttprequest`: XHR 요청 (별도 계측)
 
 ## 주요 속성
 
@@ -103,34 +141,72 @@ DocumentLoad Telemetry는 주로 `@opentelemetry/instrumentation-document-load` 
 - `name`: "resourceFetch"
 - `parentSpanId`: 부모 documentLoad 스팬의 ID
 
-### 문서 로드(`documentLoad`) 스팬 속성
+### 스팬 타입별 속성
 
-각 문서 로드 스팬은 다음과 같은 속성을 포함합니다:
+#### 1. 문서 로드 (`documentLoad`) 스팬 속성
+
+메인 문서 로드 스팬은 다음 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
+| `imqa.rum.component` | `string` | 계측 컴포넌트 이름 |
+| `imqa.span.type` | `string` | "render" (메인 문서 로드) |
 | `location.href` | `string` | 현재 페이지 URL |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
 | `environment` | `string` | 환경 이름 |
 | `deployment.environment` | `string` | 배포 환경 |
-| `screen.name` | `string` | 화면/페이지 이름 |
-| `screen.type` | `string` | 화면/페이지 타입 (예: "page") |
-| `session.id` | `string` | 사용자 세션 식별자 |
-| `url.full` | `string` | 요청 전체 URL (예: "https://example.com/articles/4?s=1&t1" ) |
-| `http.url` | `string` | (deprecated) 가져오는 문서나 리소스의 URL (예: "https://example.com/articales/4" ) |
-| `http.response_content_length` | `integer` | 응답 컨텐츠의 크기 (바이트) |
-| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type`| `string` | 스팬 타입 (예: "render") |
-| `http.request.method` | `string` | 요청에 사용된 HTTP 메서드 (일반적으로 "GET") |
-| `http.scheme` | `string` | 요청에 사용된 프로토콜 (예: "https") |
-| `http.host` | `string` | 요청에 사용된 호스트 (예: "example.com") |
+| `imqa.document.referrer` | `string` | 이전 페이지 URL (존재하는 경우) |
+| `imqa.document.screen.xy` | `string` | 화면 해상도 (예: "1920x1080") |
+| `url.full` | `string` | 요청 전체 URL |
+| `http.url` | `string` | (deprecated) 문서 URL |
+| `http.response_content_length` | `integer` | 응답 컨텐츠 크기 (바이트) |
+| `http.request.method` | `string` | HTTP 메서드 (기본값: "GET") |
+| `http.scheme` | `string` | 프로토콜 (예: "https") |
+| `http.host` | `string` | 호스트 이름 |
+| `http.user_agent` | `string` | 브라우저 사용자 에이전트 |
 
-주 문서 로드 스팬은 다음과 같은 추가 속성도 포함할 수 있습니다:
+#### 2. 문서 가져오기 (`documentFetch`) 스팬 속성
+
+초기 HTML 문서 가져오기 스팬은 다음 속성을 포함합니다:
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `http.user_agent` | `string` | 브라우저 사용자 에이전트 |
-| `document.referrer` | `string` | 적용 가능한 경우 이전 페이지 URL |
-| `screen.xy` | `string` | 화면 크기 (예: "1920x1080") |
+| `imqa.rum.component` | `string` | 계측 컴포넌트 이름 |
+| `imqa.span.type` | `string` | "render_child" |
+| `http.request.method` | `string` | "GET" |
+| `location.href` | `string` | 현재 페이지 URL |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
+
+**Server-Timing 연결:**
+- Navigation Timing API의 `serverTiming` 정보 자동 추출
+- TraceParent 정보를 통한 분산 추적 연결
+
+#### 3. 리소스 가져오기 (`resourceFetch`) 스팬 속성
+
+개별 리소스 로드 스팬은 다음 속성을 포함합니다:
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `imqa.rum.component` | `string` | 계측 컴포넌트 이름 |
+| `imqa.span.type` | `string` | "render_child" |
+| `http.request.method` | `string` | "GET" |
+| `url.full` | `string` | 리소스의 전체 URL |
+| `http.url` | `string` | 리소스 URL |
+| `http.response_content_length` | `integer` | 리소스 크기 (바이트) |
+| `location.href` | `string` | 현재 페이지 URL |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면/페이지 타입 |
+| `session.id` | `string` | 사용자 세션 식별자 |
+
+**TraceParent 연결:**
+- Performance Entry의 Server-Timing 정보에서 자동 추출
+- 서버 측 추적과의 자동 연결
 
 ### 이벤트
 
@@ -181,18 +257,298 @@ DocumentLoad Telemetry는 주로 `@opentelemetry/instrumentation-document-load` 
 ```typescript
 interface IMQADocLoadInstrumentationConfig extends InstrumentationConfig {
   ignoreUrls?: (string | RegExp)[];
+  screenNameOption?: ScreenNameOption;
 }
 ```
-- `ignoreUrls`: 계측하지 않을 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 부분 일치 또는 정확히 일치하는 URL은 계측되지 않습니다.
 
-## 예시
+**설정 옵션:**
+
+- **`ignoreUrls`** (`(string | RegExp)[]`, optional): 계측하지 않을 리소스 URL 패턴을 지정합니다. 정규식이나 문자열 배열로 설정할 수 있으며, 패턴과 일치하는 리소스는 계측되지 않습니다.
+
+- **`screenNameOption`** (`ScreenNameOption`, optional): 화면 이름 생성 방식을 지정합니다. 이 설정은 `screen.name`과 `screen.type` 속성 생성에 영향을 줍니다.
+
+**자동 제외되는 리소스 타입:**
+
+다음 initiatorType을 가진 리소스는 자동으로 계측에서 제외됩니다:
+- `beacon`: 분석 비콘
+- `fetch`: Fetch API 호출
+- `xmlhttprequest`: XMLHttpRequest 호출
+
+이러한 리소스들은 별도의 계측 모듈에서 처리됩니다.
+
+## 사용 예시
+
+### 기본 설정
+
+문서 로드 계측은 기본적으로 활성화되며 추가 설정 없이 사용할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  // 문서 로드 계측은 기본적으로 활성화됨
+});
+```
+
+### 리소스 URL 필터링
+
+특정 URL 패턴의 리소스를 계측에서 제외할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    documentLoad: {
+      enabled: true,
+      // CDN 리소스 제외
+      ignoreUrls: [
+        /cdn\.example\.com/,
+        'https://analytics.example.com',
+        /google-analytics/
+      ]
+    }
+  }
+});
+```
+
+### 화면 이름 설정
+
+화면 이름 생성 방식을 커스터마이징할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    documentLoad: {
+      enabled: true,
+      screenNameOption: {
+        screenNameType: 'routeOnly', // 또는 'full', 'pathOnly'
+        urlWithSearchParams: false
+      }
+    }
+  }
+});
+```
+
+## 고급 기능
+
+### Server-Timing 헤더 통합
+
+문서 가져오기 시 서버가 Server-Timing 헤더를 제공하면 자동으로 캡처됩니다:
+
+```http
+HTTP/1.1 200 OK
+Server-Timing: db;dur=53, app;dur=47.2, total;dur=100.2
+Server-Timing: traceparent;desc="00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+```
+
+이 정보는 다음과 같이 활용됩니다:
+- 서버 측 성능 메트릭 자동 수집
+- TraceParent를 통한 분산 추적 연결
+- 클라이언트-서버 간 성능 상관관계 분석
+
+### TraceParent 자동 추출
+
+Performance Entry에서 TraceParent 정보를 자동으로 추출하여 서버 측 추적과 연결합니다:
+
+```javascript
+// documentFetch 및 resourceFetch 스팬에서 자동 처리
+captureTraceParentFromPerformanceEntries(entries, span);
+```
+
+이를 통해:
+- 서버 측 트레이스와 클라이언트 측 트레이스 자동 연결
+- 전체 요청 흐름의 종단 간 가시성 확보
+- 서버와 클라이언트 성능 병목 구간 식별
+
+### 리소스 타입 자동 필터링
+
+다음 initiatorType의 리소스는 자동으로 제외됩니다:
+
+```javascript
+const excludedInitiatorTypes = ['beacon', 'fetch', 'xmlhttprequest'];
+```
+
+**제외 이유:**
+- `beacon`: 분석/추적 목적의 작은 요청으로, 별도 모니터링 불필요
+- `fetch`: `@imqa/instrumentation-fetch`에서 더 상세하게 추적
+- `xmlhttprequest`: `@imqa/instrumentation-xml-http-request`에서 더 상세하게 추적
+
+### 추가 문서 메타데이터
+
+메인 문서 로드 스팬에 유용한 메타데이터가 자동으로 추가됩니다:
+
+```javascript
+// 이전 페이지 정보
+if (document.referrer && document.referrer !== '') {
+  span.setAttribute('imqa.document.referrer', document.referrer);
+}
+
+// 화면 해상도
+if (window.screen) {
+  span.setAttribute(
+    'imqa.document.screen.xy',
+    window.screen.width + 'x' + window.screen.height
+  );
+}
+```
+
+이 정보를 통해:
+- 사용자 유입 경로 분석
+- 화면 크기별 성능 분석
+- 디바이스 타입별 최적화
+
+### Performance Timeline 활용
+
+Navigation Timing API와 Resource Timing API를 활용하여 상세한 타이밍 정보를 수집합니다:
+
+```javascript
+// Navigation Timing 이벤트
+{
+  fetchStart: 1234567890,
+  domainLookupStart: 1234567891,
+  domainLookupEnd: 1234567892,
+  connectStart: 1234567892,
+  connectEnd: 1234567895,
+  requestStart: 1234567895,
+  responseStart: 1234567900,
+  responseEnd: 1234567950,
+  domInteractive: 1234568000,
+  domContentLoadedEventStart: 1234568100,
+  domContentLoadedEventEnd: 1234568110,
+  domComplete: 1234568200,
+  loadEventStart: 1234568200,
+  loadEventEnd: 1234568210
+}
+```
+
+## 스팬 계층 구조
+
+문서 로드 계측은 다음과 같은 계층 구조의 스팬을 생성합니다:
+
+```
+documentLoad (render)
+├── documentFetch (render_child)
+│   └── Server-Timing 정보
+│   └── TraceParent 연결
+├── resourceFetch (render_child) - style.css
+│   └── TraceParent 연결 (가능한 경우)
+├── resourceFetch (render_child) - script.js
+├── resourceFetch (render_child) - logo.png
+└── resourceFetch (render_child) - font.woff2
+```
+
+각 스팬은 다음을 포함합니다:
+- 시작/종료 타임스탬프
+- DNS 조회, 연결, 요청/응답 타이밍
+- 리소스 크기
+- 화면 및 세션 정보
+
+## 성능 분석 시나리오
+
+### 1. 느린 초기 로딩 분석
+
+```javascript
+// documentLoad 스팬 분석
+{
+  name: "documentLoad",
+  startTime: 0,
+  duration: 3500, // 3.5초
+  events: {
+    domInteractive: 1200,
+    domContentLoadedEventEnd: 2000,
+    loadEventEnd: 3500
+  }
+}
+```
+
+**분석:**
+- DOM 준비까지 1.2초: 적절함
+- DOMContentLoaded까지 2초: 추가 800ms 소요 - 동기 스크립트 확인 필요
+- 전체 로드 3.5초: 추가 1.5초 소요 - 이미지/리소스 최적화 필요
+
+### 2. 리소스 로딩 병목 식별
+
+```javascript
+// resourceFetch 스팬들 분석
+[
+  { name: "style.css", duration: 50, size: 24000 },
+  { name: "app.js", duration: 500, size: 2400000 },  // 병목!
+  { name: "vendor.js", duration: 300, size: 1200000 },
+  { name: "hero.jpg", duration: 800, size: 1500000 }  // 병목!
+]
+```
+
+**개선 방안:**
+- `app.js`: 코드 분할 또는 압축 개선
+- `hero.jpg`: 이미지 최적화, WebP 포맷 사용, lazy loading
+
+### 3. 서버 응답 시간 분석
+
+```javascript
+// documentFetch 스팬의 Server-Timing
+{
+  serverTiming: [
+    { name: "db", duration: 53 },
+    { name: "app", duration: 47.2 },
+    { name: "total", duration: 100.2 }
+  ]
+}
+```
+
+**분석:**
+- 서버 측 처리: 100ms (양호)
+- 데이터베이스 쿼리: 53ms (전체의 53%)
+- 필요 시 쿼리 최적화 고려
+
+## 주의사항
+
+### Performance API 의존성
+- 이 계측은 브라우저의 Performance API에 의존합니다
+- 오래된 브라우저에서는 일부 메트릭이 누락될 수 있습니다
+- Navigation Timing Level 2를 지원하는 브라우저 권장
+
+### 리소스 제외
+- `fetch`와 `xmlhttprequest`는 자동으로 제외됩니다
+- 이들은 별도의 전문 계측 모듈에서 더 상세하게 추적됩니다
+- 중복 계측을 방지하여 오버헤드 최소화
+
+### CORS 제한
+- 크로스 오리진 리소스의 경우 타이밍 정보가 제한될 수 있습니다
+- `Timing-Allow-Origin` 헤더를 설정하여 상세 타이밍 정보 활성화 가능
+
+### 성능 영향
+- 계측 자체의 성능 영향은 미미합니다
+- Performance API는 브라우저에서 이미 데이터를 수집하므로 추가 오버헤드 최소
+- 리소스가 많은 페이지에서도 안정적으로 동작
+
+## Telemetry 데이터 구조
 
 유효한 문서 로드 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
-- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- 전체 페이지 로드 프로세스를 나타내는 메인 문서 로드 스팬
-- 문서 가져오기와 개별 리소스 가져오기를 나타내는 자식 스팬들
-- 각 스팬은 로딩 타이밍과 크기에 대한 상세 정보를 포함
+### 리소스 정보
+- 서비스, 브라우저 및 환경을 식별
+- 세션 및 사용자 컨텍스트
+
+### Span 데이터
+- **메인 documentLoad 스팬**: 전체 페이지 로드 프로세스
+- **documentFetch 스팬**: 초기 HTML 문서 가져오기
+- **resourceFetch 스팬들**: 개별 리소스 로딩
+
+### 타이밍 정보
+- Navigation Timing API의 모든 이벤트
+- 각 리소스의 상세 타이밍
+- Server-Timing 헤더 정보
+
+### 연결 정보
+- TraceParent를 통한 서버 추적 연결
+- 부모-자식 스팬 관계
+- 세션 및 화면 정보
 
 데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
 

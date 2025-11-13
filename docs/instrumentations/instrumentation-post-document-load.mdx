@@ -10,33 +10,80 @@ cover: web
 
 ## 개요
 
-문서 로드 후 계측은 웹 페이지의 초기 로딩 완료 이후에 발생하는 지연 로딩 및 동적 콘텐츠 로딩을 추적하는 기능을 제공합니다. 지연 로딩 이미지, 동적 스크립트, AJAX 콘텐츠 등 사용자 상호작용에 따라 추가로 로딩되는 리소스들을 모니터링할 수 있습니다.
+문서 로드 후 계측은 웹 페이지의 초기 로딩 완료 이후에 발생하는 지연 로딩 및 동적 콘텐츠 로딩을 추적하는 기능을 제공합니다. Performance Observer API와 Mutation Observer API를 활용하여 지연 로딩 이미지, 동적 스크립트, 스타일시트 등 사용자 상호작용에 따라 추가로 로딩되는 리소스들을 실시간으로 모니터링할 수 있습니다.
 
 ## 주요 기능
 
+### Performance Observer 기반 추적
+- Performance Observer API를 통한 실시간 리소스 모니터링
+- `resource`, `navigation`, `element` 엔트리 타입 지원
+- 초기 페이지 로드 완료 후 자동 활성화
+- 정밀한 타이밍 정보 수집
+
+### Mutation Observer 기반 컨텍스트 보존
+- `<head>` 요소의 변경 사항 실시간 감지
+- 동적으로 추가되는 스크립트/스타일시트의 추적 컨텍스트 보존
+- URL과 추적 컨텍스트의 자동 매핑
+- 사용자 이벤트 컨텍스트 내에서 추가된 리소스 자동 연결
+
 ### 지연 로딩 추적
-- Lazy loading 이미지 및 콘텐츠 모니터링
-- Intersection Observer 기반 로딩 추적
-- 사용자 스크롤에 따른 콘텐츠 로딩
+- Lazy loading 이미지 모니터링
+- 동적으로 로드되는 콘텐츠 추적
+- 사용자 스크롤에 따른 리소스 로딩
 
 ### 동적 리소스 모니터링
-- 동적으로 생성되는 스크립트 및 스타일시트
-- AJAX로 로딩되는 콘텐츠 추적
-- 사용자 액션에 따른 리소스 로딩
+- 동적으로 생성되는 스크립트 (`<script>`)
+- 동적으로 추가되는 스타일시트 (`<link rel="stylesheet">`)
+- 이미지 리소스 (`<img>`)
+- CSS 파일
+- 기타 링크 리소스
 
 ### 성능 최적화 지원
 - 지연 로딩 효과 측정
 - 리소스 로딩 우선순위 분석
 - 사용자 경험 개선을 위한 데이터
+- 리소스별 네트워크 타이밍 이벤트
 
 ## 계측 범위
 
-문서 로드 후 계측은 다음과 같은 이벤트를 추적합니다:
+문서 로드 후 계측은 다음과 같은 리소스 타입을 추적합니다:
 
-- **지연 로딩**: 뷰포트 진입 시 로딩되는 이미지/콘텐츠
-- **동적 스크립트**: 런타임에 추가되는 JavaScript 파일
-- **AJAX 콘텐츠**: 비동기로 로딩되는 HTML 콘텐츠
-- **사용자 트리거**: 클릭, 호버 등에 의한 리소스 로딩
+### 기본 추적 리소스 타입
+
+다음 `initiatorType`을 가진 리소스가 기본적으로 추적됩니다:
+
+#### 1. 이미지 (`img`)
+- `<img>` 태그를 통한 이미지 로드
+- CSS `background-image`로 로드된 이미지
+- 지연 로딩(lazy loading) 이미지
+- 동적으로 생성된 이미지 요소
+
+#### 2. 스크립트 (`script`)
+- 동적으로 추가되는 `<script>` 태그
+- `document.createElement('script')`로 생성된 스크립트
+- 런타임에 로드되는 JavaScript 파일
+- 써드파티 스크립트 위젯
+
+#### 3. 스타일시트 (`css`)
+- CSS 파일 리소스
+- `@import`로 로드되는 스타일시트
+
+#### 4. 링크 (`link`)
+- `<link rel="stylesheet">`로 추가되는 스타일시트
+- 동적으로 생성되는 링크 요소
+- 폰트 파일 등 기타 링크 리소스
+
+### 추적 시점
+
+- **초기 문서 로드 완료 후**: `window.load` 이벤트 이후
+- **문서 준비 상태**: `document.readyState === 'complete'`
+- **실시간 추적**: Performance Observer를 통한 즉시 감지
+
+### 컨텍스트 보존
+
+- `<head>` 요소에 추가되는 리소스의 컨텍스트 자동 보존
+- 사용자 이벤트 실행 중 추가된 리소스 자동 연결
+- URL 기반 컨텍스트 매핑
 
 ## 주요 속성
 
@@ -88,31 +135,41 @@ cover: web
 
 ### 문서 로드 후 스팬 속성
 
-각 문서 로드 후 스팬은 다음과 같은 속성을 포함합니다:
+각 문서 로드 후 스팬(`resourceFetch`)은 다음과 같은 속성을 포함합니다:
+
+#### 필수 속성
+
+| 속성 | 타입 | 설명 |
+|-----------|------|-------------|
+| `imqa.rum.component` | `string` | 계측 컴포넌트 이름 (`@imqa/instrumentation-post-doc-load-resource`) |
+| `imqa.span.type` | `string` | 스팬 타입 (항상 `post-docs`) |
+| `url.full` | `string` | 로드된 리소스의 전체 URL |
+| `http.request.method` | `string` | HTTP 메서드 (항상 `GET`) |
+
+#### 컨텍스트 속성
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
 | `location.href` | `string` | 현재 페이지 URL |
-| `environment` | `string` | 환경 컨텍스트 (예: "development", "production") |
-| `deployment.environment` | `string` | 배포 환경 |
-| `screen.name` | `string` | 현재 화면이나 페이지의 이름 |
-| `screen.type` | `string` | 화면 타입 (예: "page") |
+| `screen.name` | `string` | 화면/페이지 이름 |
+| `screen.type` | `string` | 화면 타입 |
 | `session.id` | `string` | 사용자 세션 식별자 |
-| `url.full` | `string` | 현재 페이지의 전체 URL |
-| `component` | `string` | 인스트루멘테이션 컴포넌트 이름 |
-| `span.type` | `string` | 스팬 타입 (예: "post-docs") |
-| `http.request.method` | `string` | 요청에 사용된 HTTP 메서드 (`GET`, `POST`) |
-| `http.response_content_length` | `integer` | 응답 컨텐츠의 크기 (바이트) |
-| `http.response_content_length_uncompressed` | `integer` | 압축되지 않은 응답의 크기 (사용 가능한 경우) |
+| `environment` | `string` | 환경 이름 |
+| `deployment.environment` | `string` | 배포 환경 |
 
-#### 사용자 상호작용 관련 속성
+#### 리소스 정보 속성
 
 | 속성 | 타입 | 설명 |
 |-----------|------|-------------|
-| `event_type` | `string` | 사용자 상호작용 이벤트의 타입 (예: "click") |
-| `target_element` | `string` | 상호작용된 HTML 요소 타입 |
-| `target_xpath` | `string` | 상호작용된 요소의 XPath |
-| `http.url` | `string` | 상호작용이 발생한 페이지의 URL |
+| `http.response_content_length` | `integer` | 응답 컨텐츠 크기 (바이트) |
+| `http.response_content_length_uncompressed` | `integer` | 압축되지 않은 응답 크기 (해당되는 경우) |
+
+#### 부모 컨텍스트 연결
+
+리소스가 `<head>` 요소에 동적으로 추가된 경우:
+- 추가 시점의 활성 컨텍스트와 자동 연결
+- 사용자 이벤트 내에서 추가된 리소스는 해당 이벤트의 자식 스팬으로 생성
+- `parentSpanId`를 통한 부모-자식 관계 유지
 
 #### 이벤트
 
@@ -142,31 +199,440 @@ cover: web
 
 ### 계측 설정
 
-> (`boolean` 또는 `InstrumentationConfig`, 선택)
+> (`boolean` 또는 `IMQAPostDocLoadResourceInstrumentationConfig`, 선택)
 
-문서 로드 후 리소스 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 초기 문서 로드 완료 후 발생하는 리소스 로딩 이벤트가 자동으로 계측됩니다.
+문서 로드 후 리소스 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 초기 문서 로드 완료 후 발생하는 리소스 로딩 이벤트가 자동으로 계측됩니다. `IMQAPostDocLoadResourceInstrumentationConfig`를 제공하여 추적할 리소스 타입과 제외할 URL을 세밀하게 제어할 수 있습니다.
 
 ```typescript
-interface InstrumentationConfig {
-  enabled?: boolean;
+interface IMQAPostDocLoadResourceInstrumentationConfig extends InstrumentationConfig {
+  allowedInitiatorTypes?: string[];
+  ignoreUrls?: (string | RegExp)[];
+  screenNameOption?: ScreenNameOption;
 }
 ```
 
-## 예시
+**설정 옵션:**
+
+- **`allowedInitiatorTypes`** (`string[]`, optional): 추적할 리소스 타입을 지정합니다. 
+  - 기본값: `['img', 'script', 'css', 'link']`
+  - Performance Entry의 `initiatorType`과 매칭됩니다
+  - 다른 타입을 추가하거나 기본 타입을 제한할 수 있습니다
+
+- **`ignoreUrls`** (`(string | RegExp)[]`, optional): 계측하지 않을 리소스 URL 패턴을 지정합니다.
+  - 정규식이나 문자열 배열로 설정 가능
+  - 패턴과 일치하는 리소스는 계측에서 제외됩니다
+  - 써드파티 CDN이나 분석 도구 등을 제외할 때 유용합니다
+
+- **`screenNameOption`** (`ScreenNameOption`, optional): 화면 이름 생성 방식을 지정합니다.
+  - `screen.name`과 `screen.type` 속성 생성에 영향을 줍니다
+
+**기본 설정 예시:**
+
+```javascript
+{
+  allowedInitiatorTypes: ['img', 'script', 'css', 'link'],
+  ignoreUrls: [],
+  enabled: true
+}
+```
+
+## 사용 예시
+
+### 기본 설정
+
+문서 로드 후 계측은 기본적으로 활성화되며 별도 설정 없이 사용할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  // 문서 로드 후 계측은 기본적으로 활성화됨
+});
+```
+
+### 리소스 타입 필터링
+
+특정 리소스 타입만 추적하도록 설정할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    postload: {
+      enabled: true,
+      // 이미지와 스크립트만 추적
+      allowedInitiatorTypes: ['img', 'script']
+    }
+  }
+});
+```
+
+### URL 패턴 제외
+
+특정 URL 패턴의 리소스를 계측에서 제외할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    postload: {
+      enabled: true,
+      // 분석 도구와 광고 제외
+      ignoreUrls: [
+        /google-analytics\.com/,
+        /googletagmanager\.com/,
+        /doubleclick\.net/,
+        'https://cdn.example.com/analytics'
+      ]
+    }
+  }
+});
+```
+
+### 커스텀 리소스 타입 추적
+
+기본 타입 외에 추가 리소스 타입을 추적할 수 있습니다:
+
+```javascript
+IMQA.init({
+  collectorUrl: 'https://collector.example.com',
+  serviceName: 'my-web-app',
+  serviceKey: 'your-service-key',
+  instrumentations: {
+    postload: {
+      enabled: true,
+      // 기본 타입 + 'other' 타입 추가
+      allowedInitiatorTypes: ['img', 'script', 'css', 'link', 'other']
+    }
+  }
+});
+```
+
+## 고급 기능
+
+### Performance Observer 통합
+
+Performance Observer API를 사용하여 리소스 로딩을 실시간으로 감지합니다:
+
+```javascript
+// 내부 구현
+this.performanceObserver = new PerformanceObserver((list) => {
+  if (window.document.readyState === 'complete') {
+    list.getEntries().forEach((entry) => {
+      if (this.config.allowedInitiatorTypes?.includes(entry.initiatorType)) {
+        this._createSpan(entry);
+      }
+    });
+  }
+});
+
+this.performanceObserver.observe({
+  entryTypes: ['resource', 'navigation', 'element']
+});
+```
+
+**지원되는 엔트리 타입:**
+- `resource`: 리소스 로딩 이벤트
+- `navigation`: 네비게이션 이벤트
+- `element`: 요소 타이밍 정보
+
+### Mutation Observer를 통한 컨텍스트 보존
+
+`<head>` 요소의 변경을 감지하여 동적으로 추가된 리소스의 컨텍스트를 보존합니다:
+
+```javascript
+// 내부 구현
+this.headMutationObserver = new MutationObserver((mutations) => {
+  if (context.active() === ROOT_CONTEXT) {
+    return; // ROOT 컨텍스트에서는 매핑하지 않음
+  }
+  
+  mutations
+    .flatMap((mutation) => Array.from(mutation.addedNodes || []))
+    .filter(node => 
+      node instanceof HTMLScriptElement || 
+      node instanceof HTMLImageElement
+    )
+    .forEach((node) => {
+      const src = node.getAttribute('src');
+      if (src) {
+        const srcUrl = new URL(src, location.origin);
+        this.urlToContextMap[srcUrl.toString()] = context.active();
+      }
+    });
+});
+
+this.headMutationObserver.observe(document.head, { childList: true });
+```
+
+**동작 방식:**
+1. `<head>` 요소에 새 노드가 추가되면 감지
+2. `src` 속성이 있는 `<script>`나 `<img>` 태그 확인
+3. 리소스 URL과 현재 활성 컨텍스트를 매핑
+4. Performance Observer가 해당 리소스를 감지하면 저장된 컨텍스트 사용
+
+### 사용자 이벤트와의 통합
+
+사용자 이벤트 내에서 동적으로 로드된 리소스는 자동으로 연결됩니다:
+
+```javascript
+// 사용자 이벤트 시작
+const eventId = IMQA.userEvent.start('load-additional-content');
+
+// 동적으로 스크립트 추가
+const script = document.createElement('script');
+script.src = 'https://example.com/dynamic-content.js';
+document.head.appendChild(script);
+// → 이 스크립트는 자동으로 eventId 컨텍스트와 연결됨
+
+// 이벤트 완료
+IMQA.userEvent.end(eventId);
+```
+
+### 컨텍스트 변경 시 처리
+
+컨텍스트 전환 전에 대기 중인 Mutation Observer 레코드를 처리합니다:
+
+```javascript
+// 컨텍스트 관리자가 컨텍스트를 변경하기 전에 호출
+public onBeforeContextChange(): void {
+  // 아직 처리되지 않은 mutation 레코드 처리
+  this._processHeadMutationObserverRecords(
+    this.headMutationObserver?.takeRecords() || []
+  );
+}
+```
+
+이를 통해:
+- 컨텍스트 전환 시 데이터 손실 방지
+- 정확한 부모-자식 스팬 관계 유지
+- 리소스와 올바른 컨텍스트 연결
+
+### 네트워크 타이밍 이벤트
+
+각 리소스 스팬에 상세한 네트워크 타이밍 이벤트가 자동으로 추가됩니다:
+
+```javascript
+addSpanNetworkEvents(span, entry);
+```
+
+**포함되는 타이밍 이벤트:**
+- `fetchStart`: 리소스 가져오기 시작
+- `domainLookupStart`: DNS 조회 시작
+- `domainLookupEnd`: DNS 조회 종료
+- `connectStart`: 서버 연결 시작
+- `connectEnd`: 서버 연결 종료
+- `secureConnectionStart`: HTTPS 핸드셰이크 시작
+- `requestStart`: 요청 전송 시작
+- `responseStart`: 첫 바이트 수신
+- `responseEnd`: 응답 완료
+
+## 실제 사용 시나리오
+
+### 1. Lazy Loading 이미지 추적
+
+```javascript
+// Intersection Observer로 lazy loading 구현
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      img.src = img.dataset.src;
+      // → post-doc-load 계측이 자동으로 추적
+      observer.unobserve(img);
+    }
+  });
+});
+
+document.querySelectorAll('img[data-src]').forEach(img => {
+  observer.observe(img);
+});
+```
+
+**결과:**
+```javascript
+{
+  name: "resourceFetch",
+  attributes: {
+    "imqa.span.type": "post-docs",
+    "url.full": "https://example.com/lazy-image.jpg",
+    "http.request.method": "GET"
+  },
+  events: {
+    fetchStart: 5000,
+    responseEnd: 5200
+  }
+}
+```
+
+### 2. 동적 스크립트 로딩
+
+```javascript
+// 사용자 이벤트 내에서 동적 스크립트 로드
+const eventId = IMQA.userEvent.start('load-widget');
+
+function loadWidget() {
+  const script = document.createElement('script');
+  script.src = 'https://cdn.example.com/widget.js';
+  script.onload = () => {
+    IMQA.userEvent.end(eventId, { result: 'success' });
+  };
+  script.onerror = () => {
+    IMQA.userEvent.end(eventId, { result: 'error' });
+  };
+  document.head.appendChild(script);
+  // → 스크립트 로딩이 eventId의 자식 스팬으로 추적됨
+}
+
+loadWidget();
+```
+
+**스팬 계층 구조:**
+```
+userEvent: load-widget
+└── resourceFetch: widget.js (post-docs)
+```
+
+### 3. SPA 라우트 전환 시 리소스 추적
+
+```javascript
+// React Router 예시
+function ArticlePage({ articleId }) {
+  useEffect(() => {
+    // 페이지 전환 시 추가 리소스 로드
+    const img = new Image();
+    img.src = `/api/articles/${articleId}/cover.jpg`;
+    document.body.appendChild(img);
+    // → post-doc-load가 자동 추적
+    
+    return () => {
+      document.body.removeChild(img);
+    };
+  }, [articleId]);
+  
+  return <div>...</div>;
+}
+```
+
+### 4. 써드파티 위젯 성능 측정
+
+```javascript
+// 위젯 로드 시작
+const widgetEventId = IMQA.userEvent.start('load-chat-widget', {
+  'widget.type': 'chat',
+  'widget.vendor': 'example-chat'
+});
+
+// 써드파티 위젯 스크립트
+(function() {
+  const script = document.createElement('script');
+  script.src = 'https://widget.example.com/chat.js';
+  script.async = true;
+  script.onload = function() {
+    IMQA.userEvent.end(widgetEventId, {
+      'load.result': 'success'
+    });
+  };
+  document.head.appendChild(script);
+})();
+```
+
+## 브라우저 호환성
+
+### Performance Observer
+- Chrome 52+
+- Firefox 57+
+- Safari 11+
+- Edge 79+
+
+오래된 브라우저에서는 자동으로 비활성화되며 오류를 발생시키지 않습니다.
+
+### Mutation Observer
+- Chrome 18+
+- Firefox 14+
+- Safari 6+
+- Edge 12+
+
+## 주의사항
+
+### Performance API 의존성
+- Performance Observer API가 지원되지 않는 브라우저에서는 동작하지 않습니다
+- `window.PerformanceObserver` 체크 후 활성화됩니다
+- 지원하지 않는 브라우저에서도 오류 없이 정상 동작합니다
+
+### 초기 로드 완료 후에만 활성화
+- `window.load` 이벤트 이후에만 Performance Observer 시작
+- 초기 페이지 로드의 리소스는 `@imqa/instrumentation-document-load`에서 처리
+- 중복 계측 방지를 위한 명확한 경계 설정
+
+### Mutation Observer 범위
+- `document.head`의 변경만 감지합니다
+- `<body>`에 추가되는 리소스는 컨텍스트 매핑이 되지 않습니다
+- 대부분의 동적 스크립트/스타일시트는 `<head>`에 추가되므로 실용적입니다
+
+### 컨텍스트 보존 제한
+- ROOT_CONTEXT에서는 URL 매핑을 생성하지 않습니다
+- 무효한 URL은 자동으로 건너뜁니다
+- 상대 경로는 `location.origin` 기준으로 변환됩니다
+
+### 성능 영향
+- Performance Observer와 Mutation Observer 모두 매우 경량입니다
+- 리소스가 많은 페이지에서도 성능 영향은 미미합니다
+- URL 매핑 객체는 메모리를 사용하지만, 일반적인 사용에서는 문제되지 않습니다
+
+## Telemetry 데이터 구조
 
 유효한 문서 로드 후 Telemetry 객체는 다음과 같은 내용을 포함합니다:
 
-- 서비스, 브라우저 및 환경을 식별하는 리소스 정보
-- 문서 로드 후 리소스 가져오기를 나타내는 하나 이상의 스팬
-- 각 스팬은 리소스 로딩 타이밍과 크기에 대한 상세 정보를 포함
+### 리소스 정보
+- 서비스, 브라우저 및 환경 식별
+- 세션 및 사용자 컨텍스트
 
-데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다. 문서 로드 후 이벤트는 초기 페이지 표시 후 웹 애플리케이션의 동작 방식에 대한 통찰력을 제공하여 동적 콘텐츠 로딩과 AJAX 요청의 성능 문제를 식별하는 데 도움이 됩니다.
+### Span 데이터
+- **resourceFetch 스팬들**: 각 동적 리소스에 대한 개별 스팬
+- **부모 컨텍스트**: 사용자 이벤트나 상호작용과의 연결
+- **imqa.span.type**: "post-docs"로 식별
+
+### 타이밍 정보
+- Performance Entry의 모든 네트워크 타이밍
+- 시작 시간: `entry.fetchStart`
+- 종료 시간: `entry.responseEnd`
+- 상세 네트워크 이벤트
+
+### 컨텍스트 연결
+- URL 기반 컨텍스트 매핑
+- 부모-자식 스팬 관계
+- 사용자 이벤트와의 자동 연결
+
+데이터는 다양한 Telemetry 수집 및 분석 도구와 호환되는 OpenTelemetry 프로토콜 형식을 따릅니다.
+
+## 활용 사례
 
 문서 로드 후 모니터링은 다음과 같은 경우에 특히 유용합니다:
 
-- 동적으로 콘텐츠를 로드하는 싱글 페이지 애플리케이션(SPA)
-- 지연 로딩 기술을 사용하는 웹 애플리케이션
-- 사용자 상호작용 중 발생하는 리소스 로딩 병목 현상 식별
-- 메인 문서가 로드된 후 로드되는 서드파티 스크립트와 위젯의 성능 영향 측정
+### 1. 싱글 페이지 애플리케이션(SPA)
+- 동적으로 콘텐츠를 로드하는 SPA의 성능 모니터링
+- 라우트 전환 시 추가 리소스 로딩 추적
+- 컴포넌트별 리소스 로딩 분석
+
+### 2. Lazy Loading 최적화
+- 지연 로딩 전략의 효과 측정
+- 뷰포트 진입 시 로딩되는 리소스 성능 분석
+- 최적의 로딩 시점 결정
+
+### 3. 써드파티 스크립트 성능
+- 채팅 위젯, 분석 도구 등의 영향 측정
+- 써드파티 스크립트 로딩 시간 추적
+- 성능 병목 원인 식별
+
+### 4. 사용자 상호작용 최적화
+- 클릭, 호버 등 사용자 액션에 따른 리소스 로딩 분석
+- 상호작용 응답 시간 개선
+- 동적 콘텐츠 로딩 전략 최적화
 
 이 데이터를 분석함으로써 개발자는 초기 페이지 표시 후의 인식된 성능과 사용자 경험을 개선하기 위한 리소스 로딩 전략을 최적화할 수 있습니다.

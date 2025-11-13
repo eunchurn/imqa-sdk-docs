@@ -1485,6 +1485,19 @@ IMQA.userEvent.cancel(id: string): void
 - **매개변수:**
   - `id` (`string`, required): 취소할 이벤트 ID
 
+#### 고급 API
+
+사용자 이벤트는 복잡한 워크플로우를 위한 추가 메서드들을 제공합니다:
+
+- **`with(id, fn)`**: 특정 이벤트 컨텍스트에서 함수 실행
+- **`withActive(fn)`**: 현재 활성 이벤트 컨텍스트에서 함수 실행
+- **`switchTo(id)`**: 특정 이벤트로 컨텍스트 전환
+- **`getActiveContext()`**: 현재 활성 컨텍스트 반환
+- **`hasActiveUserEvent()`**: 활성 이벤트 존재 여부 확인
+- **`getContext(id)`**: 특정 이벤트의 컨텍스트 반환
+
+자세한 내용은 [사용자 이벤트 계측](/docs/instrumentations/instrumentation-user-event) 문서를 참조하세요.
+
 #### 사용 예시
 
 ```javascript
