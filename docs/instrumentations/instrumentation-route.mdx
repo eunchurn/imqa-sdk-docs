@@ -12,6 +12,8 @@ cover: web
 
 라우트 계측은 단일 페이지 애플리케이션(SPA)에서 클라이언트 사이드 라우팅과 페이지 네비게이션을 자동으로 추적하는 기능을 제공합니다. History API와 hashchange 이벤트를 모니터링하여 페이지 전환, 로딩 시간, 네비게이션 패턴을 실시간으로 모니터링하며, React Router, Vue Router, Angular Router 등 모든 라우팅 라이브러리와 호환됩니다.
 
+라우트 변경은 사용자 상호작용의 결과로 발생하는 경우가 많습니다. IMQA는 OpenTelemetry 컨텍스트 전파를 통해 [사용자 이벤트(UserEvent)](/docs/instrumentations/instrumentation-user-event)와 라우트 변경을 자동으로 연결합니다. 예를 들어, 버튼 클릭으로 시작된 `userEvent.start()`가 활성 상태일 때 발생하는 라우트 변경은 해당 사용자 이벤트의 하위 스팬으로 자동 그룹화되어, 사용자 행동부터 페이지 전환까지의 전체 플로우를 하나의 트레이스에서 확인할 수 있습니다.
+
 ## 주요 기능
 
 ### History API 기반 추적
@@ -340,9 +342,9 @@ window.addEventListener('hashchange', (event) => {
 });
 ```
 
-### 컨텍스트 보존
+### 컨텍스트 보존 및 사용자 이벤트 연결
 
-사용자 상호작용에서 트리거된 라우트 변경은 자동으로 연결됩니다:
+IMQA는 OpenTelemetry 컨텍스트 전파를 통해 라우트 변경을 발생시킨 원인을 자동으로 추적합니다. 사용자 상호작용이나 [사용자 이벤트(UserEvent)](/docs/instrumentations/instrumentation-user-event)에서 트리거된 라우트 변경은 자동으로 해당 이벤트의 컨텍스트에 연결됩니다:
 
 ```javascript
 // 링크 클릭 -> 라우트 변경
@@ -352,6 +354,17 @@ window.addEventListener('hashchange', (event) => {
 // 스팬 계층 구조:
 // userInteraction: click
 // └── routeChange: /products
+
+// 사용자 이벤트 컨텍스트에서 라우트 변경
+const eventId = IMQA.userEvent.start('navigation-flow');
+// navigate()가 호출되면 자동으로 userEvent 컨텍스트와 연결됨
+navigate('/products');
+IMQA.userEvent.end(eventId);
+
+// 스팬 계층 구조:
+// userEvent: navigation-flow
+// └── routeChange: /products
+//     └── (라우트 변경 후 로드되는 리소스들)
 ```
 
 ### Post Document Load와 연동
@@ -457,9 +470,14 @@ history.forward();
 
 ### 3. 사용자 이벤트와 함께 라우트 추적
 
+[사용자 이벤트(UserEvent)](/docs/instrumentations/instrumentation-user-event)를 사용하면 비즈니스 로직의 시작부터 끝까지 전체 플로우를 하나의 트레이스로 추적할 수 있습니다. `userEvent.start()`로 시작된 이벤트가 활성 상태일 때 발생하는 모든 라우트 변경은 자동으로 해당 사용자 이벤트의 하위 스팬으로 기록됩니다:
+
 ```javascript
 // 사용자 이벤트 내에서 라우트 변경
-const eventId = IMQA.userEvent.start('checkout-process');
+const eventId = IMQA.userEvent.start('checkout-process', {
+  'user.id': currentUser.id,
+  'cart.items': cartItems.length
+});
 
 try {
   // 사용자 정보 입력
@@ -474,21 +492,37 @@ try {
   // 완료 페이지로 이동 (자동으로 eventId와 연결됨)
   navigate('/checkout/complete');
   
-  IMQA.userEvent.end(eventId, { result: 'success' });
+  IMQA.userEvent.end(eventId, { 
+    result: 'success',
+    'order.id': orderId,
+    'order.amount': totalAmount
+  });
 } catch (error) {
-  IMQA.userEvent.end(eventId, { result: 'error' });
+  IMQA.userEvent.end(eventId, { 
+    result: 'error',
+    'error.message': error.message 
+  });
 }
 ```
 
 **스팬 계층 구조:**
 ```
 userEvent: checkout-process
+├── fetch: POST /api/user-info
 ├── routeChange: /checkout/payment
 │   ├── resourceFetch: payment-form.js
 │   └── resourceFetch: payment-styles.css
+├── fetch: POST /api/process-payment
 ├── routeChange: /checkout/complete
 │   └── resourceFetch: success-icon.svg
+└── duration: 전체 체크아웃 프로세스 시간
 ```
+
+이러한 자동 연결을 통해:
+- 사용자 여정(User Journey)의 전체 플로우를 시각화할 수 있습니다
+- 각 단계별 소요 시간을 정확히 측정할 수 있습니다
+- 라우트 변경과 관련된 API 호출, 리소스 로딩이 함께 추적됩니다
+- 에러 발생 시 어느 단계에서 문제가 발생했는지 명확히 파악할 수 있습니다
 
 ### 4. 해시 기반 라우팅
 

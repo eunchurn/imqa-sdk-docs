@@ -21,33 +21,70 @@ IMQA Web Agent는 Opentelemetry Native 기반으로 동작합니다. 이 문서�
 
 ### 주요 기능
 
-- XMLHttpRequest 및 Fetch API 자동 계측
-  - 네트워크 요청 및 응답의 상세 추적
-  - WebSocket 및 Socket.IO 계측
-- 사용자 상호작용 (클릭, 마우스 이벤트, 드래그 등)
-- Document load, Fetched resources
-- History API 및 해시 변경 지원
-- 웹 바이탈(Web Vitals) 자동 수집
-- 세션 ID를 통한 행동분석
-- 자동 컨텍스트 연결을 통한 longtasks 수집
-- 에러 수집: uncaught exceptions, unhandled rejections, document errors, console errors
-- Timer, Promise, Native async-await, 이벤트, 옵저버 등을 통한 자동 컨텍스트 유지
-- SPA (Single Page Application) 지원
-  - 컴포넌트 전환 시 Post Document Load 이벤트 자동 계측
-- 페이지 가시성, 네트워크 연결성 자동 계측
-- 사용자 정의 속성 추가
-  - 사용자 ID
-  - 사용자 지역
-- 수동 계측 지원
-  - 커스텀 데이터 수집 지원(커스텀 로그, 커스텀 에러)
-  - 사용자 이벤트 추적 및 분석 (@imqa/user-event)
-- 세션 리플레이 (Session Replay) 기능 (*beta*)
-  - DOM 변경 사항 기록
-  - 사용자 입력 및 상호작용 기록
-  - 스크린샷 캡처
-- IMQA Mobile SDK(Android, iOS)와 연동하여 네이티브 앱과 웹뷰 환경 계측 지원
-  - 네이티브 환경과 웹뷰 환경 컨텍스트 자동 연결
-- 레거시 브라우저 지원 (IE11, Chrome 52, Edge Legacy 79, Safari 11, Firefox 57 등)
+#### 네트워크 요청 자동 계측
+- **XMLHttpRequest 및 Fetch API**: 네트워크 요청 및 응답의 상세 추적
+- **WebSocket** (*beta*): 실시간 양방향 통신 계측
+- **요청/응답 메타데이터**: HTTP 메서드, 상태 코드, 헤더, 타이밍 정보 자동 수집
+
+#### 페이지 로드 성능 추적
+- **Document Load** (`@imqa/instrumentation-document-load`)
+  - Navigation Timing API를 통한 초기 페이지 로드 성능 측정
+  - Server-Timing 헤더 파싱 및 백엔드 타이밍 정보 수집
+  - TraceParent 추출을 통한 분산 추적 지원
+  - 리소스 타이밍 정보 수집 (이미지, 스크립트, 스타일시트 등)
+- **Post Document Load** (`@imqa/instrumentation-post-doc-load-resource`)
+  - Performance Observer를 통한 동적 리소스 추적
+  - Mutation Observer를 통한 `<head>` 변경 감지
+  - SPA 라우트 전환 후 로드되는 리소스 자동 계측
+  - URL-to-Context 매핑을 통한 컨텍스트 보존
+
+#### 사용자 상호작용 및 이벤트
+- **User Interaction**: 클릭, 마우스 이벤트, 드래그, 키보드 입력 등 자동 추적
+- **User Event** (`@imqa/user-event`)
+  - 비즈니스 로직의 시작과 완료 지점을 명시적으로 추적
+  - OpenTelemetry 컨텍스트 전파를 통한 자동 그룹화
+  - 이벤트 중 발생하는 모든 계측(fetch, console, exception 등)을 단일 트레이스로 연결
+  - 저장소를 통한 이벤트 지속성 (페이지 새로고침 지원)
+
+#### SPA (Single Page Application) 지원
+- **Route Change** (`@imqa/instrumentation-route`)
+  - History API 기반 클라이언트 사이드 라우팅 자동 추적
+  - `pushState`, `replaceState`, `popstate`, `hashchange` 이벤트 감지
+  - React Router, Vue Router, Angular Router, Next.js 등 모든 라우팅 라이브러리 호환
+  - 라우트 전환 시 발생하는 리소스 로딩 자동 연결
+  - 사용자 이벤트와의 자동 컨텍스트 연결
+
+#### 에러 및 예외 추적
+- **Browser Exception** (`@imqa/instrumentation-browser-exception`)
+  - Uncaught exceptions 자동 수집
+  - Unhandled promise rejections 추적
+  - Document error events (이미지/스크립트 로드 실패 등)
+  - `console.error()` 패칭 및 스택 트레이스 수집
+  - 에러 발생 시 활성 컨텍스트 자동 보존
+  - Span/Log 상관관계 (`span.id`, `trace.id`)를 통한 추적
+
+#### 성능 모니터링
+- **Web Vitals**: LCP, FID, CLS, FCP, TTFB 자동 수집
+- **Long Tasks**: 자동 컨텍스트 연결을 통한 브라우저 메인 스레드 블로킹 감지
+- **세션 분석**: 세션 ID를 통한 사용자 행동 패턴 분석
+
+#### 컨텍스트 관리
+- **자동 컨텍스트 유지**: Timer, Promise, async/await, 이벤트, Observer 등에서 자동 컨텍스트 전파
+- **IMQAContextManager**: OpenTelemetry Context API를 확장한 고급 컨텍스트 관리
+- **분산 추적**: 프론트엔드와 백엔드 간 TraceParent 전파
+
+#### 페이지 상태 추적
+- **Visibility**: 페이지 가시성 변경 자동 계측
+- **Connectivity**: 네트워크 연결 상태 변경 자동 계측
+
+#### 사용자 정의 및 확장
+- **커스텀 속성**: 사용자 ID, 지역, 비즈니스 메타데이터 추가
+- **수동 계측**: 커스텀 로그, 커스텀 에러, 사용자 이벤트 수동 추적
+- **세션 리플레이** (*beta*): DOM 변경, 사용자 입력, 스크린샷 캡처
+
+#### 크로스 플랫폼 지원
+- **Mobile SDK 연동**: IMQA Android/iOS SDK와 연동하여 네이티브-웹뷰 컨텍스트 자동 연결
+- **레거시 브라우저**: IE11, Chrome 52, Edge Legacy 79, Safari 11, Firefox 57 이상 지원
 
 ## 빠른 설치
 
@@ -72,6 +109,8 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
     serviceName: '{{NAME_OF_YOUR_WEB_SERVICE}}',
     serviceVersion: '{{VERSION_OF_YOUR_WEB_SERVICE}}',
     serviceKey: '{{KEY_OF_YOUR_WEB_SERVICE}}'
+    serviceNamespace: '{{SERVICE_NAMESPACE}}',
+    deploymentEnvironment: '{{DEPLOYMENT_ENVIRONMENT}}',
   });
 </script>
 ```
@@ -85,6 +124,8 @@ IMQA 관리 계정 로그인 후 **글로벌 관리 > 서비스 관리**에서 �
 - `serviceName` 서비스 이름. (서비스 등록할 때의 패키지명) [상세 보기](#servicename)
 - `serviceVersion` 서비스 버전 [상세 보기](#serviceversion)
 - `serviceKey` 서비스 키 [상세 보기](#servicekey)
+- `serviceNamespace` 서비스 네임스페이스 [상세 보기](#servicenamespace)
+- `deploymentEnvironment` 배포 환경 [상세 보기](#deploymentenvironment)
 - 위에 언급한 4건의 설정값 이외의 추가 설정 옵션은 [설정 옵션](#설정-(options))을 참조해주세요.
 
 #### 특정 버전
