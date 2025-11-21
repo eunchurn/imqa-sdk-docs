@@ -28,47 +28,6 @@ IMQA iOS SDK는 iOS 애플리케이션을 위한 강력한 성능 모니터링 �
 
 ![xcframework](./img/ios-sdk-xcframework-01.png)
 
-2. **SDK 설정**
-```swift
-import IMQACore
-
-@main
-class AppDelegate: UIResponder, UIApplicationDelegate {
-    
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: 
-        [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        
-        let endpoint = IMQA.Endpoints(collectorURL: "수집기 URL")
-        let serviceKey = "서비스 키"
-        
-        let option = IMQA.Options(
-            serviceKey: serviceKey,
-            endpoints: endpoint,
-            sampleRate: 1.0,
-            isDeviceIdEnable: true, 
-            onOffSDKUrl: "",        
-            namespace: "namespace", 
-            deployEnvironment: .development 
-        )
-        //serviceKey : 고유 서비스 키
-        //endpoints collectorURL: 프로덕션 환경 URL
-        //sampleRate 샘플링 비율 (0.0 ~ 1.0)
-        //isDeviceIdEnable 기기 ID 활성화 여부 (선택 사항, 기본값: true
-        //namespace (선택 사항, 기본값: nil 보내지 않음)
-        //onOffSDKUrl 수집여부 api url 입력 (선택 사항 기본값: nil -> 수집함)
-        //deployEnvironment 배포 환경 설정 (선택 사항, 기본값: .production
-
-        IMQA
-            .setup(options: option, isDebug: true)?
-            .start()
-        
-        return true
-    }
-}
-```
 
 ### 방법 2: CocoaPods 설치
 
@@ -93,44 +52,231 @@ pod install
 https://github.com/idlerecord/imqa-ios-sdk-spm
 ```
 
-## 설정
+## API 속개및 설정
 
-### 엔드포인트
-- `collectorURL`: 프로덕션 환경 URL
+```Swift
+@objc(IMQAOptions) public final class Options : NSObject {
 
-### 옵션
-- `serviceKey`: 고유 서비스 키
-- `sampleRate`: 샘플링 비율 (0.0 ~ 1.0)
-  - 0.0: 수집 안함
-  - 1.0: 100% 수집 (기본값)
+        /// 서비스키
+        /// web에서 서비스 추가시 받음
+        public let serviceKey: String
 
-### 커스텀 사용자 ID
-```swift
-IMQA.setUserId(id: "사용자_식별자")
+        /// collector 주소setting
+        /// 어느 collector로 data전송을 하는가
+        public let endpoints: IMQA.Endpoints?
 
-IMQA.getUserId()
+        /// sampling 하실때 sampling 비율(0.0~1.0)
+        /// 0.0:수집되지 않습니다.
+        /// 1.0: 100%수집됩니다.
+        public var sampleRate: Double
+
+        /// deviceID를 opentelemetry에 실려 collector로 전송여부
+        /// deviceID: uuid를 생성하여 keychain에 저장한 값
+        public var isDeviceIdEnable: Bool
+
+        /// namespace 서비스공간
+        /// web에서 서비스 추가시 받음
+        public var namespace: String?
+
+        /// sdk 수집여부를 api 돌려 받는 값에 결정
+        public var sdkCollectControl: IMQA.SDKCollectControl?
+
+        /// XHR 수집시 Request의 Header혹 Body를 수집여부setting
+        ///  Setting하지 않을시 XHR은 수집하나 header와 body는 수집하지 않습니다.
+        public var xhrOption: IMQA.XHROption?
+
+        /// Webview에서 native가 보낸 data를 사용하나 webview자체에서 생성한
+        /// data를 사용할것 인가
+        /// Setting하지 않을시 native보낸 data를 사용
+        /// native App에서 setting하지 않습니다.
+        public var webviewOption: IMQA.WebviewOption?
+
+        /// 운영계환경과 test환경이 한서버로 setting되여 있는 고객사가 있서
+        /// 환경구분을 위한 setting값
+        /// 각각 서버로 구성되는 고객사에서는 setting하지 않아도 됨
+        public var deployEnvironment: IMQADeployEnvironment
+
+        @objc public init(
+            namespace: String? = nil, 
+            serviceKey: String, 
+            endpoints: IMQA.Endpoints? = nil, 
+            deployEnvironment: IMQADeployEnvironment = .production, 
+            sampleRate: Double = 1.0, 
+            isDeviceIdEnable: Bool = true, 
+            sdkCollectControl: IMQA.SDKCollectControl? = nil, 
+            xhrOption: IMQA.XHROption? = nil, 
+            webviewOption: IMQA.WebviewOption? = nil)
+    }
+```
+```Swift
+extension IMQA {
+
+    /// sdk parameters setting fucntion
+    /// - Parameter options: parameters
+    /// - Returns: instance
+    @discardableResult
+    @objc public static func setup(options: IMQA.Options, 
+    isDebug: Bool = false) -> IMQA?
+
+    /// SDK시작
+    @objc public func start()
+
+    /// set userID
+    /// - Parameter id: userID
+    @objc public static func setUserId(id: String?)
+
+    /// userID 회득
+    /// - Returns: userID
+    @objc public static func getUserId() -> String?
+
+    /// custom log 찍기
+    /// - Parameters:
+    ///   - level: log level
+    ///   - message: 메세지
+    @objc public static func customLog(level: IMQA.LogLevel, 
+    message: String)
+
+    /// 수동으로 click span 수집
+    /// - Parameters:
+    ///   - buttonName: 버튼 이름
+    ///   - buttonClassName: 버튼 클라스
+    @objc public static func sendClickEvent(buttonName: String, 
+    buttonClassName: String)
+
+    ///1:) xib 로 webview layout시 주동으로 이 함수를 호출하세요.  
+    ///    webview와 연동하는 script주입하는 방법입니다.
+    ///2:) code로 initial시 호출하지 않아도 됩니다.
+    /// 즉: 아래와 같은 code로 initial시
+    ///  let configuration = WKWebViewConfiguration()
+    ///  let view = WKWebView(frame: .zero, configuration: configuration)
+    /// - Parameter userContentController: userContentController
+    @objc public static func setWebviewConfiguration(
+        userContentController: WKUserContentController)
+}
 ```
 
-### 커스텀 로그
- ```swift
-IMQA.customLog(level: .debug, message: "로그 내용")
+
+### IMQA SDK 초기화 예제
+#### Swift 프로젝트 초기화
+```Swift
+import UIKit
+import IMQACore
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication, 
+        didFinishLaunchingWithOptions 
+        launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Override point for customization after application launch.
+        
+        setupIMQASDK()
+
+        return true
+    }
+
+    func setupIMQASDK() {
+        let endpoint = IMQA.Endpoints(collectorURL: "collector 주소")
+        let serviceKey = "서비스 키"
+        // (Api 받아온 값으로 sdk수집여부)기능 사용여부
+        let sdkControl = IMQA.SDKCollectControl(remoteCollectionControlEnable: true)
+        // XHR option setting (HTTP Request Header, Body 수집여부)(XHR의 다른 값은 수집)
+        let xhrOption = IMQA.XHROption(
+            isCaptureHttpRequestHeader: true, 
+            isCaptureHttpRequestBody: true)
+        // Webview option setting (Native가 보낸 Data 사용여부)
+        // true: Native가 보낸 Data 사용
+        // false: Webview에서 생성한 Data 사용
+        // default: true
+        // Native App에서 setting하지 않습니다.
+        let webOption = IMQA.WebviewOption(isSharedSession: true)
+
+        //Sample Rate : 1.0 (0.0~1.0) 100% 수집
+        //isDeviceIdEnable : true 기기ID활성화 여부
+        //namespace : "namespace" 서비스 공간
+        //deployEnvironment : .development 개발환경 setting
+        let option = IMQA.Options(namespace: "namespace",
+                                  serviceKey: serviceKey,
+                                  endpoints: endpoint,
+                                  deployEnvironment: .production,
+                                  sampleRate: 1, 
+                                  isDeviceIdEnable: true,
+                                  sdkCollectControl: sdkControl,
+                                  xhrOption: xhrOption,
+                                  webviewOption: webOption
+                                  )
+        
+        // SDK 초기화 및 시작
+        //isDebug: true 디버그 모드 설정 (log 출력여부)
+        IMQA
+            .setup(options: option, isDebug: true)?
+        .start()
+    }
 ```
 
-### XHR시 HTTPRequestHeader를 수집여부
+#### Objective-C 프로젝트 초기화
+```objc
+#import "AppDelegate.h"
+#import <IMQACore/IMQACore-Swift.h>
 
-```swift
-IMQA.setRequestHeaderCapture(isCapture: Bool)
-// true: 수집함, false: 수집안함 default: false
+@interface AppDelegate ()
+
+@end
+
+@implementation AppDelegate
+
+
+- (BOOL)application:(UIApplication *)application
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    // Override point for customization after application launch.
+    [self setupIMQASDK];
+    return YES;
+}
+
+- (void)setupIMQASDK{
+    IMQAEndpoints *endpoint = [[IMQAEndpoints alloc]
+                               initWithCollectorURL:@"collecter 주소"];
+    NSString * serviceKey = @"서비스 키";
+    // (Api 받아온 값으로 sdk수집여부)기능 사용여부
+    IMQASDKCollectControl *sdkControl = [[IMQASDKCollectControl alloc]
+                                         initWithRemoteCollectionControlEnable:YES];
+    
+    // XHR option setting (HTTP Request Header, Body 수집여부)(XHR의 다른 값은 수집)
+    IMQAXHROption *xhrOption = [[IMQAXHROption alloc]
+                                initWithIsCaptureHttpRequestHeader:YES
+                                isCaptureHttpRequestBody:YES];
+    
+    // Webview option setting (Native가 보낸 Data 사용여부)
+    // true: Native가 보낸 Data 사용
+    // false: Webview에서 생성한 Data 사용
+    // default: true
+    // Native App에서 setting하지 않습니다.
+    IMQAWebviewOption * webOption = [[IMQAWebviewOption alloc]
+                                     initWithIsSharedSession:YES];
+    
+    //Sample Rate : 1.0 (0.0~1.0) 100% 수집
+    //isDeviceIdEnable : true 기기ID활성화 여부
+    //namespace : "namespace" 서비스 공간
+    //deployEnvironment : .development 개발환경 setting
+    IMQAOptions *option = [[IMQAOptions alloc]
+                           initWithNamespace:@"namespace"
+                           serviceKey:serviceKey
+                           endpoints:endpoint
+                           deployEnvironment:IMQADeployEnvironmentProduction
+                           sampleRate:1.0
+                           isDeviceIdEnable:YES
+                           sdkCollectControl:sdkControl
+                           xhrOption:xhrOption
+                           webviewOption:webOption];
+    
+    // SDK 초기화 및 시작
+    //isDebug: true 디버그 모드 설정 (log 출력여부)
+    [[IMQA setupWithOptions:option isDebug:YES] start];
+    
+}
+
 ```
-
-### XHR시 HTTPRequestBody를 수집여부
-
-```swift
-IMQA.setRequestBodyCapture(isCapture: Bool)
-// true: 수집함, false: 수집안함 default: false
-```
-
-
 
 ## 웹뷰 페이지 세션 연결
 
@@ -153,12 +299,16 @@ WebView data 수집하려면 WKWebView에 javascript 를 추가해야 합니다.
 ### 1. WKWebView를 코드로 initialize할 경우
 ```swift
 let config = WKWebViewConfiguration()        
+// Hook 방법으로 web script 주입해드립니다. 
+// 하여 따로 setting하지 않아도 됩니다.
 let view = WKWebView(frame: .zero, configuration: config)
 ```
 
 ### 2. xib로 WKWebView를 initialize할 경우
 ```swift
 let request = URLRequest(url: URL(string: "https://example.com/")!)
+// xib로 layout한 webview를 IBOutlet으로 연결한 경우
+// 아래와 같이 IMQA SDK와 webview를 연동하는 script주입하는 방법입니다.
 IMQA.setWebviewConfiguration(
     userContentController: wkWebView.configuration.userContentController
 )
@@ -180,46 +330,7 @@ import Foundation
 
 > 이 클래스는 Swift 런타임이 프로젝트에 로드되도록 보장하는 역할을 합니다.
 
-4. **AppDelegate에서 IMQA를 초기화하려면 다음 코드를 추가하세요.**
-
-```c
-#import "AppDelegate.h"
-#import "IMQACore/IMQACore-Swift.h"
-
-@interface AppDelegate ()
-@end
-
-@implementation AppDelegate
-
-- (BOOL)application:(UIApplication *)application 
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    
-    IMQAEndpoints *endpoints = [[IMQAEndpoints alloc] 
-        initWithCollectorURL:@"collector 주소"];
-    
-    IMQAOptions * options = [[IMQAOptions alloc] 
-        initWithServiceKey:@"비스키"
-        endpoints:endpoints
-        sampleRate:1.0
-        onOffSDKUrl: ""  
-        namespace: "namespace" 
-        deployEnvironment: IMQADeployEnvironment.development 
-        isDeviceIdEnable:YES];
-    //serviceKey : 고유 서비스 키
-    //endpoints collectorURL: 프로덕션 환경 URL
-    //sampleRate 샘플링 비율 (0.0 ~ 1.0)
-    //isDeviceIdEnable 기기 ID 활성화 여부 (선택 사항, 기본값: true
-    //namespace (선택 사항, 기본값: nil 보내지 않음)
-    //onOffSDKUrl 수집여부 api url 입력 (선택 사항 기본값: nil -> 수집함)
-    //deployEnvironment 배포 환경 설정 (선택 사항, 기본값: .production
-    
-    [[IMQA setupWithOptions:options isDebug:YES] start];
-    
-    return YES;
-}
-@end
-```
-5. **SwiftUI Render추적하려면 다음 코드를 추가해주세요.**
+4. **SwiftUI Render추적하려면 다음 코드를 추가해주세요.**
 
 ```swift
 import IMQACore
