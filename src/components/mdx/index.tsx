@@ -1,19 +1,34 @@
-export * from './Code'
+import { Code } from './Code'
+import { Details } from './Details'
+import { Gha } from './Gha'
+import { Grid } from './Grid'
+import { Hint } from './Hint'
+import { Img } from './Img'
+import { Intro } from './Intro'
+import { Keypoints, KeypointsItem } from './Keypoints'
+// import { People } from './People'
+import { Sandpack } from './Sandpack'
+import { SDKCard } from './sdk-card'
+import { SDKCards } from './sdk-cards'
+import { Summary } from './Summary'
+import { Toc } from './Toc'
+
+export { Code } from './Code'
 // // export * from './Codesandbox'
-export * from './Details'
+export { Details } from './Details'
 // // export * from './Entries'
-export * from './Gha'
-export * from './Grid'
-export * from './Hint'
-export * from './Img'
-export * from './Intro'
-export * from './Keypoints'
-export * from './People'
-export * from './Sandpack'
-export * from './sdk-card'
-export * from './sdk-cards'
-export * from './Summary'
-export * from './Toc'
+export { Gha } from './Gha'
+export { Grid } from './Grid'
+export { Hint } from './Hint'
+export { Img } from './Img'
+export { Intro } from './Intro'
+export { Keypoints, KeypointsItem } from './Keypoints'
+// export { People } from './People'
+export { Sandpack } from './Sandpack'
+export { SDKCard } from './sdk-card'
+export { SDKCards } from './sdk-cards'
+export { Summary } from './Summary'
+export { Toc } from './Toc'
 
 import cn from '@/lib/cn'
 import { MARKDOWN_REGEX } from '@/utils/docs'
@@ -116,39 +131,39 @@ export function code(props: ComponentProps<'code'>) {
   )
 }
 
-// export default {
-//   Code,
-//   Details,
-//   Gha,
-//   Grid,
-//   Hint,
-//   Intro,
-//   Keypoints,
-//   KeypointsItem,
-//   Backers,
-//   Sandpack,
-//   SDKCard,
-//   SDKCards,
-//   Summary,
-//   Toc,
-//   h1,
-//   h2,
-//   h3,
-//   h4,
-//   h5,
-//   h6,
-//   ul,
-//   ol,
-//   li,
-//   p,
-//   hr,
-//   blockquote,
-//   table,
-//   thead,
-//   th,
-//   tr,
-//   td,
-//   a,
-//   Img,
-//   code,
-// }
+export const mdxComponents = {
+  Code,
+  Details,
+  Gha,
+  Grid,
+  Hint,
+  Img,
+  Intro,
+  Keypoints,
+  KeypointsItem,
+  // People,
+  Sandpack,
+  SDKCard,
+  SDKCards,
+  Summary,
+  Toc,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  ul,
+  ol,
+  li,
+  p,
+  hr,
+  blockquote,
+  table,
+  thead,
+  th,
+  tr,
+  td,
+  a,
+  code,
+}

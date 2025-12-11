@@ -67,7 +67,7 @@ export async function POST(req: Request) {
     await browser.close()
 
     // PDF 반환
-    return new Response(pdfBuffer, {
+    return new Response(Buffer.from(pdfBuffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename=mdx-output.pdf',

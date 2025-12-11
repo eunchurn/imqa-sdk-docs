@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Check if it's a release event
     if (body.action === 'published' || body.action === 'created') {
       // Revalidate release data cache
-      revalidateTag('github-releases')
+      revalidateTag('github-releases', { expire: 0 })
 
       console.log(`Revalidated cache for release: ${body.release?.name || body.release?.tag_name}`)
 

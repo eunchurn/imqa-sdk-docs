@@ -1,5 +1,5 @@
 import type { Doc, DocToC } from '@/app/[...slug]/DocsContext'
-import * as components from '@/components/mdx'
+import { mdxComponents } from '@/components/mdx'
 import { rehypeCode } from '@/components/mdx/Code/rehypeCode'
 import { Codesandbox1 } from '@/components/mdx/Codesandbox'
 import { rehypeCodesandbox } from '@/components/mdx/Codesandbox/rehypeCodesandbox'
@@ -375,7 +375,7 @@ async function _getDocs(
         },
         // @ts-ignore
         components: {
-          ...components,
+          ...mdxComponents,
           // ...actualComponents,
           Codesandbox: (props) => <Codesandbox1 {...props} boxes={boxes} />,
           Entries: () => <Entries items={entries} />,
