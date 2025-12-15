@@ -586,7 +586,8 @@ export default defineConfig({
 | `authorizationToken`        | `string`                                        | optional      | 인증 토큰을 설정합니다.                                                                                                                                               |
 | `serviceName`               | `string`                                        | optional      | 서비스 이름을 지정합니다. (**서비스 등록할 때의 패키지명**) 텔레메트리 데이터 저장에 필수적입니다.                                                                                                      |
 | `serviceKey`                | `string`                                        | optional      | 서비스 키를 설정합니다. 텔레메트리 데이터 저장에 필수적입니다.                                                                                                        |
-| `serviceVersion`            | `string`                                        | optional      | 서비스 버전을 지정합니다. 텔레메트리 데이터 저장에 필수적이며, 빈 문자열이나 비문자열일 경우 경고가 발생합니다.                                                        |
+| `serviceVersion`            | `string`                                        | optional      | 서비스 버전을 지정합니다. 텔레메트리 데이터 저장에 필수적이며, 빈 문자열이나 비문자열일 경우 경고가 발생합니다. 웹뷰 환경에서는 네이티브 SDK에서 전달한 버전이 사용됩니다.                                                        |
+| `webServiceVersion`         | `string`                                        | optional      | 웹 서비스 버전을 지정합니다. 웹뷰 환경에서 네이티브 앱 버전과 별도로 웹 콘텐츠의 버전을 추적할 때 사용됩니다. 일반 웹 환경에서는 `serviceVersion`과 동일한 값이 자동으로 설정됩니다.                                                        |
 | `serviceNamespace`          | `string`                                        | optional      | 서비스 네임스페이스를 설정합니다. 여러 서비스(Android, iOS, Web 등)를 통합하여 모니터링할 경우 필요하며 비어있는 경우 `service.namespace`를 보내지 않습니다.                                               |
 | `deploymentEnvironment`     | `string`                                        | optional      | 배포 환경을 설정합니다. `setGlobalAttributes()`를 통해 지속되는 `environment` 속성의 값을 설정할 수 있습니다.                                                      |
 | `defaultAttributes`         | `Attributes`                                    | optional      | 기본 리소스 속성을 설정합니다. 모든 Span에 추가되는 전역 속성으로 사용됩니다.                                                                                        |
@@ -621,6 +622,20 @@ export default defineConfig({
 > (`string`, 선택)
 
 텔레메트리 데이터를 전송할 콜렉터의 URL을 지정합니다. 기본값은 `https://in-otel.imqa.io`입니다.
+
+<Gha keyword="CAUTION" title="URL 형식">
+`collectorUrl`은 반드시 `http://` 또는 `https://`로 시작하는 완전한 URL 형식이어야 합니다. scheme이 포함되지 않은 URL (예: `collector.yourdomain.com`)을 입력하면 초기화가 실패합니다.
+
+```javascript
+// ✅ 올바른 형식
+collectorUrl: 'https://collector.yourdomain.com'
+collectorUrl: 'http://192.168.1.100:4318'
+
+// ❌ 잘못된 형식 (초기화 실패)
+collectorUrl: 'collector.yourdomain.com'
+collectorUrl: '//collector.yourdomain.com'
+```
+</Gha>
 
 <Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
   <ul>
@@ -678,7 +693,7 @@ IMQA에서 발급된 서비스의 키를 설정합니다. IMQA 관리 계정 로
 
 > (`string`, 선택)
 
-서비스의 버전을 지정합니다. 이 값 서비스 버전을 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
+서비스의 버전을 지정합니다. 이 값은 서비스 버전을 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
 
 <Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
   <ul>
@@ -687,6 +702,32 @@ IMQA에서 발급된 서비스의 키를 설정합니다. IMQA 관리 계정 로
     <li>- 웹뷰 환경과 웹 브라우저 환경을 모두 계측하려는 경우, 웹뷰에서는 네이티브 SDK가 자동으로 전달한 파라미터를 사용하고, 웹 브라우저에서는 직접 입력한 파라미터를 사용하게 됩니다.</li>
   </ul>
 </Gha>
+
+<Gha keyword="TIP" title="웹뷰 환경에서의 버전 관리">
+웹뷰 환경에서는 `serviceVersion`과 `webServiceVersion`이 분리되어 처리됩니다:
+- **`serviceVersion`**: 네이티브 SDK(Android/iOS)에서 전달한 앱 버전이 사용됩니다.
+- **`webServiceVersion`**: Web Agent 초기화 시 옵션으로 전달한 웹 콘텐츠 버전이 사용됩니다.
+
+일반 웹 브라우저 환경에서는 옵션으로 전달한 `serviceVersion` 값이 `serviceVersion`과 `webServiceVersion` 모두에 동일하게 적용됩니다.
+</Gha>
+
+#### `webServiceVersion`
+
+> (`string`, 선택)
+
+웹 콘텐츠의 버전을 지정합니다. 이 옵션은 웹뷰 환경에서 네이티브 앱 버전(`serviceVersion`)과 별도로 웹 콘텐츠의 버전을 추적할 때 유용합니다.
+
+**동작 방식:**
+- **웹뷰 환경**: 옵션으로 전달한 `serviceVersion` 값이 `webServiceVersion`으로 저장되고, 네이티브 SDK에서 전달한 버전이 `serviceVersion`으로 사용됩니다.
+- **일반 웹 환경**: `serviceVersion`과 동일한 값이 자동으로 설정됩니다.
+
+```javascript
+// 웹뷰 환경 예시: 네이티브 앱 버전 1.0.0, 웹 콘텐츠 버전 2.3.1
+IMQA.init({
+  serviceVersion: '2.3.1', // 웹뷰에서는 webServiceVersion으로 저장됨
+  // serviceVersion은 네이티브 SDK에서 전달한 1.0.0이 사용됨
+});
+```
 
 #### `deploymentEnvironment`
 
