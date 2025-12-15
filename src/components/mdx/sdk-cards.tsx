@@ -32,7 +32,7 @@ export const SDKCards = async () => (
   <div>
     <div className="mx-auto max-w-7xl px-6">
       <div className="mb-16 text-center">
-        <p className="text-muted-foreground mx-auto mt-3 max-w-2xl text-xl sm:mt-4">
+        <p className="mx-auto mt-3 max-w-2xl text-xl text-on-surface-variant sm:mt-4">
           SDK 가이드를 선택하여 시작하세요.
         </p>
       </div>

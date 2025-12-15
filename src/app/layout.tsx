@@ -4,7 +4,7 @@ import cn from '@/lib/cn'
 import { svg } from '@/utils/icon'
 import resolveMdxUrl from '@/utils/resolveMdxUrl'
 import type { Metadata } from 'next'
-import { ThemeProvider } from 'next-themes'
+import { ThemeProvider } from './ThemeProvider'
 // import { Inconsolata, Inter, Nanum_Gothic_Coding } from 'next/font/google'
 import './globals.css'
 import { SandpackCSS } from './sandpack-styles'
@@ -73,12 +73,16 @@ export default function RootLayout(props: RootLayoutProps) {
           // inter.className,
           // pretendard.className,
           nanumsquareneo.className,
-          // 'bg-surface break-words'
-          'bg-zinc-50 break-words',
+          'bg-surface break-words text-on-surface',
           'scrollbar-thin',
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
           <Toaster />
         </ThemeProvider>

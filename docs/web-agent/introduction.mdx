@@ -615,6 +615,72 @@ export default defineConfig({
 | `exporterProtocol`              | `json` or `proto`                                        | optional      | exporter 프로토콜을 설정합니다. 기본값은 `json`입니다.                                                                                                      |
 | `screenNameOption` | `ScreenNameOption` | optional      | 화면 이름 옵션을 설정합니다. 기본값은 `{ screenNameType: "routeOnly", urlWithSearchParams: false }`입니다.                                                                                                      |
 
+## 서비스 상태 관리 (Service Status)
+
+IMQA Web Agent는 서버와 통신하여 서비스의 계측 상태를 동적으로 관리할 수 있습니다. 이 기능을 통해 서버 측에서 계측을 활성화하거나 비활성화할 수 있으며, Exporter 실패 시 자동으로 계측을 중단하는 기능을 제공합니다.
+
+### Service Status API
+
+IMQA Web Agent는 초기화 시 Service Status API (`/v2/service/status`)를 호출하여 서비스 상태를 확인합니다.
+
+#### 동작 방식
+
+1. **초기화 시 상태 확인**: `init()` 호출 시 이전에 저장된 `isCollecting` 상태를 확인합니다.
+2. **계측 비활성화**: 저장된 `isCollecting`이 `false`인 경우 계측이 비활성화됩니다.
+3. **백그라운드 업데이트**: Service Status API를 백그라운드에서 호출하여 최신 상태를 localStorage에 저장합니다.
+4. **다음 세션 적용**: 서버에서 `isCollecting: false`를 반환하면 다음 `init()` 호출 시 계측이 비활성화됩니다.
+
+#### 서버 응답 형식
+
+```typescript
+interface ServiceStatusResponse {
+  /** 계측 수집 활성화 여부 - false인 경우 다음 init 시 계측 비활성화 */
+  isCollecting: boolean;
+  /** Drop Policy 활성화 여부 */
+  dropPolicy: boolean;
+  /** Drop Policy 실패 임계값 - exporter가 이 횟수 이상 실패하면 계측 중단 */
+  targetDropCount: number;
+  /** 서버에서 발급한 토큰 */
+  token: string;
+}
+```
+
+### Drop Policy (Exporter 실패 시 자동 중단)
+
+Drop Policy는 Exporter가 연속으로 실패할 경우 자동으로 계측을 중단하는 기능입니다.
+
+#### 동작 방식
+
+1. **실패 추적**: `ExporterFailureTracker`가 Exporter의 성공/실패를 추적합니다.
+2. **임계값 도달**: 연속 실패 횟수가 `targetDropCount`에 도달하면 자동으로 `deinit()`이 호출됩니다.
+3. **실패 카운터 리셋**: 실패 카운터는 `init()` 호출 시에만 리셋됩니다. 성공해도 리셋되지 않습니다.
+
+#### Exporter 이벤트
+
+IMQA는 `CustomEvent`를 통해 Exporter의 성공/실패를 알립니다.
+
+```typescript
+// Exporter 이벤트 리스닝 예시
+window.addEventListener('imqa:exporter', (event) => {
+  const { type } = event.detail; // 'success' | 'failure'
+  console.log(`Exporter ${type}`);
+});
+```
+
+<Gha keyword="NOTE" title="Drop Policy 활성화 조건">
+Drop Policy는 서버의 Service Status API 응답에서 `dropPolicy: true`가 반환된 경우에만 활성화됩니다. `dropPolicy`가 활성화되면 Exporter는 XHR 방식으로 전환되어 실제 네트워크 실패를 감지할 수 있습니다.
+</Gha>
+
+<Gha keyword="WARNING" title="Drop Policy 사용 시 주의사항">
+Drop Policy가 활성화된 경우, 네트워크가 불안정한 환경에서 계측이 조기에 중단될 수 있습니다:
+
+- **영향받는 환경**: 엘리베이터, 지하주차장, 터널, 지하철 등 네트워크 연결이 불안정한 장소
+- **데이터 손실 가능성**: 네트워크 일시 단절로 인한 Exporter 실패가 `targetDropCount`에 도달하면 계측이 중단되어 **세션 후반부의 데이터가 수집되지 않을 수 있습니다**
+- **모바일 환경 주의**: 모바일 기기는 이동 중 네트워크 전환(Wi-Fi ↔ LTE/5G)이 빈번하여 잦은 drop이 발생할 수 있으며, 이로 인해 **데이터 정합성에 손실**이 발생할 수 있습니다
+
+Drop Policy는 서버 부하를 줄이고 불필요한 네트워크 요청을 방지하는 데 유용하지만, 위와 같은 환경에서 완전한 세션 데이터 수집이 필요한 경우에는 신중하게 사용해야 합니다.
+</Gha>
+
 ### 옵션 상세 설명
 
 #### `collectorUrl`
@@ -694,6 +760,19 @@ IMQA에서 발급된 서비스의 키를 설정합니다. IMQA 관리 계정 로
 > (`string`, 선택)
 
 서비스의 버전을 지정합니다. 이 값은 서비스 버전을 구분짓는 값으로 텔레메트리 데이터 저장 및 분석에 사용됩니다.
+
+<Gha keyword="NOTE" title="웹뷰 환경에서의 serviceVersion 분리 처리">
+웹뷰 환경에서는 `serviceVersion`이 네이티브 앱 버전과 웹 앱 버전을 분리하여 처리됩니다:
+
+- **웹뷰 환경**:
+  - `serviceVersion`: 네이티브 SDK에서 전달한 앱 버전
+  - `webServiceVersion`: `init()` 옵션에서 설정한 웹 버전 (내부적으로 별도 관리)
+
+- **일반 웹 브라우저 환경**:
+  - `serviceVersion`과 `webServiceVersion`이 동일한 값으로 설정됩니다.
+
+이를 통해 웹뷰에서 네이티브 앱 버전과 웹 콘텐츠 버전을 모두 추적할 수 있습니다.
+</Gha>
 
 <Gha keyword="WARNING" title="IMQA Mobile SDK와 연동">
   <ul>
@@ -1313,6 +1392,49 @@ IMQA.init(config: IMQASDKConfig): void
     - `serviceVersion` (`string`): 서비스 버전 (필수)
     - 기타 선택적 설정들...
 
+<Gha keyword="NOTE" title="Service Status 기반 계측 제어">
+`init()` 호출 시 이전에 저장된 서비스 상태(`isCollecting`)가 `false`인 경우 계측이 자동으로 비활성화됩니다. 또한 `init()`이 호출되면 Exporter 실패 카운터가 리셋됩니다.
+</Gha>
+
+### `deinit`
+
+```ts
+IMQA.deinit(): void
+```
+
+IMQA 인스턴스를 종료하고 모든 계측을 중단합니다. 세션 레코더도 함께 종료됩니다.
+
+- **동작:**
+  - Exporter 이벤트 리스너 제거
+  - OpenTelemetry 계측 종료
+  - 세션 레코더 종료
+  - OpAMP 클라이언트 정리
+
+```typescript
+// 계측 종료 예시
+IMQA.deinit();
+```
+
+<Gha keyword="NOTE" title="자동 deinit">
+Drop Policy가 활성화된 상태에서 Exporter 실패 횟수가 `targetDropCount`에 도달하면 `deinit()`이 자동으로 호출됩니다.
+</Gha>
+
+### `inited`
+
+```ts
+IMQA.inited: boolean
+```
+
+IMQA가 초기화되었는지 여부를 반환합니다.
+
+- **반환값:** (`boolean`): 초기화 여부
+
+```typescript
+if (IMQA.inited) {
+  console.log('IMQA is initialized');
+}
+```
+
 ### `stopSessionRecorder`
 
 ```ts
@@ -1703,6 +1825,63 @@ import { ErrorBoundary } from 'react-error-boundary';
 // ErrorBoundary 컴포넌트에 연결하여 모든 인스턴스에서 발생하는 오류를 캡처합니다.
 IMQA.attachToReactErrorBoundary(ErrorBoundary);
 ```
+
+### `getServiceStatus`
+
+```ts
+IMQA.getServiceStatus(): ServiceStatusResponse | null
+```
+
+현재 저장된 서비스 상태를 조회합니다.
+
+- **반환값:** (`ServiceStatusResponse | null`): 서비스 상태 객체 또는 `null`
+
+```typescript
+interface ServiceStatusResponse {
+  isCollecting: boolean;    // 계측 수집 활성화 여부
+  dropPolicy: boolean;      // Drop Policy 활성화 여부
+  targetDropCount: number;  // 실패 임계값
+  token: string;            // 서버에서 발급한 토큰
+}
+
+// 사용 예시
+const status = IMQA.getServiceStatus();
+if (status) {
+  console.log('Is collecting:', status.isCollecting);
+  console.log('Drop policy enabled:', status.dropPolicy);
+  console.log('Target drop count:', status.targetDropCount);
+}
+```
+
+### `recordExporterFailure`
+
+```ts
+IMQA.recordExporterFailure(): boolean
+```
+
+Exporter 실패를 수동으로 기록합니다. 주로 내부적으로 사용되지만, 커스텀 Exporter를 사용하는 경우 수동으로 호출할 수 있습니다.
+
+- **반환값:** (`boolean`): 임계값에 도달하여 계측이 중단되었으면 `true`, 아니면 `false`
+
+```typescript
+// 커스텀 Exporter에서 실패 시 호출
+const shouldStop = IMQA.recordExporterFailure();
+if (shouldStop) {
+  console.log('Threshold reached, instrumentation stopped');
+}
+```
+
+### `recordExporterSuccess`
+
+```ts
+IMQA.recordExporterSuccess(): void
+```
+
+Exporter 성공을 수동으로 기록합니다. 주로 내부적으로 사용됩니다.
+
+<Gha keyword="NOTE" title="실패 카운터 동작">
+`recordExporterSuccess()`를 호출해도 실패 카운터는 리셋되지 않습니다. 실패 카운터는 `init()` 호출 시에만 리셋됩니다.
+</Gha>
 
 ### CORS 요청에 대한 리소스 타이밍 활성화
 

@@ -26,17 +26,17 @@ export function SDKCard({
   return (
     <Link
       href={link}
-      className="text-card-foreground group bg-background-light relative overflow-hidden rounded-lg border-2 shadow-sm transition-all duration-300 hover:border-primary"
+      className="group bg-surface-container relative overflow-hidden rounded-lg border-2 border-outline-variant text-on-surface shadow-sm transition-all duration-300 hover:border-primary"
     >
       <div className="flex h-full flex-col p-6">
         <div className="mb-4 flex items-center gap-4">
           <div className={cn(['rounded-lg p-3', 'bg-opacity-10', color])}>
             <Icon className={cn('h-8 w-8', color)} />
           </div>
-          <h2 className="text-foreground text-2xl font-semibold">{title}</h2>
+          <h2 className="text-2xl font-semibold text-on-surface">{title}</h2>
         </div>
 
-        <p className="text-muted-foreground mb-6 flex-grow">{description}</p>
+        <p className="mb-6 flex-grow text-on-surface-variant">{description}</p>
 
         {/* <Button
           // variant="outline"

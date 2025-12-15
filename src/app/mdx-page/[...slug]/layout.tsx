@@ -19,9 +19,9 @@ export default async function MDXPageLayout(props: Props) {
   } = await getData(...slug)
   const toc = <TocPDF toc={tableOfContents.filter(({ level }) => level > 0)} />
   return (
-    <div className={`print:bg-white`}>
+    <div className={`bg-surface print:bg-white`}>
       <div className="min-h-screen">
-        <header className="w-full border-b bg-white print:pb-8">
+        <header className="bg-surface w-full border-b border-outline-variant print:bg-white print:pb-8">
           {cover ? <Cover kind={cover} /> : null}
           <div className="mx-auto max-w-[850px] px-6 py-8">
             <div className="flex items-center justify-between">
@@ -45,7 +45,7 @@ export default async function MDXPageLayout(props: Props) {
                   </span>
                 ) : null}
               </span>
-              <div className="text-gray-500 text-sm">
+              <div className="text-sm text-on-surface-variant">
                 Last updated: {new Date().toLocaleDateString()}
               </div>
             </div>
@@ -56,9 +56,9 @@ export default async function MDXPageLayout(props: Props) {
           <div className="max-w-none print:prose-sm">{children}</div>
         </main>
 
-        <footer className="w-full border-t print:mt-8">
+        <footer className="w-full border-t border-outline-variant print:mt-8">
           <div className="mx-auto max-w-[850px] px-6 py-4">
-            <div className="text-gray-500 text-center text-sm">
+            <div className="text-center text-sm text-on-surface-variant">
               © {new Date().getFullYear()} ONYCOM. All rights reserved.
             </div>
           </div>
