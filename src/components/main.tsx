@@ -14,6 +14,8 @@ interface MainProps {
   pdf?: boolean
 }
 
+const isDev = process.env.NODE_ENV === 'development'
+
 function Page(props: MainProps) {
   const { doc, pdf } = props
   const { toast } = useToast()
@@ -57,7 +59,14 @@ function Page(props: MainProps) {
   return (
     <>
       <header className={cn('mb-6 mt-8 border-b', 'border-outline-variant/50')}>
-        <h1 className="mb-2 text-3xl tracking-tighter">{doc.title}</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="mb-2 text-3xl tracking-tighter">{doc.title}</h1>
+          {isDev && doc.draft && (
+            <span className="bg-yellow-100 text-yellow-800 ring-yellow-600/20 mb-2 inline-flex items-center rounded-md px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset">
+              DRAFT
+            </span>
+          )}
+        </div>
         <div className="flex justify-between">
           {!!doc?.description?.length && (
             <p className={cn('my-2 text-base leading-5', 'text-on-surface-variant/50')}>

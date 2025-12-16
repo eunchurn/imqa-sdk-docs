@@ -31,6 +31,7 @@ export type Doc = {
   pdf?: boolean
   cover?: CoverKind
   toc?: boolean
+  draft?: boolean
   // releases?: ReleaseList
   // releaseJsx?: ReactNode
 }

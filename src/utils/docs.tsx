@@ -273,7 +273,7 @@ async function _getDocs(
       //
 
       if (slugOnly) {
-        return { slug } as Doc
+        return { slug, draft: frontmatter.draft } as Doc
       }
 
       //
@@ -401,13 +401,19 @@ async function _getDocs(
         pdf: frontmatter.pdf,
         cover: frontmatter.cover,
         toc: frontmatter.toc === undefined ? true : false,
+        draft: frontmatter.draft,
         // releases,
         // releaseJsx: releases ? await getReleaseJsx(releases) : undefined,
       }
     }),
   )
 
-  return docs.sort((a, b) => a.nav - b.nav)
+  // Filter out draft documents (always filter in static build, but allow in dev for preview)
+  const isDev = process.env.NODE_ENV === 'development'
+  const showDrafts = isDev && process.env.SHOW_DRAFTS !== 'false'
+  const filteredDocs = showDrafts ? docs : docs.filter((doc) => !doc.draft)
+
+  return filteredDocs.sort((a, b) => a.nav - b.nav)
 }
 // export const getDocs = pMemoize(_getDocs, { cacheKey: ([lib]) => lib })
 export const getDocs = cache(_getDocs)

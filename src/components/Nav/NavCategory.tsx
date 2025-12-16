@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ComponentProps } from 'react'
 
 const INDEX_PAGE = 'introduction'
+const isDev = process.env.NODE_ENV === 'development'
 
 export function NavCategory({
   category,
@@ -43,7 +44,14 @@ export function NavCategory({
           return (
             <li key={page}>
               <NavItem href={doc.url} active={doc.url === `/${asPath}`} className="pl-10 text-xs">
-                {doc.title}
+                <span className="flex items-center gap-2">
+                  {doc.title}
+                  {isDev && doc.draft && (
+                    <span className="bg-yellow-100 text-yellow-800 inline-flex items-center rounded px-1 py-0.5 text-[10px] font-medium">
+                      DRAFT
+                    </span>
+                  )}
+                </span>
               </NavItem>
             </li>
           )
