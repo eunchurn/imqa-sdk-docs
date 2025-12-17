@@ -4,6 +4,7 @@ const output = process.env.OUTPUT || undefined
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  devIndicators: false,
   productionBrowserSourceMaps: true,
   images: {
     // domains: ['codesandbox.io'],

@@ -1,0 +1,764 @@
+---
+title: IMQA 서버 애플리케이션 설치 가이드
+description: IMQA 서버 애플리케이션을 설치하는 방법을 안내합니다.
+draft: true
+nav: 1004
+pdf: true
+cover: admin-guide
+---
+
+<Intro>
+이 문서는 네트워크가 격리된 환경에서 IMQA 서버 애플리케이션 및 서버 구동을 위한 K3s를 오프라인으로 설치하는 방법을 설명합니다.
+인터넷 연결이 없는 서버에 K3s 클러스터를 구축하는 시나리오를 기준으로 합니다.
+</Intro>
+
+![server-diagram](img/server-diagram.png)
+
+## 사전 준비
+
+### 포함 구성요소
+
+| 구성요소 | 버전 | 설명 |
+|----------|------|------|
+| K3s | v1.33.3+k3s1 | 경량 Kubernetes 배포판 |
+| k9s | v0.50.9 | Kubernetes 터미널 UI 도구 |
+| K3s airgap 이미지 | - | K3s 핵심 컨테이너 이미지 |
+| IMQA 관련 이미지 | - | IMQA 배포용 컨테이너 이미지 |
+
+### 패키지 구성
+
+| 파일/디렉토리 | 설명 |
+|---------------|------|
+| `binaries/k3s` | K3s 바이너리 |
+| `binaries/install.sh` | K3s 설치 스크립트 |
+| `binaries/k3s-airgap-images-amd64.tar` | K3s airgap 이미지 아카이브 |
+| `binaries/k9s_linux_amd64.rpm` | k9s RPM 패키지 (RHEL 계열) |
+| `binaries/k9s_linux_amd64.deb` | k9s DEB 패키지 (Debian 계열) |
+| `binaries/k9s_Linux_amd64.tar.gz` | k9s 바이너리 아카이브 |
+| `images/k3s/` | K3s 관련 컨테이너 이미지 |
+| `images/imqa/` | IMQA 관련 컨테이너 이미지 |
+| `install-k3s-offline.sh` | 오프라인 설치 스크립트 |
+
+### 대상 서버 요구사항
+
+- **OS**: RHEL 9 / Rocky Linux 9 / AlmaLinux 9 / Ubuntu 22.04+
+- **아키텍처**: x86_64 (amd64)
+- **CPU**: 시스템 사용 가용 한도 (총 64코어 권장)
+- **RAM**: 시스템 사용 가용 한도 (최소 512GB 권장)
+- **디스크**: 최소 8TB 여유 공간 (TTL에 따라 다름)
+- **파일시스템**: ext4, xfs, btrfs (K3s 데이터 디렉토리용)
+- **권한**: root 권한 필요
+
+### 컨테이너 이미지 요구사항 (중요)
+
+<Gha keyword="WARNING" title="주의">
+K3s 환경에서 컨테이너 이미지는 **Alpine Linux 기반 이미지 사용을 권장**합니다.
+</Gha>
+K3s의 containerd는 overlayfs snapshotter를 사용하여 컨테이너 이미지 레이어를 관리합니다.
+특정 환경(SELinux, 파일시스템 구성, cgroup 설정 등)에서 non-Alpine 베이스 이미지 사용 시 다음과 같은 오류가 발생할 수 있습니다:
+
+```text
+failed to mount rootfs component: mount error... invalid argument
+```
+
+**원인 분석**:
+
+- containerd의 overlay snapshotter가 rootfs 마운트 시 실패
+- 호스트의 파일시스템 특성(중첩 overlay 불가), SELinux 정책, cgroup 구성 등과 충돌
+- 복잡한 레이어 구조를 가진 이미지에서 overlay 작업이 실패할 가능성 증가
+
+**권장 사항**:
+
+- **Alpine 기반 이미지 사용**: 이미지 크기가 작고 레이어 구조가 단순하여 overlay 작업이 안정적
+- K3s 데이터 디렉토리(`/var/lib/rancher`)는 **ext4, xfs, btrfs** 등 표준 파일시스템에 위치해야 함
+- overlay 파일시스템 위에 K3s를 설치하지 않아야 함 (중첩 overlay 불가)
+
+**IMQA 패키지에 포함된 이미지**:
+
+| 이미지 | 베이스 | 비고 |
+|--------|--------|------|
+| clickhouse-server | Alpine | 권장 |
+| clickhouse-keeper | Alpine | 권장 |
+| postgres | Alpine | 권장 |
+| IMQA 애플리케이션 이미지 | Alpine | 권장 |
+
+<Gha keyword="NOTE" title="참고">
+[K3s GitHub Issue #2755](https://github.com/k3s-io/k3s/issues/2755)
+</Gha>
+
+### 필요 포트
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 6443 | TCP | Kubernetes API Server |
+| 10250 | TCP | Kubelet API |
+| 8472 | UDP | VXLAN (Flannel) |
+| 51820 | UDP | WireGuard IPv4 |
+| 51821 | UDP | WireGuard IPv6 |
+
+---
+
+## 패키지 전송
+
+### SCP를 통한 전송
+
+```bash
+# 압축 파일 전송
+scp k3s-offline.tar.gz user@target-server:/tmp/
+
+# 또는 디렉토리 직접 전송
+scp -r k3s-offline/ user@target-server:/tmp/
+```
+
+### USB 드라이브를 통한 전송
+
+```bash
+# USB 마운트 (대상 서버에서)
+sudo mount /dev/sdb1 /mnt/usb
+
+# 파일 복사
+sudo cp -r /mnt/usb/k3s-offline /tmp/
+# 또는 압축 파일 복사 후 해제
+sudo cp /mnt/usb/k3s-offline.tar.gz /tmp/
+cd /tmp && tar -xzvf k3s-offline.tar.gz
+
+# USB 언마운트
+sudo umount /mnt/usb
+```
+
+### 네트워크 공유를 통한 전송
+
+```bash
+# NFS 마운트 예시
+sudo mount -t nfs file-server:/share /mnt/nfs
+sudo cp -r /mnt/nfs/k3s-offline /tmp/
+sudo umount /mnt/nfs
+```
+
+---
+
+## 시스템 요구사항 확인
+
+### 수동 확인
+
+```bash
+# OS 확인
+cat /etc/os-release
+
+# CPU 코어 수 확인
+nproc
+
+# 메모리 확인 (최소 2GB 필요)
+free -g
+
+# 디스크 공간 확인 (최소 10GB 필요)
+df -h /
+
+# 필요 포트 사용 여부 확인
+ss -tuln | grep -E ':(6443|10250|8472|51820|51821) '
+
+# iptables 확인
+iptables --version
+```
+
+### 방화벽 설정 (필요 시)
+
+```bash
+# firewalld 사용 시 (RHEL 계열)
+sudo firewall-cmd --permanent --add-port=6443/tcp
+sudo firewall-cmd --permanent --add-port=10250/tcp
+sudo firewall-cmd --permanent --add-port=8472/udp
+sudo firewall-cmd --permanent --add-port=51820/udp
+sudo firewall-cmd --permanent --add-port=51821/udp
+sudo firewall-cmd --reload
+
+# 또는 방화벽 비활성화 (테스트 환경)
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+```
+
+---
+
+## K3s 설치
+
+### 설치 스크립트 실행
+
+```bash
+cd /tmp/k3s-offline
+
+# root 권한으로 설치 스크립트 실행
+sudo ./install-k3s-offline.sh
+```
+
+### 설치 과정 안내
+
+스크립트 실행 시 다음 단계를 거칩니다:
+
+#### 단계 1: K3s 설치 여부 확인
+
+```text
+[INFO] Do you want to install K3s? (Y/n)
+```
+
+`Y` 또는 `Enter`를 눌러 설치를 진행합니다.
+
+#### 단계 2: 설치 모드 선택
+
+```text
+[INFO] Select K3s installation mode:
+[INFO] 1) Master node (server)
+[INFO] 2) Worker node (agent)
+Enter your choice (1-2, default: 1):
+```
+
+- **마스터 노드**: `1` 선택 (첫 번째 노드)
+- **워커 노드**: `2` 선택 (클러스터에 추가할 노드)
+
+#### 단계 3: containerd 그룹 사용자 설정
+
+```text
+Enter username for containerd group (default: imqa):
+```
+
+K3s containerd 소켓에 접근할 사용자를 입력합니다.
+
+### Control Pane 노드 설치 (옵션 1)
+
+Control Pane 노드로 설치 시 다음 작업이 자동 수행됩니다:
+
+1. K3s 바이너리 설치 (`/usr/local/bin/k3s`)
+2. K3s airgap 이미지 로드
+3. K3s 설정 파일 생성 (`/etc/rancher/k3s/config.yaml`)
+4. K3s systemd 서비스 등록 및 시작
+5. containerd 그룹 생성 및 사용자 추가
+
+생성되는 K3s 설정 파일:
+
+```yaml
+# /etc/rancher/k3s/config.yaml
+write-kubeconfig-mode: "0644"
+cluster-init: true
+disable:
+  - traefik
+tls-san:
+  - <서버 IP>
+  - <호스트명>
+node-name: <호스트명>
+```
+
+### 워커 노드 설치 (옵션 2)
+
+워커 노드로 설치 시 추가 정보가 필요합니다:
+
+```text
+Enter K3s master server URL (e.g., https://master-ip:6443): https://192.168.1.100:6443
+Enter K3s token: <마스터 노드의 토큰>
+```
+
+<Gha keyword="TIP" title="TIP">
+> **마스터 노드에서 토큰 확인 방법**:
+> ```bash
+> sudo cat /var/lib/rancher/k3s/server/node-token
+> ```
+</Gha>
+---
+
+## k9s 설치
+
+### 자동 설치 (설치 스크립트 진행 중)
+
+```text
+[INFO] Do you want to install k9s (Kubernetes CLI tool)? (Y/n)
+```
+
+`Y`를 입력하면 OS에 따라 자동으로 설치됩니다:
+
+- **RHEL 계열**: RPM 패키지 사용
+- **Debian 계열**: DEB 패키지 사용
+- **기타**: 바이너리 직접 설치
+
+### 수동 설치
+
+```bash
+# RHEL/CentOS/Rocky Linux
+sudo rpm -i /tmp/k3s-offline/binaries/k9s_linux_amd64.rpm
+
+# Ubuntu/Debian
+sudo dpkg -i /tmp/k3s-offline/binaries/k9s_linux_amd64.deb
+
+# 바이너리 설치 (범용)
+cd /tmp
+tar -xzf /tmp/k3s-offline/binaries/k9s_Linux_amd64.tar.gz
+sudo mv k9s /usr/local/bin/k9s
+sudo chmod +x /usr/local/bin/k9s
+
+# 설치 확인
+k9s version
+```
+
+---
+
+## 사용자 권한 설정
+
+### 자동 권한 설정 (설치 스크립트 진행 중)
+
+```text
+[INFO] Do you want to configure user permissions for K3s? (Y/n)
+```
+
+`Y`를 입력하면 다음 설정이 자동 수행됩니다:
+
+```text
+Username (default: imqa):
+Group name (default: imqa):
+```
+
+### 수동 권한 설정
+
+```bash
+# 대상 사용자 설정
+TARGET_USER="imqa"
+TARGET_GROUP="imqa"
+
+# 바이너리 권한
+sudo chmod 755 /usr/local/bin/k3s
+sudo chmod 755 /usr/local/bin/kubectl 2>/dev/null || true
+
+# 설정 디렉토리 권한
+sudo chown -R $TARGET_USER:$TARGET_GROUP /etc/rancher
+sudo chmod -R 755 /etc/rancher
+
+# 데이터 디렉토리 권한
+sudo chown -R $TARGET_USER:$TARGET_GROUP /var/lib/rancher
+sudo chmod -R 755 /var/lib/rancher
+
+# containerd 그룹 설정
+sudo groupadd -f containerd
+sudo usermod -aG containerd $TARGET_USER
+
+# containerd 소켓 권한
+sudo chgrp containerd /run/k3s/containerd/containerd.sock
+sudo chmod g+rw /run/k3s/containerd/containerd.sock
+```
+
+### `kubeconfig` 설정
+
+```bash
+# 사용자 홈 디렉토리에 kubeconfig 복사
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(whoami):$(whoami) ~/.kube/config
+chmod 600 ~/.kube/config
+
+# 또는 환경변수 설정
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+```
+
+### `kubectl` 별칭 설정
+
+```bash
+# .bashrc에 추가
+echo "alias k='kubectl'" >> ~/.bashrc
+source ~/.bashrc
+
+# 확인
+k get nodes
+```
+
+---
+
+## 설치 확인
+
+### K3s 서비스 상태 확인
+
+```bash
+# 서비스 상태 확인
+sudo systemctl status k3s
+
+# 서비스 로그 확인
+sudo journalctl -u k3s -f
+```
+
+예상 출력:
+
+```systemd
+● k3s.service - Lightweight Kubernetes
+     Loaded: loaded (/etc/systemd/system/k3s.service; enabled; preset: disabled)
+     Active: active (running) since ...
+```
+
+### 클러스터 상태 확인
+
+```bash
+# 노드 상태 확인
+kubectl get nodes
+
+# 예상 출력:
+# NAME        STATUS   ROLES                       AGE   VERSION
+# k3s-master  Ready    control-plane,etcd,master   5m    v1.33.3+k3s1
+
+# 모든 Pod 상태 확인
+kubectl get pods -A
+
+# 클러스터 정보 확인
+kubectl cluster-info
+```
+
+### `k9s` 실행
+
+```bash
+# k9s 터미널 UI 실행
+k9s
+
+# 특정 네임스페이스로 시작
+k9s -n kube-system
+```
+
+### CP 노드 정보 확인
+
+```bash
+# 서버 URL (워커 노드 추가 시 필요)
+echo "Server URL: https://$(hostname -I | awk '{print $1}'):6443"
+
+# 토큰 확인 (워커 노드 추가 시 필요)
+sudo cat /var/lib/rancher/k3s/server/node-token
+```
+
+---
+
+## 워커 노드 추가
+
+### CP 노드에서 정보 확인
+
+```bash
+# CP 노드에서 실행
+echo "=== CP Node Information ==="
+echo "Server URL: https://$(hostname -I | awk '{print $1}'):6443"
+echo "Token: $(sudo cat /var/lib/rancher/k3s/server/node-token)"
+```
+
+### 워커 노드에서 설치
+
+```bash
+# 워커 노드에서 실행
+cd /tmp/k3s-offline
+sudo ./install-k3s-offline.sh
+
+# 설치 모드에서 "2) Worker node (agent)" 선택
+# 마스터 노드의 URL과 토큰 입력
+```
+
+### 워커 노드 연결 확인
+
+```bash
+# CP 노드에서 실행
+kubectl get nodes
+
+# 예상 출력:
+# NAME          STATUS   ROLES                       AGE   VERSION
+# k3s-master    Ready    control-plane,etcd,master   10m   v1.33.3+k3s1
+# k3s-worker1   Ready    <none>                      2m    v1.33.3+k3s1
+```
+
+---
+
+## 제거 방법
+
+### 제거 스크립트 사용
+
+```bash
+# 프로젝트 디렉토리에서
+sudo ./uninstall-k3s.sh
+
+# 확인 메시지가 표시되면 'y' 입력
+```
+
+### 수동 제거
+
+```bash
+# K3s 서비스 중지
+sudo systemctl stop k3s
+
+# K3s 서비스 비활성화
+sudo systemctl disable k3s
+
+# K3s 제거 스크립트 실행 (있는 경우)
+if [[ -f /usr/local/bin/k3s-uninstall.sh ]]; then
+    sudo /usr/local/bin/k3s-uninstall.sh
+fi
+
+# K3s 디렉토리 제거
+sudo rm -rf /var/lib/rancher/k3s
+sudo rm -rf /etc/rancher/k3s
+sudo rm -rf /var/lib/kubelet
+sudo rm -rf /var/lib/cni
+sudo rm -rf /etc/cni
+
+# K3s 바이너리 제거
+sudo rm -f /usr/local/bin/k3s
+sudo rm -f /usr/local/bin/kubectl
+sudo rm -f /usr/local/bin/crictl
+sudo rm -f /usr/local/bin/k3s-uninstall.sh
+sudo rm -f /usr/local/bin/k3s-killall.sh
+
+# k9s 제거
+sudo rm -f /usr/local/bin/k9s
+# 또는 RPM/DEB로 설치한 경우
+sudo rpm -e k9s  # RHEL 계열
+sudo dpkg -r k9s  # Debian 계열
+```
+
+---
+
+## 트러블슈팅
+
+### K3s 서비스 시작 실패
+
+#### 증상
+
+```text
+[ERROR] Failed to start K3s service.
+```
+
+#### 해결 방법
+
+```bash
+# 서비스 상태 확인
+sudo systemctl status k3s
+
+# 상세 로그 확인
+sudo journalctl -u k3s --no-pager -n 100
+
+# 일반적인 원인:
+# 1. 포트 충돌 확인
+sudo ss -tuln | grep 6443
+
+# 2. 디스크 공간 확인
+df -h /
+
+# 3. 메모리 확인
+free -g
+```
+
+### 노드가 Ready 상태가 되지 않음
+
+#### 증상
+
+```text
+NAME        STATUS     ROLES                       AGE   VERSION
+k3s-master  NotReady   control-plane,etcd,master   5m    v1.33.3+k3s1
+```
+
+#### 해결 방법
+
+```bash
+# 노드 상세 정보 확인
+kubectl describe node $(hostname)
+
+# Pod 상태 확인
+kubectl get pods -A
+
+# K3s 로그에서 오류 확인
+sudo journalctl -u k3s | grep -i error
+
+# containerd 소켓 권한 확인
+ls -la /run/k3s/containerd/containerd.sock
+```
+
+### `kubectl` 명령이 작동하지 않음
+
+#### 증상
+
+```text
+The connection to the server localhost:8080 was refused
+```
+
+#### 해결 방법
+
+```bash
+# kubeconfig 경로 확인
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+# 또는 ~/.kube/config로 복사
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(whoami):$(whoami) ~/.kube/config
+
+# 권한 확인
+ls -la ~/.kube/config
+```
+
+### 워커 노드가 연결되지 않음
+
+#### 증상
+
+```text
+[ERROR] Failed to connect to server
+```
+
+#### 해결 방법
+
+```bash
+# 마스터 노드 접근성 확인 (워커에서 실행)
+curl -k https://<master-ip>:6443
+
+# 토큰 확인 (마스터에서 실행)
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+# 방화벽 확인 (마스터에서 실행)
+sudo firewall-cmd --list-ports
+
+# 네트워크 연결 확인
+ping <master-ip>
+telnet <master-ip> 6443
+```
+
+### 이미지 로딩 실패
+
+#### 증상
+
+```text
+[WARNING] Docker or Podman not found. Skipping image loading.
+```
+
+#### 해결 방법
+
+```bash
+# K3s의 ctr 명령 사용
+sudo k3s ctr images import /tmp/k3s-offline/images/imqa/*.tar
+
+# 이미지 확인
+sudo k3s ctr images list
+```
+
+### containerd 소켓 권한 오류
+
+#### 증상
+
+```text
+permission denied while trying to connect to the Docker daemon socket
+```
+
+#### 해결 방법
+
+```bash
+# containerd 그룹 확인
+getent group containerd
+
+# 사용자를 그룹에 추가
+sudo usermod -aG containerd $(whoami)
+
+# 소켓 권한 설정
+sudo chgrp containerd /run/k3s/containerd/containerd.sock
+sudo chmod g+rw /run/k3s/containerd/containerd.sock
+
+# 재로그인 필요
+exit
+# 다시 로그인
+```
+
+### Pod 생성 시 overlay mount 실패
+
+#### 증상
+
+```text
+failed to mount rootfs component: mount error... invalid argument
+```
+
+또는
+
+```text
+failed to create containerd task: failed to create shim task:
+OCI runtime create failed: runc create failed: unable to start container process:
+error during container init: error mounting ... invalid argument: unknown
+```
+
+#### 원인
+
+이 오류는 containerd의 overlayfs snapshotter가 컨테이너 rootfs를 마운트할 때 발생합니다.
+주요 원인:
+
+1. **파일시스템 문제**: K3s 데이터 디렉토리가 overlay 파일시스템 위에 있는 경우 (중첩 overlay 불가)
+2. **SELinux 정책**: SELinux가 overlay 마운트를 차단
+3. **이미지 레이어 복잡성**: 복잡한 레이어 구조를 가진 이미지에서 overlay 작업 실패
+4. **cgroup 구성 문제**: cgroup v1/v2 호환성 이슈
+
+#### 해결 방법
+
+```bash
+# 1. K3s 데이터 디렉토리 파일시스템 확인
+df -T /var/lib/rancher
+# ext4, xfs, btrfs 여야 함. overlay는 불가
+
+# 2. SELinux 상태 확인 및 일시 비활성화 (테스트용)
+getenforce
+sudo setenforce 0  # 일시 비활성화
+
+# 3. SELinux 영구 비활성화 (필요 시)
+sudo sed -i 's/SELINUX=enforcing/SELINUX=permissive/' /etc/selinux/config
+
+# 4. containerd 로그 확인
+sudo journalctl -u k3s | grep -i "mount\|overlay\|rootfs"
+
+# 5. snapshotter 상태 확인
+sudo k3s ctr plugins ls | grep snapshotter
+```
+
+#### 권장 조치
+
+1. **Alpine 기반 이미지 사용**: 레이어 구조가 단순하여 overlay 작업이 안정적
+2. **표준 파일시스템 사용**: K3s 데이터 디렉토리는 ext4, xfs, btrfs에 위치
+3. **SELinux 정책 조정**: 필요 시 permissive 모드로 변경
+
+```bash
+# Alpine 기반 이미지 예시 (권장)
+clickhouse/clickhouse-server:24.12.3.47-alpine
+postgres:17.2-alpine3.21
+
+# 문제가 발생할 수 있는 이미지 (비권장)
+# - debian/ubuntu 기반의 복잡한 레이어 이미지
+# - systemd를 포함한 이미지
+```
+<Gha keyword="NOTE" title="참고">
+> 참고: [K3s GitHub Issue #2755](https://github.com/k3s-io/k3s/issues/2755)
+</Gha>
+---
+
+## 부록: 주요 경로 및 명령어 요약
+
+### 설정 파일 위치
+
+| 파일 | 경로 | 설명 |
+|------|------|------|
+| kubeconfig | `/etc/rancher/k3s/k3s.yaml` | Kubernetes 설정 파일 |
+| K3s 설정 | `/etc/rancher/k3s/config.yaml` | K3s 서버 설정 |
+| K3s 토큰 | `/var/lib/rancher/k3s/server/node-token` | 노드 연결용 토큰 |
+| airgap 이미지 | `/var/lib/rancher/k3s/agent/images/` | 오프라인 이미지 저장소 |
+| systemd 서비스 | `/etc/systemd/system/k3s.service` | K3s 서비스 파일 |
+
+### 주요 명령어
+
+```bash
+# K3s 서비스 관리
+sudo systemctl start k3s
+sudo systemctl stop k3s
+sudo systemctl restart k3s
+sudo systemctl status k3s
+
+# K3s 로그 확인
+sudo journalctl -u k3s -f
+
+# 클러스터 관리
+kubectl get nodes              # 노드 목록
+kubectl get pods -A            # 모든 Pod 목록
+kubectl cluster-info           # 클러스터 정보
+kubectl describe node <name>   # 노드 상세 정보
+
+# k9s 사용
+k9s                           # 터미널 UI 실행
+k9s -n kube-system            # 특정 네임스페이스로 시작
+
+# 이미지 관리 (K3s ctr 사용)
+sudo k3s ctr images list                    # 이미지 목록
+sudo k3s ctr images import <tar-file>       # 이미지 가져오기
+sudo k3s ctr images remove <image-name>     # 이미지 삭제
+```
