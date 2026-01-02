@@ -44,7 +44,7 @@ cover: admin-guide
 - **OS**: RHEL 9 / Rocky Linux 9 / AlmaLinux 9 / Ubuntu 22.04+
 - **아키텍처**: x86_64 (amd64)
 - **CPU**: 시스템 사용 가용 한도 (총 64코어 권장)
-- **RAM**: 시스템 사용 가용 한도 (최소 512GB 권장)
+- **RAM**: 시스템 사용 가용 한도 (최소 128GB, 권장 512GB)
 - **디스크**: 최소 8TB 여유 공간 (TTL에 따라 다름)
 - **파일시스템**: ext4, xfs, btrfs (K3s 데이터 디렉토리용)
 - **권한**: root 권한 필요
@@ -93,8 +93,6 @@ failed to mount rootfs component: mount error... invalid argument
 | 6443 | TCP | Kubernetes API Server |
 | 10250 | TCP | Kubelet API |
 | 8472 | UDP | VXLAN (Flannel) |
-| 51820 | UDP | WireGuard IPv4 |
-| 51821 | UDP | WireGuard IPv6 |
 
 ---
 
@@ -168,8 +166,6 @@ iptables --version
 sudo firewall-cmd --permanent --add-port=6443/tcp
 sudo firewall-cmd --permanent --add-port=10250/tcp
 sudo firewall-cmd --permanent --add-port=8472/udp
-sudo firewall-cmd --permanent --add-port=51820/udp
-sudo firewall-cmd --permanent --add-port=51821/udp
 sudo firewall-cmd --reload
 
 # 또는 방화벽 비활성화 (테스트 환경)

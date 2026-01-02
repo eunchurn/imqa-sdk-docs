@@ -40,6 +40,35 @@ cover: web
 - 오류 패턴 및 트렌드 분석 지원
 - Span과 Log의 자동 상관관계 설정
 
+## 설정 옵션
+
+### IMQAErrorInstrumentationConfig
+
+| 옵션 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `captureConsoleError` | `boolean` | `true` | `console.error` 호출을 exception으로 캡처할지 여부 |
+
+> `screenNameOption`은 모든 계측기에서 공통으로 사용되는 옵션입니다.
+
+### 기본 동작
+
+- `captureConsoleError: true` (기본값): `console.error` 호출이 exception으로 캡처됨
+- `captureConsoleError: false`: `console.error` 계측이 비활성화되어 exception으로 캡처되지 않음
+
+### 설정 예시
+
+```typescript
+import { IMQAErrorInstrumentation } from '@imqa/instrumentation-browser-exception';
+
+// 기본 설정 (console.error 캡처 활성화)
+const errorInstrumentation = new IMQAErrorInstrumentation({});
+
+// console.error 캡처 비활성화
+const errorInstrumentation = new IMQAErrorInstrumentation({
+  captureConsoleError: false,
+});
+```
+
 ## 계측 범위
 
 브라우저 예외 계측은 다음과 같은 오류 유형을 감지합니다:

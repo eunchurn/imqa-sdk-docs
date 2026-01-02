@@ -1086,6 +1086,16 @@ IMQA.init({
 
 `IMQAOtelWebOptionsInstrumentations` 인터페이스는 다양한 계측 모듈의 활성화 여부 및 설정을 정의합니다. 각 속성은 특정 계측 기능을 활성화하거나 비활성화할 수 있으며, 추가적인 설정을 제공할 수 있습니다.
 
+##### 공통 옵션
+
+모든 계측기에서 공통으로 사용되는 옵션입니다.
+
+| 옵션 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `screenNameOption` | `ScreenNameOption` | `{ screenNameType: 'routeOnly', urlWithSearchParams: false }` | 화면 이름 수집 옵션 |
+
+`screenNameOption`은 각 계측기의 설정 객체에서 개별적으로 설정할 수 있으며, 전역 `screenNameOption` 설정을 오버라이드합니다. 자세한 내용은 [`screenNameOption`](#screennameoption) 옵션을 참조하세요.
+
 ##### `instrumentations` 속성 목록
 
 | 속성 이름         | 타입                                               | 필수 여부 | 설명                                                                                                       |
@@ -1148,9 +1158,23 @@ interface IMQADocLoadInstrumentationConfig
 
 ###### errors instrumentation
 
-> (`boolean`, 선택)
+> (`boolean` 또는 `IMQAErrorInstrumentationConfig`, 선택)
 
-브라우저에서 발생하는 오류 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 전역 오류 핸들러가 활성화되어 애플리케이션에서 발생하는 오류가 자동으로 계측됩니다.
+브라우저에서 발생하는 오류 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 전역 오류 핸들러가 활성화되어 애플리케이션에서 발생하는 오류가 자동으로 계측됩니다. `IMQAErrorInstrumentationConfig` 객체를 제공하여 오류 계측의 세부 설정을 커스터마이즈할 수 있습니다.
+
+```typescript
+interface IMQAErrorInstrumentationConfig extends InstrumentationConfig {
+  /**
+   * Whether to capture console.error calls as exceptions.
+   * @default true
+   */
+  captureConsoleError?: boolean;
+}
+```
+
+- `captureConsoleError`: `console.error` 호출을 exception으로 캡처할지 여부를 설정합니다. 기본값은 `true`입니다.
+  - `true` (기본값): `console.error` 호출이 exception으로 캡처됨
+  - `false`: `console.error` 계측이 비활성화되어 exception으로 캡처되지 않음
 
 자세한 계측 정보는 [@imqa/instrumentation-browser-exception](../instrumentations/instrumentation-browser-exception.mdx) 참조
 

@@ -83,6 +83,13 @@ export default function RootLayout(props: RootLayoutProps) {
           enableSystem
           disableTransitionOnChange
         >
+          {/* <div id="campaign-hero"></div>
+          <script
+            src="https://www.1hour.dev/effect-library/spider.js"
+            defer
+            data-auto-start="true"
+            data-target="#campaign-hero"
+          ></script> */}
           {children}
           <Toaster />
         </ThemeProvider>
