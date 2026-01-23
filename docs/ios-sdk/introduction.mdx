@@ -1,6 +1,6 @@
 ---
 title: iOS SDK 설치 가이드
-description: IMQA iOS SDK v1.0.103 설치 및 설정 방법을 안내합니다.
+description: IMQA iOS SDK v1.0.104 설치 및 설정 방법을 안내합니다.
 nav: 400
 image: ./img/ios-sdk-custom-01.png
 pdf: true
@@ -136,12 +136,17 @@ extension IMQA {
     @objc public static func customLog(level: IMQA.LogLevel, 
     message: String)
 
-    /// 수동으로 click span 수집
+    /// Span 데이터 전송시 함께 포함되는 값입니다.
+    /// 형태: Dict["custom.key"] = value
+    /// 예: key가 "hello", value가 "kitty"인 경우
+    ///     Dict["custom.hello"] = "kitty"
+    ///
+    /// SDK start 이전에 설정하면 이후 생성되는 모든 Span에 자동으로 포함됩니다.
+    /// SDK start 이후 설정하면 설정하는 시점이후 생성되는 모든 Span에 자동으로 포함됩니다.
     /// - Parameters:
-    ///   - buttonName: 버튼 이름
-    ///   - buttonClassName: 버튼 클라스
-    @objc public static func sendClickEvent(buttonName: String, 
-    buttonClassName: String)
+    ///   - key: 키
+    ///   - value: 값
+    @objc public static func setAttribute(key:String, value: String?)
 
     ///1:) xib 로 webview layout시 주동으로 이 함수를 호출하세요.  
     ///    webview와 연동하는 script주입하는 방법입니다.
