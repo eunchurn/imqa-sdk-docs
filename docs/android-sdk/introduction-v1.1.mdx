@@ -59,7 +59,7 @@ Maven 이용시 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추�
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.1.2'
+  implementation 'io.imqa:imqa-android-sdk:1.1.4'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.1.2")
+  implementation("io.imqa:imqa-android-sdk:1.1.4")
 }
 ```
 
@@ -82,7 +82,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.2-release.aar')
+  implementation files('libs/imqa-android-sdk-1.1.4-release.aar')
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.2-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.1.4-release.aar"))
 }
 ```
 
@@ -321,10 +321,10 @@ imqa-android-sdk-extension-버전-release.aar 파일을 복사 후 dependencies 
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.0-release.aar') //IMQA SDK
+  implementation files('libs/imqa-android-sdk-1.1.4-release.aar') //IMQA SDK
   //IMQA SDK Extensions 추가
-  implementation files('libs/imqa-android-sdk-extensions-1.0.0-release.aar') 
-  //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.0' //Maven 사용시 
+  implementation files('libs/imqa-android-sdk-extensions-1.0.1-release.aar') 
+  //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.1' //Maven 사용시 
 }
 ```
 
@@ -332,10 +332,10 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.0-release.aar")) //IMQA SDK
+  implementation(files("libs/imqa-android-sdk-1.1.4-release.aar")) //IMQA SDK
   //IMQA SDK Extensions 추가 
-  implementation(files("libs/imqa-android-sdk-extensions-1.0.0-release.aar")) 
-  //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.0") //Maven 사용시 
+  implementation(files("libs/imqa-android-sdk-extensions-1.0.1-release.aar")) 
+  //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.1") //Maven 사용시 
 }
 ```
 
@@ -355,12 +355,9 @@ import io.imqa.sdk.extensions.ktor.IMQAKtorIntercept
     }
 ```
 
-## 검증
+### 4. 설치 검증
 
 IMQA가 정상적으로 동작하는지 확인하기 위해 샘플 오류를 발생시켜 로그가 전송되는지 확인합니다.
-
-### 샘플 코드
-
 아래 코드를 애플리케이션의 적절한 위치에 추가하여 테스트합니다.
 
 **Kotlin**
@@ -663,4 +660,1122 @@ IMQALog.debug("TAG", "message");
 IMQALog.info("TAG", "message");
 IMQALog.warn("TAG", "message");
 IMQALog.error("TAG", "message", new RuntimeException("exception"));
+```
+
+## API 참조
+
+### IMQA
+
+SDK의 메인 객체입니다.
+
+#### setup(option: IMQAOption): IMQA
+
+SDK 옵션을 설정합니다.
+
+**매개변수:**
+- `option`: IMQAOption - SDK 설정 옵션 객체
+
+**반환값:**
+- `IMQA` - IMQA 객체
+
+**Kotlin**
+
+```kotlin
+val option = IMQAOption()
+option.setDefault()
+option.setCollectorURL("https://collector.example.com")
+option.setServiceKey("your-service-key")
+
+IMQA.setup(option)
+```
+
+**Java**
+
+```java
+IMQAOption option = new IMQAOption();
+option.setDefault();
+option.setCollectorURL("https://collector.example.com");
+option.setServiceKey("your-service-key");
+
+IMQA.setup(option);
+```
+
+#### initialize(context: Context, application: Application)
+
+SDK를 초기화합니다. `setup()` 호출 후 `Application.onCreate()`에서 호출해야 합니다.
+
+**매개변수:**
+- `context`: Context - 애플리케이션 컨텍스트
+- `application`: Application - 애플리케이션 인스턴스
+
+**Kotlin**
+
+```kotlin
+class MyApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        val option = IMQAOption()
+        // ... 옵션 설정 ...
+        
+        IMQA.setup(option)
+        IMQA.initialize(this.applicationContext, this)
+    }
+}
+```
+
+**Java**
+
+```java
+public class MyApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        IMQAOption option = new IMQAOption();
+        // ... 옵션 설정 ...
+        
+        IMQA.setup(option);
+        IMQA.initialize(this.getApplicationContext(), this);
+    }
+}
+```
+
+#### sendClickEvent(view: View, isNetworkRequest: Boolean = false)
+
+View 객체의 클릭 이벤트를 전송합니다.
+
+**매개변수:**
+- `view`: View - 클릭된 View 객체
+- `isNetworkRequest`: Boolean - 네트워크 요청 포함 여부 (기본값: false)
+
+**Kotlin**
+
+```kotlin
+button.setOnClickListener { view ->
+    IMQA.sendClickEvent(view, false)
+}
+```
+
+**Java**
+
+```java
+button.setOnClickListener(v -> {
+    IMQA.sendClickEvent(v, false);
+});
+```
+
+#### sendClickEvent(viewName: String, isNetworkRequest: Boolean = false)
+
+커스텀 이름으로 클릭 이벤트를 전송합니다.
+
+**매개변수:**
+- `viewName`: String - 클릭 이벤트의 커스텀 이름
+- `isNetworkRequest`: Boolean - 네트워크 요청 포함 여부 (기본값: false)
+
+**Kotlin**
+
+```kotlin
+button.setOnClickListener {
+    IMQA.sendClickEvent("커스텀 버튼명", false)
+}
+```
+
+**Java**
+
+```java
+button.setOnClickListener(v -> {
+    IMQA.sendClickEvent("커스텀 버튼명", false);
+});
+```
+
+#### custom: CustomAttributes
+
+사용자 속성을 설정하기 위한 CustomAttributes 객체입니다.
+
+**Kotlin**
+
+```kotlin
+IMQA.custom.setupUserId("customer-user-id")
+```
+
+**Java**
+
+```java
+IMQA.getCustomAttributes().setupUserId("customer-user-id");
+```
+
+#### getOption(): IMQAOption
+
+현재 설정된 IMQAOption 객체를 반환합니다.
+
+**반환값:**
+- `IMQAOption` - 설정된 옵션 객체
+
+
+### IMQAOption
+
+SDK 설정을 관리하는 클래스입니다.
+
+#### 생성자
+
+**IMQAOption()**
+
+새 IMQAOption 인스턴스를 생성합니다.
+
+**Kotlin**
+
+```kotlin
+val option = IMQAOption()
+```
+
+**Java**
+
+```java
+IMQAOption option = new IMQAOption();
+```
+
+#### 설정 메서드
+
+**setDefault(): IMQAOption**
+
+기본 설정을 적용합니다.
+
+**반환값:**
+- `IMQAOption` - IMQAOption 객체
+
+**Kotlin**
+
+```kotlin
+val option = IMQAOption()
+option.setDefault()
+```
+
+**Java**
+
+```java
+IMQAOption option = new IMQAOption();
+option.setDefault();
+```
+
+**setCollectorURL(url: String): IMQAOption**
+
+데이터 수집 서버 URL을 설정합니다.
+
+**매개변수:**
+- `url`: String - 수집 서버 URL
+
+**반환값:**
+- `IMQAOption` - IMQAOption 객체
+
+**Kotlin**
+
+```kotlin
+option.setCollectorURL("https://collector.example.com")
+```
+
+**Java**
+
+```java
+option.setCollectorURL("https://collector.example.com");
+```
+
+**setServiceKey(key: String): IMQAOption**
+
+서비스 키를 설정합니다.
+
+**매개변수:**
+- `key`: String - 서비스 키
+
+**반환값:**
+- `IMQAOption` - IMQAOption 객체
+
+**Kotlin**
+
+```kotlin
+option.setServiceKey("your-service-key")
+```
+
+**Java**
+
+```java
+option.setServiceKey("your-service-key");
+```
+
+**setSampleRate(rate: Double)**
+
+샘플링 비율을 설정합니다. (0.0 ~ 1.0) 디폴트 값은 1.0(100%) 입니다.
+
+**매개변수:**
+- `rate`: Double - 샘플링 비율 (0.0: 0%, 1.0: 100%)
+
+**Kotlin**
+
+```kotlin
+option.setSampleRate(0.5) // 50% 샘플링
+option.setSampleRate(1.0) // 100% 샘플링
+```
+
+**Java**
+
+```java
+option.setSampleRate(0.5); // 50% 샘플링
+option.setSampleRate(1.0); // 100% 샘플링
+```
+
+**setServiceNameSpace(nameSpace: String)**
+
+서비스 네임스페이스를 설정합니다.
+
+**매개변수:**
+- `nameSpace`: String - 네임스페이스
+
+**Kotlin**
+
+```kotlin
+option.setServiceNameSpace("production")
+```
+
+**Java**
+
+```java
+option.setServiceNameSpace("production");
+```
+
+**setEnvironment(environment: Environment)**
+
+환경 타입을 설정합니다. 디폴트 값은 PRODUCTION 입니다.
+
+**매개변수:**
+- `environment`: Environment - DEVELOPMENT 또는 PRODUCTION
+
+**Kotlin**
+
+```kotlin
+import io.imqa.sdk.core.Environment
+
+option.setEnvironment(Environment.PRODUCTION)
+option.setEnvironment(Environment.DEVELOPMENT)
+```
+
+**Java**
+
+```java
+import io.imqa.sdk.core.Environment;
+
+option.setEnvironment(Environment.PRODUCTION);
+option.setEnvironment(Environment.DEVELOPMENT);
+```
+
+**setRemoteCollectionControlEnable(enable: Boolean)**
+
+원격 컬렉션 제어 기능을 활성화/비활성화합니다. 
+디폴트 값은 false(비활성화) 입니다.
+
+**매개변수:**
+- `enable`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setRemoteCollectionControlEnable(true)
+```
+
+**Java**
+
+```java
+option.setRemoteCollectionControlEnable(true);
+```
+
+**setUserEventEnable(value: Boolean)**
+
+사용자 이벤트(클릭) 추적을 활성화/비활성화합니다. 디폴트 값은 false(비활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setUserEventEnable(true)
+```
+
+**Java**
+
+```java
+option.setUserEventEnable(true);
+```
+
+**setActivityLifecycleEnabled(value: Boolean): IMQAOption**
+
+Activity 라이프사이클 추적을 활성화/비활성화합니다.
+디폴트 값은 true(활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**반환값:**
+- `IMQAOption` - IMQAOption 객체
+
+**Kotlin**
+
+```kotlin
+option.setActivityLifecycleEnabled(true)
+```
+
+**Java**
+
+```java
+option.setActivityLifecycleEnabled(true);
+```
+
+**setFragmentLifecycleEnabled(value: Boolean): IMQAOption**
+
+Fragment 라이프사이클 추적을 활성화/비활성화합니다.
+디폴트 값은 true(활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**반환값:**
+- `IMQAOption` - IMQAOption 객체
+
+**Kotlin**
+
+```kotlin
+option.setFragmentLifecycleEnabled(true)
+```
+
+**Java**
+
+```java
+option.setFragmentLifecycleEnabled(true);
+```
+
+**setDeviceIdEnable(value: Boolean)**
+
+디바이스 ID 수집을 활성화/비활성화합니다.
+디폴트 값은 true(활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setDeviceIdEnable(true)
+```
+
+**Java**
+
+```java
+option.setDeviceIdEnable(true);
+```
+
+**setAdvancedNetworkCapture(isCapture: Boolean)**
+
+HTTP 요청 body 수집을 활성화/비활성화합니다.
+디폴트 값은 false(비활성화) 입니다.
+
+**매개변수:**
+- `isCapture`: Boolean - 수집 여부
+
+**Kotlin**
+
+```kotlin
+option.setAdvancedNetworkCapture(true)
+```
+
+**Java**
+
+```java
+option.setAdvancedNetworkCapture(true);
+```
+
+**setXhrRequestHeaderEnable(value: Boolean)**
+
+HTTP 요청 헤더 수집을 활성화/비활성화합니다.
+디폴트 값은 false(비활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setXhrRequestHeaderEnable(true)
+```
+
+**Java**
+
+```java
+option.setXhrRequestHeaderEnable(true);
+```
+
+**setXhrResponseHeaderEnable(value: Boolean)**
+
+HTTP 응답 헤더 수집을 활성화/비활성화합니다.
+디폴트 값은 false(비활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setXhrResponseHeaderEnable(true)
+```
+
+**Java**
+
+```java
+option.setXhrResponseHeaderEnable(true);
+```
+
+**setAnrDetectionEnable(value: Boolean)**
+
+ANR(Application Not Responding) 탐지를 활성화/비활성화합니다.
+디폴트 값은 true(활성화) 입니다.
+
+**매개변수:**
+- `value`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setAnrDetectionEnable(true)
+```
+
+**Java**
+
+```java
+option.setAnrDetectionEnable(true);
+```
+
+**setSharedSession(flag: Boolean)**
+
+웹뷰 세션 공유를 활성화/비활성화합니다.
+디폴트 값은 true(활성화) 입니다.
+
+**매개변수:**
+- `flag`: Boolean - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+option.setSharedSession(true)
+```
+
+**Java**
+
+```java
+option.setSharedSession(true);
+```
+
+**setMinSupportedApiLevel(apiLevel: Int)**
+
+지원하는 Min Api Level 설정합니다.
+디폴트 값은 SDK의 minSDK의 21(Android 5.0) 입니다.
+설정한 값 미만의 API Level의 디바이스는 IMQA 기능이 비활성화 됩니다.
+디슈가링을 활성화하지 못하는 경우는 이 값을 26으로 조정해야 합니다.
+
+**매개변수:**
+- `apiLevel`: Int - 최소 지원할 API 레벨
+
+**Kotlin**
+
+```kotlin
+option.setMinSupportedApiLevel(26)
+```
+
+**Java**
+
+```java
+option.setMinSupportedApiLevel(26);
+```
+
+#### 조회 메서드
+
+**getCollectorURL(): String**
+
+설정된 수집 서버 URL을 반환합니다.
+
+**반환값:**
+- `String` - 수집 서버 URL
+
+**Kotlin**
+
+```kotlin
+val url = option.getCollectorURL()
+```
+
+**Java**
+
+```java
+String url = option.getCollectorURL();
+```
+
+**getServiceKey(): String**
+
+설정된 서비스 키를 반환합니다.
+
+**반환값:**
+- `String` - 서비스 키
+
+**Kotlin**
+
+```kotlin
+val key = option.getServiceKey()
+```
+
+**Java**
+
+```java
+String key = option.getServiceKey();
+```
+
+**getSampleRate(): Double**
+
+설정된 샘플링 비율을 반환합니다.
+
+**반환값:**
+- `Double` - 샘플링 비율 (0.0 ~ 1.0)
+
+**Kotlin**
+
+```kotlin
+val rate = option.getSampleRate()
+```
+
+**Java**
+
+```java
+double rate = option.getSampleRate();
+```
+
+**getServiceNameSpace(): String**
+
+설정된 네임스페이스를 반환합니다.
+
+**반환값:**
+- `String` - 네임스페이스
+
+**Kotlin**
+
+```kotlin
+val namespace = option.getServiceNameSpace()
+```
+
+**Java**
+
+```java
+String namespace = option.getServiceNameSpace();
+```
+
+**getEnvironment(): String**
+
+설정된 환경 타입을 반환합니다.
+
+**반환값:**
+- `String` - "development" 또는 "production"
+
+**Kotlin**
+
+```kotlin
+val env = option.getEnvironment()
+```
+
+**Java**
+
+```java
+String env = option.getEnvironment();
+```
+**isIMQAEnabled(): Boolean**
+
+IMQA 기능 활성화 여부를 반환합니다.
+수집, 전송 기능 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.isIMQAEnabled()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.isIMQAEnabled();
+```
+
+
+**isUserEventEnable(): Boolean**
+
+사용자 이벤트 추적 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.isUserEventEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.isUserEventEnable();
+```
+
+**getActivityLifecycleEnabled(): Boolean**
+
+Activity 라이프사이클 추적 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getActivityLifecycleEnabled()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getActivityLifecycleEnabled();
+```
+
+**getFragmentLifecycleEnabled(): Boolean**
+
+Fragment 라이프사이클 추적 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getFragmentLifecycleEnabled()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getFragmentLifecycleEnabled();
+```
+
+**isDeviceIdEnable(): Boolean**
+
+디바이스 ID 수집 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.isDeviceIdEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.isDeviceIdEnable();
+```
+
+**getAdvancedNetworkCapture(): Boolean**
+
+HTTP 요청 body 수집 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getAdvancedNetworkCapture()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getAdvancedNetworkCapture();
+```
+
+**getXhrRequestHeaderEnable(): Boolean**
+
+HTTP 요청 헤더 수집 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getXhrRequestHeaderEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getXhrRequestHeaderEnable();
+```
+
+**getXhrResponseHeaderEnable(): Boolean**
+
+HTTP 응답 헤더 수집 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getXhrResponseHeaderEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getXhrResponseHeaderEnable();
+```
+
+**isAnrDetectionEnable(): Boolean**
+
+ANR 탐지 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.isAnrDetectionEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.isAnrDetectionEnable();
+```
+
+**getSharedSession(): Boolean**
+
+웹뷰 세션 공유 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getSharedSession()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getSharedSession();
+```
+
+**getSendTelemetry(): Boolean**
+
+텔레메트리 전송 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.getSendTelemetry()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.getSendTelemetry();
+```
+
+**isRemoteCollectionControlEnable(): Boolean**
+
+원격 컬렉션 제어 활성화 여부를 반환합니다.
+
+**반환값:**
+- `Boolean` - 활성화 여부
+
+**Kotlin**
+
+```kotlin
+val isEnabled = option.isRemoteCollectionControlEnable()
+```
+
+**Java**
+
+```java
+boolean isEnabled = option.isRemoteCollectionControlEnable();
+```
+
+**getMinSupportedApiLevel(): Int**
+
+지원하는 Min Api Level을 반환합니다.
+
+**반환값:**
+- `Int` - 최소 지원할 API 레벨
+
+**Kotlin**
+
+```kotlin
+val apiLevel = option.getMinSupportedApiLevel()
+```
+
+**Java**
+
+```java
+int apiLevel = option.getMinSupportedApiLevel();
+```
+
+### CustomAttributes
+
+사용자 속성을 설정하는 데이터 클래스입니다.
+
+#### setupUserId(s: String)
+
+사용자 ID를 설정합니다.
+
+**매개변수:**
+- `s`: String - 사용자 ID
+
+**Kotlin**
+
+```kotlin
+// 로그인 시
+IMQA.custom.setupUserId("user123")
+// 로그아웃 시
+IMQA.custom.setupUserId("")
+```
+
+**Java**
+
+```java
+// 로그인 시
+IMQA.getCustomAttributes().setupUserId("user123");
+// 로그아웃 시
+IMQA.getCustomAttributes().setupUserId("");
+```
+
+#### setAttribute(key: String,value: String)
+사용자 정의 attribute 추가합니다.  
+사용자 attribute는 key 앞에 "custom."이 자동으로 추가됩니다.  
+     * ex) setAttribute("age", "30")  
+     *     → custom.age = 30  
+
+**매개변수:**
+- `key`: String - 속성 키 (custom. 접두사 자동 추가)
+- `value`: String - 속성 값
+
+**Kotlin**
+
+```kotlin
+IMQA.custom.setAttribute("key", "value")
+```
+
+**Java**
+
+```java
+IMQA.getCustomAttributes().setAttribute("key", "value");
+```
+
+### IMQALog
+
+로그를 전송하는 객체입니다.
+
+#### debug(tag: String, message: String)
+
+DEBUG 레벨 로그를 전송합니다.
+
+**매개변수:**
+- `tag`: String - 로그 태그
+- `message`: String - 로그 메시지
+
+**Kotlin**
+
+```kotlin
+IMQALog.debug("MyTag", "Debug message")
+```
+
+**Java**
+
+```java
+IMQALog.debug("MyTag", "Debug message");
+```
+
+#### info(tag: String, message: String)
+
+INFO 레벨 로그를 전송합니다.
+
+**매개변수:**
+- `tag`: String - 로그 태그
+- `message`: String - 로그 메시지
+
+**Kotlin**
+
+```kotlin
+IMQALog.info("MyTag", "Info message")
+```
+
+**Java**
+
+```java
+IMQALog.info("MyTag", "Info message");
+```
+
+#### warn(tag: String, message: String)
+
+WARN 레벨 로그를 전송합니다.
+
+**매개변수:**
+- `tag`: String - 로그 태그
+- `message`: String - 로그 메시지
+
+**Kotlin**
+
+```kotlin
+IMQALog.warn("MyTag", "Warning message")
+```
+
+**Java**
+
+```java
+IMQALog.warn("MyTag", "Warning message");
+```
+
+#### error(tag: String, message: String, throwable: Throwable? = null)
+
+ERROR 레벨 로그를 전송합니다.
+
+**매개변수:**
+- `tag`: String - 로그 태그
+- `message`: String - 로그 메시지
+- `throwable`: Throwable? - 예외 객체 (선택)
+
+**Kotlin**
+
+```kotlin
+try {
+    // some code
+} catch (e: Exception) {
+    IMQALog.error("MyTag", "Error occurred", e)
+}
+```
+
+**Java**
+
+```java
+try {
+    // some code
+} catch (Exception e) {
+    IMQALog.error("MyTag", "Error occurred", e);
+}
+```
+
+### 네트워크 인터셉터
+
+#### HttpInterceptor
+
+OkHttp 클라이언트에 네트워크 추적을 위한 인터셉터를 추가합니다.
+
+**Kotlin**
+
+```kotlin
+import io.imqa.sdk.network.interceptor.HttpInterceptor
+
+val client = OkHttpClient.Builder()
+    .addInterceptor(HttpInterceptor())
+    .build()
+```
+
+**Java**
+
+```java
+import io.imqa.sdk.network.interceptor.HttpInterceptor;
+
+OkHttpClient client = new OkHttpClient.Builder()
+    .addInterceptor(new HttpInterceptor())
+    .build();
+```
+
+#### ConnectionWrapper
+
+HttpURLConnection을 래핑하여 네트워크 추적을 수행합니다.
+
+**Kotlin**
+
+```kotlin
+import io.imqa.sdk.network.urlconnection.ConnectionWrapper
+
+val url = URL("https://example.com/api")
+val connection = ConnectionWrapper.wrap(url.openConnection() as HttpURLConnection)
+```
+
+**Java**
+
+```java
+import io.imqa.sdk.network.urlconnection.ConnectionWrapper;
+
+URL url = new URL("https://example.com/api");
+HttpURLConnection connection = 
+    ConnectionWrapper.wrap((HttpURLConnection) url.openConnection());
+```
+
+### Annotation
+
+#### @RumScreenName
+
+Fragment에 화면 이름을 지정하는 어노테이션입니다.
+
+**Kotlin**
+
+```kotlin
+import io.imqa.sdk.annotations.RumScreenName
+
+@RumScreenName("CustomScreenName")
+class MyFragment : Fragment() {
+    // ...
+}
+```
+
+**Java**
+
+```java
+import io.imqa.sdk.annotations.RumScreenName;
+
+@RumScreenName("CustomScreenName")
+class MyFragment extends Fragment {
+    // ...
+}
+```
+
+어노테이션을 사용하지 않으면 Fragment의 클래스명이 화면 이름으로 사용됩니다.
+
+### IMQA Extensions
+
+확장 기능을 제공하는 객체입니다.
+
+#### IMQAKtorIntercept.Plugin
+
+Ktor Android Engine의 네트워크 추적 플러그인을 추가합니다.
+
+**Kotlin**
+
+```kotlin
+import io.imqa.sdk.extensions.ktor.IMQAKtorIntercept
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+
+val client = HttpClient(Android) {
+    install(IMQAKtorIntercept.Plugin)
+}
 ```
