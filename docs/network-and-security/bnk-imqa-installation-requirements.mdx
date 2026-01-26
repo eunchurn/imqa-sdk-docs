@@ -1,0 +1,469 @@
+---
+title: 부산은행 IMQA 4.0 서버 설치
+description: BNK 부산은행 IMQA 4.0 설치를 위한 서버 요구사항 및 권장 구성안
+draft: true
+nav: 1005
+pdf: true
+cover: admin-guide
+---
+
+<Intro>
+이 문서는 BNK 부산은행의 레거시 IMQA 제품을 제거하고 IMQA 4.0을 설치하기 위한 베어메탈 서버 요구사항 및 권장 구성안을 설명합니다.
+</Intro>
+
+## 개요
+
+### 프로젝트 목표
+
+- 기존 레거시 IMQA 제품 제거
+- IMQA 4.0 신규 설치
+- K3s 기반 컨테이너 오케스트레이션 환경 구축
+
+### 대상 환경
+
+| 항목 | 값 |
+|------|------|
+| 고객사 | BNK 부산은행 |
+| 배포 방식 | 베어메탈 서버 (On-Premise) |
+| 네트워크 구성 | DMZ + Private 2-Tier 구조 |
+| 현재 운영체제 | RHEL 8.4 |
+| 예상 트래픽 | MAU 150만, DAU 50만 |
+
+---
+
+## 트래픽 분석
+
+| 지표 | 값 | 비고 |
+|------|------|------|
+| MAU | 1,500,000 | 월간 활성 사용자 |
+| DAU | 500,000 | 일간 활성 사용자 |
+| 피크 동시 접속자 | ~50,000 | DAU의 약 10% |
+| 피크 TPS | 5,000 ~ 10,000 | 초당 트랜잭션 |
+| 피크 SPS | 70,000 ~ 140,000 | 초당 스팬 (1 TPS = 14 SPS) |
+
+---
+
+## 네트워크 아키텍처
+
+![BNK IMQA 네트워크 아키텍처](img/server-diagram.png)
+
+<Gha keyword="NOTE" title="부산은행 네트워크 구성 참고">
+Collector 와 Symbolicator 는 부산은행의 경우 통합됩니다. 따라서 서버 3대에 모두 배포됩니다.
+</Gha>
+
+### Kubernetes Cluster 기본 (모든 노드 공통)
+
+- 안1: **Control Pane (1번 Proxy) ←→ Worker (2~4번)**
+
+<Gha keyword="NOTE" title="K3s 클러스터 네트워크 구성">
+  DMZ ↔ Private 간 클러스터 구성이 가능한 경우
+</Gha>
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 6443 | TCP | API Server (Control Pane Ingress) |
+| 9345 | TCP | K3s cluster join (Control Pane Ingress) |
+| 8472 | UDP | Flannel VXLAN (Pod 네트워크) |
+| 10250 | TCP | kubelet API (노드 상태 수집) |
+| 30000-32767 | TCP | NodePort 서비스 (Ingress 대신 노출 시만) |
+
+- 안2: Proxy (별도), **Control Pane ←→ Worker (1~3번)**
+
+### Pod 제반 사항
+
+#### Proxy 서버 (DMZ, Ingress Controller Pod 운영)
+
+**Ingress (외부 → Proxy)**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 80 | TCP | 외부 클라이언트 접속 (Nginx ingress) |
+| 443 | TCP | 외부 클라이언트 접속 (Nginx ingress) |
+
+**Egress (Proxy → 내부 K3s)**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 6443 | TCP | Control Pane API Server |
+| 4317 (34317) | TCP | Collector Pod (OTLP gRPC) |
+| 4318 (34318) | TCP | Collector Pod (OTLP HTTP) |
+| 13133 (33133) | TCP | Collector Pod (Agent API) |
+
+#### Collector 서버 (Pod: OTel Collector)
+
+**Ingress (Proxy → Collector Pod)**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 4317 | TCP | OTLP gRPC |
+| 4318 | TCP | OTLP HTTP |
+| 13133 | TCP | Collector Healthcheck |
+
+**Egress (Collector → 내부 서비스)**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 4319 | TCP | Symbolicator Pod |
+| 5432 | TCP | PostgreSQL (Collector DB export 시) |
+
+#### Symbolicator 서버 (Pod)
+
+**Ingress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 4319 | TCP | Collector 요청 수신 |
+
+**Egress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 8000 | TCP | WAS API 호출 |
+
+#### WAS / RDB 서버 (Pod)
+
+**Ingress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 80, 443 | TCP | Proxy 서비스 호출 |
+| 5432 | TCP | PostgreSQL 내부 Pod (Collector, ClickHouse 등 DB 접근) |
+
+**Egress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 8123 | TCP | ClickHouse HTTP (데이터 조회) |
+| 9000 | TCP | ClickHouse Native (데이터 조회) |
+
+#### DB 서버 (Pod: ClickHouse 전용)
+
+**Ingress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 8123 | TCP | WAS, Symbolicator HTTP 접근 |
+| 9000 | TCP | WAS, Symbolicator Native 접근 |
+
+**Egress**
+
+| 포트 | 프로토콜 | 용도 |
+|------|----------|------|
+| 5432 | TCP | PostgreSQL (메타 정보 동기화) |
+---
+
+## 서버 구성
+
+### 구성 요약 (4대)
+
+| 위치 | 역할 | 대수 |
+|------|------|------|
+| DMZ | Proxy (Ingress) | 1대 |
+| Private | Control Pane/Worker 통합 | 3대 |
+
+### 권장 서버 사양
+
+| 서버 역할 | CPU | RAM | Disk | 비고 |
+|-----------|-----|-----|------|------|
+| Proxy (DMZ) | 4 Core | 8 GB | 100 GB SSD | nginx |
+| Control Pane | 16 Core | 64 GB | 500 GB NVMe | WAS + PostgreSQL |
+| Worker #1 | 16 Core | 64 GB | 500 GB NVMe | Collector + Symbolicator |
+| Worker #2 | 16 Core | 256 GB | 5 TB NVMe | ClickHouse |
+
+<Gha keyword="WARNING" title="ClickHouse 서버 사양">
+ClickHouse 서버(#3)는 대용량 데이터 처리를 위해 256 GB 메모리와 5 TB 이상의 스토리지를 권장합니다.
+</Gha>
+
+---
+
+## 하드웨어 명세
+
+### Private 서버: HPE ProLiant DL380 Gen10 Plus (3대)
+
+| 구분 | 품명 | 제품 코드 | 수량 |
+|------|------|-----------|------|
+| 서버 | HPE ProLiant DL380 Gen10 Plus 8SFF NC CTO Server | P05172-B21 | 3 |
+| CPU | Intel Xeon-Gold 5315Y 3.2GHz 8-core 140W Processor | P36930-B21 | 6 |
+| 메모리 | HPE 32GB DDR4-3200 Registered Smart Memory Kit | P06033-B21 | 6 |
+| 스토리지 | HPE 1.92TB SATA 6G Read Intensive SFF SSD | P40499-B21 | 9 |
+| RAID | Broadcom MegaRAID MR416i-a x16 4GB Cache Controller | P26279-B21 | 3 |
+| 배터리 | HPE 96W Smart Storage Lithium-ion Battery Kit | P01366-B21 | 3 |
+| 네트워크 | Broadcom BCM57412 10Gb 2-port SFP+ Adapter | P26259-B21 | 3 |
+| 네트워크 | Broadcom BCM5719 1Gb 4-port BASE-T OCP3 Adapter | P51181-B21 | 3 |
+| 트랜시버 | HPE 10Gb SFP+ SR Transceiver | 455883-B21 | 6 |
+| 라이저 | HPE DL380 Gen10 Plus x8/x16/x8 Primary FIO Riser Kit | P37038-B21 | 6 |
+| 냉각 | HPE DL38X Gen10 Plus Maximum Performance Fan Kit | P14608-B21 | 3 |
+| 전원 | HPE 800W Flex Slot Platinum Hot Plug Power Supply | P38995-B21 | 6 |
+
+### 서버별 구성 요약
+
+| 서버 | CPU | RAM | Storage |
+|------|-----|-----|---------|
+| Server #1 | 16 Core (5315Y x 2) | 64 GB | 5.76 TB (RAID 5: ~3.84 TB) |
+| Server #2 | 16 Core (5315Y x 2) | 64 GB | 5.76 TB (RAID 5: ~3.84 TB) |
+| Server #3 | 16 Core (5315Y x 2) | 64 GB | 5.76 TB (RAID 5: ~3.84 TB) |
+
+<Gha keyword="WARNING" title="Server #3 증설 권장">
+ClickHouse 서버(#3)는 메모리 256 GB, 스토리지 5 TB 이상을 권장합니다.
+- 메모리: 32 GB DIMM 6개 추가 필요
+- 스토리지: 추가 SSD 또는 외장 스토리지 필요
+</Gha>
+
+### DMZ Proxy 서버 (별도)
+
+| 항목 | 최소 | 권장 |
+|------|------|------|
+| CPU | 2 Core | 4 Core |
+| RAM | 4 GB | 8 GB |
+| Storage | 50 GB SSD | 100 GB SSD |
+| OS | RHEL 8.4 | RHEL 8.4+ |
+
+---
+
+## 볼륨 구성
+
+K3s 설치 및 클러스터 구성 시 root 영역(VG_OS)에 설치/운영이 필요하며, Kubernetes 내부에서 실행되는 앱들이 직접적으로 사용하는 볼륨은 VG_APP 그룹을 사용합니다.
+
+<Gha keyword="NOTE" title="VG_APP 볼륨 타입">
+VG_APP의 타입은 반드시 **LVM**이어야 합니다.
+</Gha>
+
+<Gha keyword="NOTE" title="용량 산정 기준">
+안정적인 운영에 초점을 두어 여유있게 산정하였으나, 실 운영 단계의 상황에 따라 다소 조정이 필요할 수 있습니다.
+</Gha>
+
+### K3s 서비스 및 권한 구성
+
+<Gha keyword="NOTE" title="K3s 서비스 구동 방식">
+- `k3s.service`는 **root 권한**(system service)으로 구동됩니다.
+- `/run/k3s/containerd/containerd.sock` 접근을 위해 `containerd` 사용자 그룹을 생성하고, 운영 사용자 계정을 해당 그룹에 추가해야 합니다.
+</Gha>
+
+### K3s 클러스터 구성 시 생성 파일/디렉토리
+
+#### 파일 생성
+
+| 경로 | 설명 | 소유권 |
+|------|------|--------|
+| `/usr/local/bin/k3s` | K3s 단일 실행 바이너리 파일 | root:root |
+| `/usr/local/bin/kubectl` | K8s 클러스터 관리 공식 CLI 파일 | root:root |
+| `/usr/local/bin/crictl` | CRI 컨테이너 런타임 인터페이스 CLI 파일 | root:root |
+| `/usr/local/bin/ctr` | containerd 컨테이너 런타임, 이미지 관리 CLI 파일 | root:root |
+| `/usr/local/bin/k9s` | K8s 관리용 TUI 파일 | root:root |
+| `/usr/local/bin/k3s-uninstall.sh` | K3s 클러스터 컴포넌트 중지/제거 스크립트 파일 | root:root |
+| `/usr/local/bin/k3s-killall.sh` | K3s 및 관련 프로세스 강제 종료 스크립트 파일 | root:root |
+| `/etc/systemd/system/k3s.service` | K3s 서버(Control Pane) 역할을 위한 systemd 서비스 유닛 파일 | root:root |
+| `/etc/systemd/system/k3s-agent.service` | K3s 에이전트(워커) 역할을 위한 systemd 서비스 유닛 파일 | root:root |
+
+#### 디렉토리 생성
+
+| 경로 | 설명 | 소유권 | 비고 |
+|------|------|--------|------|
+| `/etc/rancher/` | K3s 핵심 설정 디렉토리 | user:user | 사용자 소유권 필요 |
+| `/var/lib/rancher/` | K3s 데이터 디렉토리 | user:user | 사용자 소유권 필요 |
+| `/var/lib/kubelet/` | kubelet 볼륨 마운트, 체크포인트 등 노드별 데이터 관리 디렉토리 | root:root | - |
+| `/var/lib/cni/` | CNI (Container Network Interface) 플러그인 설정 및 상태 정보 디렉토리 | root:root | - |
+| `/run/k3s/` | K3s 프로세스 실행 중 생성되는 임시 상태 파일(PID, 소켓) 관리 디렉토리 | root:root | - |
+| `/run/k3s/containerd/` | containerd 소켓 디렉토리 | root:containerd | 그룹 권한 필요 |
+| `/run/flannel/` | Flannel CNI 네트워크 상태 정보를 임시로 저장하는 디렉토리 | root:root | - |
+| `/var/log/pods/` | Kubernetes Pod 로그의 실제 저장 디렉토리 | root:root | - |
+| `/var/log/containers/` | 컨테이너 로그 파일에 대한 심볼릭 링크 디렉토리 | root:root | - |
+
+### containerd 그룹 및 소켓 권한 설정
+
+운영 사용자가 `kubectl`, `crictl`, `ctr` 명령을 사용하려면 containerd 소켓에 접근 권한이 필요합니다.
+
+```bash
+# containerd 그룹 생성 (설치 시 root 권한 필요)
+sudo groupadd -f containerd
+
+# 운영 사용자를 containerd 그룹에 추가 (설치 시 root 권한 필요)
+sudo usermod -aG containerd <username>
+
+# containerd 소켓 그룹 권한 설정 (설치 시 root 권한 필요)
+sudo chgrp containerd /run/k3s/containerd/containerd.sock
+sudo chmod g+rw /run/k3s/containerd/containerd.sock
+```
+
+### 사용자 소유권 설정이 필요한 디렉토리
+
+| 경로 | chown 명령 | 용도 |
+|------|------------|------|
+| `/etc/rancher/` | `chown -R <user>:<user> /etc/rancher/` | K3s 설정 파일 접근 |
+| `/var/lib/rancher/` | `chown -R <user>:<user> /var/lib/rancher/` | K3s 데이터 관리 |
+
+### 서버별 볼륨 구성
+
+#### Proxy 서버 (DMZ) - 1 TB
+
+| 볼륨 그룹 | 용량 |
+|-----------|------|
+| VG_OS | 400 GB |
+| VG_APP | 600 GB |
+
+#### Web 서버 (Control Pane) - 1 TB
+
+| 볼륨 그룹 | 용량 | 구성 |
+|-----------|------|------|
+| VG_OS | 400 GB | `/usr/local/bin/` (1 GB), `/etc/rancher/` (500 MB), `/var/lib/rancher/` (250 GB), `/var/lib/kubelet/` (5 GB), `/var/lib/cni/` (500 MB), `/run/k3s/` (500 MB), `/var/flannel/` (500 MB), `/var/log/pods/` (60 GB), `/var/log/containers/` (30 GB), 기타 여유 공간 |
+| VG_APP | 600 GB | - |
+
+#### Collector 서버 (Worker Node) - 512 GB
+
+| 볼륨 그룹 | 용량 | 구성 |
+|-----------|------|------|
+| VG_OS | 200 GB | `/usr/local/bin/` (1 GB), `/etc/rancher/` (500 MB), `/var/lib/rancher/` (80 GB), `/var/lib/kubelet/` (5 GB), `/var/lib/cni/` (500 MB), `/run/k3s/` (500 MB), `/var/flannel/` (500 MB), `/var/log/pods/` (40 GB), `/var/log/containers/` (20 GB), 기타 여유 공간 |
+| VG_APP | 312 GB | - |
+
+#### Symbolicator 서버 (Worker Node) - 512 GB
+
+| 볼륨 그룹 | 용량 | 구성 |
+|-----------|------|------|
+| VG_OS | 200 GB | `/usr/local/bin/` (1 GB), `/etc/rancher/` (500 MB), `/var/lib/rancher/` (80 GB), `/var/lib/kubelet/` (5 GB), `/var/lib/cni/` (500 MB), `/run/k3s/` (500 MB), `/var/flannel/` (500 MB), `/var/log/pods/` (40 GB), `/var/log/containers/` (20 GB), 기타 여유 공간 |
+| VG_APP | 312 GB | - |
+
+#### Database 서버 (Worker Node) - 10 TB
+
+| 볼륨 그룹 | 용량 | 구성 |
+|-----------|------|------|
+| VG_OS | 200 GB | `/usr/local/bin/` (1 GB), `/etc/rancher/` (500 MB), `/var/lib/rancher/` (80 GB), `/var/lib/kubelet/` (5 GB), `/var/lib/cni/` (500 MB), `/run/k3s/` (500 MB), `/var/flannel/` (500 MB), `/var/log/pods/` (40 GB), `/var/log/containers/` (20 GB), 기타 여유 공간 |
+| VG_APP | 9.8 TB | ClickHouse 데이터 저장 |
+
+### 볼륨 구성 요약
+
+| 서버 | 역할 | 총 용량 | VG_OS | VG_APP |
+|------|------|---------|-------|--------|
+| Proxy | DMZ Ingress | 1 TB | 400 GB | 600 GB |
+| Web | Control Pane | 1 TB | 400 GB | 600 GB |
+| Collector | Worker Node | 512 GB | 200 GB | 312 GB |
+| Symbolicator | Worker Node | 512 GB | 200 GB | 312 GB |
+| Database | Worker Node | 10 TB | 200 GB | 9.8 TB |
+
+---
+
+## 소프트웨어 요구사항
+
+### 운영체제
+
+| 항목 | 요구사항 |
+|------|----------|
+| OS | RHEL 8.4 이상 |
+| 아키텍처 | x86_64 (amd64) |
+| 파일시스템 | ext4, xfs, btrfs |
+
+### 주요 구성요소
+
+| 구성요소 | 버전 | 설명 |
+|----------|------|------|
+| K3s | v1.33.3+k3s1 | 경량 Kubernetes |
+| nginx | 1.28.0 | 리버스 프록시 (DMZ) |
+
+---
+
+## 설치 시 Root 권한 요구사항
+
+<Gha keyword="NOTE" title="참고">
+Root 권한(wheel 그룹)은 **최초 설치 시에만** 필요합니다. 설치 완료 후 운영 시에는 일반 사용자 계정으로 운영 가능합니다.
+</Gha>
+
+### Private 서버 (K3s 클러스터)
+
+| 작업 | 사유 |
+|------|------|
+| K3s 바이너리 설치 (`/usr/local/bin/`) | 시스템 경로 쓰기 |
+| K3s systemd 서비스 등록 | `/etc/systemd/system/` 쓰기 |
+| K3s 설정/데이터 디렉토리 생성 | `/etc/rancher/`, `/var/lib/rancher/` |
+| containerd 그룹 생성 및 사용자 추가 | 그룹 관리 |
+| 방화벽 포트 개방 | firewalld 설정 |
+
+### DMZ Proxy 서버
+
+| 작업 | 사유 |
+|------|------|
+| nginx RPM 패키지 설치 | 시스템 패키지 설치 |
+| 80/443 포트 바인딩 권한 (setcap) | 특권 포트 사용 |
+| linger 활성화 | 사용자 세션 유지 |
+| 방화벽 포트 개방 | firewalld 설정 |
+
+---
+
+## IMQA 설치 절차
+
+### 1단계: IMQA SDK 검증단계
+
+- Android/iOS SDK 개발계 테스트
+  - 빌드 이슈 확인 및 기술 지원
+  - 난독화 모듈 확인
+- Web Agent(Browser SDK) 개발계 테스트
+  - 빌드 이슈 확인 및 기술 지원
+  - 소스맵 연동 여부 확인
+
+### 2단계: IMQA 설치 사전 준비
+
+- Root 권한 요청 (설치 시에만 필요)
+- IMQA 오프라인 설치 패키지 전달 및 수령
+
+### 3단계: DMZ Proxy 서버 설치
+
+1. nginx 패키지 설치 **(root)**
+2. IMQA Proxy 설정 적용
+3. 방화벽 포트 개방 **(root)**
+4. systemd 서비스 등록
+
+### 4단계: Private 서버 K3s 클러스터 구성
+
+1. K3s 오프라인 패키지 전송
+2. Control Pane 노드 설치 **(root)**
+3. Worker 노드 추가 **(root)**
+4. 클러스터 상태 확인
+
+### 5단계: IMQA 애플리케이션 배포
+
+1. IMQA 컨테이너 이미지 로드
+2. Kubernetes 리소스 배포
+3. 서비스 상태 확인
+
+### 6단계: 설치 검증
+
+1. SDK 데이터 수집 테스트
+2. 대시보드 접속 테스트 (데이터 확인)
+3. 모든 트레이스, 로그 확인
+
+### 사후 검증
+
+1. 정기 점검 및 모니터링 설정
+2. 3개월 이상 점검 결과를 기반으로 TTL 설정 및 조정 (최초 운영 배포 후 3개월 이후)
+
+---
+
+## 체크리스트
+
+### 사전 준비
+
+- [ ] IMQA 오프라인 설치 패키지 전달 및 수령
+- [ ] 네트워크 정보, 계정 정보를 기반으로 설치 Manifest 작성
+- [ ] 설치 및 롤백 스크립트 준비
+- [ ] SSL 인증서 (collector, WAS) 준비 (인증서 비밀번호)
+
+### 설치
+
+- [ ] DMZ Proxy nginx 설치 및 구성
+- [ ] K3s Control Pane 노드 설치
+- [ ] K3s Worker 노드 추가
+- [ ] IMQA 애플리케이션 배포
+
+### 검증
+
+- [ ] Kubernetes 클러스터 상태 확인
+- [ ] 모든 Pod Running 상태 확인
+- [ ] SDK 데이터 수집 테스트
+- [ ] 대시보드 접속 테스트
+
+---
+
+## 연락처
+
+기술 지원이 필요한 경우 ONYCOM 개발팀으로 문의하세요.
+
+- IMQA 개발팀: 박은천 팀장(eunchurn@onycom.com) 010-4215-6420
+- IMQA 개발팀 DevOps 파트: 현신일 주임(rubber1926@onycom.com) 010-4054-9665
