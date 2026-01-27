@@ -484,7 +484,7 @@ export default defineConfig({
   },
   plugins: [
     sourcemapUpload({
-      endpoint: 'https://api.your-service.imqa.io/v1/web-sourcemaps',
+      endpoint: 'https://{{imqa-service}}/api/v1/web-sourcemaps',
       apiKey: process.env.IMQA_ACCESS_TOKEN,
       release: process.env.GIT_SHA,
       appVersion: process.env.npm_package_version,
@@ -507,7 +507,7 @@ export default defineConfig({
   plugins: [
     sourcemapUpload({
       // 필수: 업로드 엔드포인트
-      endpoint: 'https://api.your-service.imqa.io/v1/web-sourcemaps',
+      endpoint: 'https://{{imqa-service}}/api/v1/web-sourcemaps',
 
       // 인증
       apiKey: process.env.IMQA_ACCESS_TOKEN,
