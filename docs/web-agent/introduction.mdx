@@ -453,6 +453,8 @@ window.IMQA.init({
 
 ### @imqa/vite-sourcemap 플러그인
 
+![NPM Version](https://img.shields.io/npm/v/%40imqa%2Fvite-sourcemap?style=flat-square&logo=npm&color=%238ef7c1)
+
 Vite를 사용하는 프로젝트에서 빌드 후 소스맵을 자동으로 IMQA 서버로 업로드할 수 있습니다. 이를 통해 프로덕션 환경에서 발생한 에러의 원본 소스코드 위치를 정확하게 추적할 수 있습니다.
 
 #### 주요 기능
@@ -463,6 +465,7 @@ Vite를 사용하는 프로젝트에서 빌드 후 소스맵을 자동으로 IMQ
 - 동시 업로드 제한 및 재시도 로직
 - CI 환경 감지
 - 업로드 후 로컬 소스맵 파일 삭제 옵션
+- 커스텀 경로 변환 및 URL 접두사 지원
 
 #### 설치
 
@@ -483,8 +486,8 @@ export default defineConfig({
   },
   plugins: [
     sourcemapUpload({
-      endpoint: 'https://api.your-service.imqa.io/api/sourcemaps',
-      apiKey: process.env.SOURCEMAP_API_KEY,
+      endpoint: 'https://{{imqa-service}}/api/v1/web-sourcemaps',
+      apiKey: process.env.IMQA_ACCESS_TOKEN,
       release: process.env.GIT_SHA,
       appVersion: process.env.npm_package_version,
     }),
@@ -492,31 +495,11 @@ export default defineConfig({
 })
 ```
 
-#### 고급 설정 옵션
-
-| 옵션 | 타입 | 기본값 | 설명 |
-|------|------|--------|------|
-| `endpoint` | `string` | - | **(필수)** 소스맵을 업로드할 API 엔드포인트 |
-| `method` | `'POST' \| 'PUT'` | `'POST'` | HTTP 메서드 |
-| `apiKey` | `string` | - | Bearer 토큰 또는 API 키 |
-| `release` | `string` | - | 릴리즈 식별자 (예: git SHA) |
-| `appVersion` | `string` | - | 앱 버전 (semver) |
-| `build` | `string` | - | 빌드 번호 또는 CI 빌드 ID |
-| `include` | `(string \| RegExp)[]` | - | 포함할 파일 패턴 |
-| `exclude` | `(string \| RegExp)[]` | - | 제외할 파일 패턴 |
-| `urlPrefix` | `string` | - | 업로드 파일명에 추가할 접두사 |
-| `transformPath` | `(path: string) => string` | - | 경로 변환 함수 |
-| `concurrency` | `number` | `6` | 동시 업로드 수 |
-| `retries` | `number` | `3` | 재시도 횟수 |
-| `gzip` | `boolean` | `true` | gzip 압축 사용 여부 |
-| `deleteAfterUpload` | `boolean` | `false` | 업로드 후 로컬 파일 삭제 |
-| `ciOnly` | `boolean` | `false` | CI 환경에서만 실행 |
-| `verbose` | `boolean` | CI에서 `true` | 상세 로그 출력 |
-
-#### 사용 예시
+#### 고급 설정
 
 ```typescript
 // vite.config.ts
+import { defineConfig } from 'vite'
 import sourcemapUpload from '@imqa/vite-sourcemap'
 
 export default defineConfig({
@@ -526,30 +509,217 @@ export default defineConfig({
   plugins: [
     sourcemapUpload({
       // 필수: 업로드 엔드포인트
-      endpoint: 'https://api.your-service.imqa.io/api/sourcemaps',
+      endpoint: 'https://{{imqa-service}}/api/v1/web-sourcemaps',
 
       // 인증
-      apiKey: process.env.IMQA_AUTH_TOKEN,
+      apiKey: process.env.IMQA_ACCESS_TOKEN,
 
       // 릴리즈 정보
-      release: process.env.IMQA_SERVICE_NAME,
+      release: process.env.GIT_SHA,
       appVersion: process.env.npm_package_version,
+      build: process.env.BUILD_NUMBER,
 
-      // CDN 경로 설정
-      urlPrefix: '~/dist/',
+      // 앱 타입 (플랫폼별 소스맵 구분)
+      appType: 'ALL', // 'ANDROID' | 'IOS' | 'WEB' | 'ALL' | null
 
-      // 파일 필터링: assets 폴더의 JS 소스맵만
+      // 파일 필터링
       include: [/assets\/.+\.js\.map$/],
       exclude: [/node_modules/],
+
+      // CDN 경로 설정
+      urlPrefix: '~/static/js',
+
+      // 커스텀 경로 변환
+      transformPath: (path) => `build/${path}`,
+
+      // 업로드 설정
+      concurrency: 3,
+      retries: 5,
+      gzip: true,
+      deleteAfterUpload: true,
 
       // CI에서만 실행
       ciOnly: true,
 
-      // 업로드 후 로컬 파일 삭제
-      deleteAfterUpload: true,
+      // 추가 헤더
+      headers: {
+        'X-Custom-Header': 'value',
+      },
+
+      // 추가 폼 필드
+      fields: {
+        environment: 'production',
+        team: 'frontend',
+      },
     }),
   ],
 })
+```
+
+#### 설정 옵션
+
+##### 필수 옵션
+
+| 옵션 | 타입 | 설명 |
+|------|------|------|
+| `endpoint` | `string` | 소스맵을 업로드할 API 엔드포인트 |
+
+##### 선택 옵션
+
+| 옵션 | 타입 | 기본값 | 설명 |
+|------|------|--------|------|
+| `method` | `'POST' \| 'PUT'` | `'POST'` | HTTP 메서드 |
+| `headers` | `Record<string, string>` | `{}` | 추가 HTTP 헤더 |
+| `apiKey` | `string` | - | Bearer 토큰 또는 API 키 |
+| `release` | `string` | - | 릴리즈 식별자 (예: git SHA) |
+| `appVersion` | `string` | - | 앱 버전 (semver) |
+| `build` | `string` | - | 빌드 번호 또는 CI 빌드 ID |
+| `appType` | `'ANDROID' \| 'IOS' \| 'WEB' \| 'ALL' \| null` | `null` | 앱 타입 (플랫폼별 소스맵 구분) |
+| `fileFieldName` | `string` | `'file'` | 파일 업로드용 폼 필드명 |
+| `fields` | `Record<string, string \| number \| boolean>` | `{}` | 추가 폼 필드 |
+| `include` | `(string \| RegExp)[]` | - | 포함할 파일 패턴 |
+| `exclude` | `(string \| RegExp)[]` | - | 제외할 파일 패턴 |
+| `urlPrefix` | `string` | - | 업로드 파일명에 추가할 접두사 |
+| `transformPath` | `(path: string) => string` | - | 경로 변환 함수 |
+| `concurrency` | `number` | `6` | 동시 업로드 수 |
+| `retries` | `number` | `3` | 재시도 횟수 |
+| `gzip` | `boolean` | `true` | gzip 압축 사용 여부 |
+| `deleteAfterUpload` | `boolean` | `false` | 업로드 후 로컬 파일 삭제 |
+| `ciOnly` | `boolean` | `false` | CI 환경에서만 실행 |
+| `verbose` | `boolean` | CI에서 `true`, 로컬에서 `false` | 상세 로그 출력 |
+
+#### 플랫폼별 소스맵 (appType)
+
+ServiceNamespace 또는 Service 레벨에서 플랫폼별로 소스맵을 구분하여 관리할 수 있습니다.
+
+##### 공통 WebView (모든 플랫폼)
+
+Android/iOS/Web에서 공통으로 사용하는 WebView 소스맵:
+
+```typescript
+sourcemapUpload({
+  endpoint: 'https://api.imqa.io/v1/web-sourcemaps',
+  apiKey: process.env.IMQA_ACCESS_TOKEN,
+  appVersion: '1.0.0',
+  appType: 'ALL', // 모든 플랫폼에서 사용
+})
+```
+
+##### Android WebView 전용
+
+```typescript
+sourcemapUpload({
+  endpoint: 'https://api.imqa.io/v1/web-sourcemaps',
+  apiKey: process.env.IMQA_ACCESS_TOKEN,
+  appVersion: '1.0.0',
+  appType: 'ANDROID',
+})
+```
+
+##### iOS WebView 전용
+
+```typescript
+sourcemapUpload({
+  endpoint: 'https://api.imqa.io/v1/web-sourcemaps',
+  apiKey: process.env.IMQA_ACCESS_TOKEN,
+  appVersion: '1.0.0',
+  appType: 'IOS',
+})
+```
+
+##### Web 브라우저 전용
+
+```typescript
+sourcemapUpload({
+  endpoint: 'https://api.imqa.io/v1/web-sourcemaps',
+  apiKey: process.env.IMQA_ACCESS_TOKEN,
+  appVersion: '1.0.0',
+  appType: 'WEB',
+})
+```
+
+##### 레거시 (appType 미지정)
+
+기존 방식과의 호환성을 위해 `appType`을 지정하지 않으면 모든 플랫폼에서 fallback으로 사용됩니다:
+
+```typescript
+sourcemapUpload({
+  endpoint: 'https://api.imqa.io/v1/web-sourcemaps',
+  apiKey: process.env.IMQA_ACCESS_TOKEN,
+  appVersion: '1.0.0',
+  // appType 미지정 = null (레거시 호환)
+})
+```
+
+#### appType Fallback 로직
+
+소스맵 조회 시 다음 우선순위로 검색합니다:
+
+1. **정확한 appType 매칭**: 요청된 appType과 정확히 일치하는 소스맵
+2. **ALL 타입**: appType이 `ALL`로 지정된 소스맵 (모든 플랫폼 공용)
+3. **null 타입**: appType이 지정되지 않은 레거시 소스맵
+
+예를 들어, Android 앱에서 에러가 발생하면:
+1. `appType: 'ANDROID'`인 소스맵을 먼저 찾음
+2. 없으면 `appType: 'ALL'`인 소스맵을 찾음
+3. 없으면 `appType: null`인 소스맵을 fallback으로 사용
+
+<Gha keyword="TIP" title="플랫폼별 소스맵 관리">
+Android/iOS 네이티브 앱 내 WebView와 웹 브라우저에서 동일한 웹 애플리케이션을 사용하지만 소스맵이 다른 경우, `appType`을 지정하여 각 플랫폼별로 정확한 소스맵을 매칭할 수 있습니다.
+</Gha>
+
+#### 액세스 토큰 발급
+
+소스맵 업로드를 위해서는 IMQA 액세스 토큰이 필요합니다. 토큰은 ServiceNamespace 또는 Service 레벨에서 발급할 수 있습니다.
+
+##### IMQA 콘솔에서 발급
+
+1. IMQA 관리자 콘솔 로그인
+2. **글로벌 관리 > 서비스 관리**로 이동
+3. 대상 서비스 또는 서비스 네임스페이스 선택
+4. **액세스 토큰** 탭에서 **토큰 생성** 클릭
+5. 토큰 이름과 만료일(선택) 설정 후 생성
+6. 생성된 토큰을 복사하여 안전하게 보관
+
+<Gha keyword="CAUTION" title="토큰 보안">
+액세스 토큰은 생성 시 한 번만 표시됩니다. 토큰을 분실한 경우 새로운 토큰을 발급받아야 합니다. CI/CD 환경에서는 시크릿으로 관리하세요.
+</Gha>
+
+##### API를 통한 발급
+
+```bash
+# ServiceNamespace 레벨 토큰 발급
+curl -X POST https://api.imqa.io/v1/access-tokens \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {{SESSION_TOKEN}}" \
+  -d '{
+    "serviceNamespaceId": 1,
+    "name": "CI/CD Sourcemap Upload",
+    "expiresAt": "2025-12-31T23:59:59Z"
+  }'
+
+# Service 레벨 토큰 발급
+curl -X POST https://api.imqa.io/v1/access-tokens \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {{SESSION_TOKEN}}" \
+  -d '{
+    "serviceId": 1,
+    "name": "CI/CD Sourcemap Upload",
+    "expiresAt": "2025-12-31T23:59:59Z"
+  }'
+```
+
+응답:
+
+```json
+{
+  "id": 1,
+  "name": "CI/CD Sourcemap Upload",
+  "token": "generated-token-value",
+  "tokenHint": "****abcd",
+  "createdAt": "2024-01-15T10:00:00Z",
+  "expiresAt": "2025-12-31T23:59:59Z"
+}
 ```
 
 #### GitHub Actions와 함께 사용
@@ -558,7 +728,7 @@ export default defineConfig({
 # .github/workflows/deploy.yml
 - name: Build and upload sourcemaps
   env:
-    SOURCEMAP_API_KEY: ${{ secrets.SOURCEMAP_API_KEY }}
+    IMQA_ACCESS_TOKEN: ${{ secrets.IMQA_ACCESS_TOKEN }}
     GIT_SHA: ${{ github.sha }}
   run: npm run build
 ```
