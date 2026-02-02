@@ -1,6 +1,6 @@
 ---
 title: Android SDK 설치 가이드 (Extension)
-description: IMQA Android SDK v1.1.4 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.1.5 설치 및 설정 방법을 안내합니다.
 nav: 411
 pdf: true
 cover: android
@@ -59,7 +59,7 @@ Maven 이용시 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추�
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.1.4'
+  implementation 'io.imqa:imqa-android-sdk:1.1.5'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.1.4")
+  implementation("io.imqa:imqa-android-sdk:1.1.5")
 }
 ```
 
@@ -82,7 +82,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.4-release.aar')
+  implementation files('libs/imqa-android-sdk-1.1.5-release.aar')
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.4-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.1.5-release.aar"))
 }
 ```
 
@@ -321,7 +321,7 @@ imqa-android-sdk-extension-버전-release.aar 파일을 복사 후 dependencies 
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.4-release.aar') //IMQA SDK
+  implementation files('libs/imqa-android-sdk-1.1.5-release.aar') //IMQA SDK
   //IMQA SDK Extensions 추가
   implementation files('libs/imqa-android-sdk-extensions-1.0.1-release.aar') 
   //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.1' //Maven 사용시 
@@ -332,7 +332,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.4-release.aar")) //IMQA SDK
+  implementation(files("libs/imqa-android-sdk-1.1.5-release.aar")) //IMQA SDK
   //IMQA SDK Extensions 추가 
   implementation(files("libs/imqa-android-sdk-extensions-1.0.1-release.aar")) 
   //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.1") //Maven 사용시 
@@ -803,6 +803,25 @@ IMQA.custom.setupUserId("customer-user-id")
 IMQA.getCustomAttributes().setupUserId("customer-user-id");
 ```
 
+#### getDeviceId()
+
+디바이스 ID를 반환합니다.
+
+**반환값:**
+- `String` - 디바이스 ID
+
+**Kotlin**
+
+```kotlin
+val deviceId = IMQA.getDeviceId()
+```
+
+**Java**
+
+```java
+String deviceId = IMQA.getDeviceId();
+```
+
 #### getOption(): IMQAOption
 
 현재 설정된 IMQAOption 객체를 반환합니다.
@@ -1002,6 +1021,27 @@ option.setUserEventEnable(true)
 
 ```java
 option.setUserEventEnable(true);
+```
+
+**setDeviceIdType(deviceIdType: DeviceIdType)**
+
+deviceId를 타입을 설정합니다. 디폴트 값은 ANDROID_ID 입니다.
+- ANDROID_ID : 안드로이드에서 제공하는 식별자 (SSAID)
+- UUID: SDK 내부에서 생성되는 랜덤 식별자 (앱 삭제 후 재설치시 새로 생성)
+
+ **매개변수:**
+- `deviceIdType`: DeviceIdType - ANDROID_ID 또는 UUID
+
+**Kotlin**
+
+```kotlin
+option.setDeviceIdType(DeviceIdType.UUID)
+```
+
+**Java**
+
+```java
+option.setDeviceIdType(DeviceIdType.UUID);
 ```
 
 **setActivityLifecycleEnabled(value: Boolean): IMQAOption**
