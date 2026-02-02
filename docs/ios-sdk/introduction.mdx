@@ -1,6 +1,6 @@
 ---
 title: iOS SDK 설치 가이드
-description: IMQA iOS SDK v1.0.107 설치 및 설정 방법을 안내합니다.
+description: IMQA iOS SDK v1.0.108 설치 및 설정 방법을 안내합니다.
 nav: 400
 image: ./img/ios-sdk-custom-01.png
 pdf: true
@@ -147,6 +147,10 @@ extension IMQA {
     ///   - key: 키
     ///   - value: 값
     @objc public static func setAttribute(key:String, value: String?)
+
+    ///  keychain에 생성한 UUID 회득
+    /// - Returns: id
+    @objc public static func getDeviceId() -> String 
 
     ///1:) xib 로 webview layout시 주동으로 이 함수를 호출하세요.  
     ///    webview와 연동하는 script주입하는 방법입니다.
