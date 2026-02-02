@@ -1339,12 +1339,41 @@ interface IMQAErrorInstrumentationConfig extends InstrumentationConfig {
    * @default true
    */
   captureConsoleError?: boolean;
+  /**
+   * A callback function for adding custom attributes to the span/log when an error is recorded.
+   * @param error - The error object or string that is being recorded.
+   * @returns Attributes to add to the span and log.
+   */
+  applyCustomAttributes?: (error: Error | string | Event) => Attributes;
 }
 ```
 
 - `captureConsoleError`: `console.error` 호출을 exception으로 캡처할지 여부를 설정합니다. 기본값은 `true`입니다.
   - `true` (기본값): `console.error` 호출이 exception으로 캡처됨
   - `false`: `console.error` 계측이 비활성화되어 exception으로 캡처되지 않음
+- `applyCustomAttributes`: 에러가 기록될 때 span/log에 커스텀 속성을 추가하는 콜백 함수입니다. 에러 객체를 인자로 받아 추가할 속성 객체를 반환합니다.
+
+**applyCustomAttributes 사용 예시:**
+
+```typescript
+IMQA.init({
+  // ... 기본 설정
+  instrumentations: {
+    errors: {
+      applyCustomAttributes: (error) => {
+        // 에러 유형에 따라 커스텀 속성 추가
+        if (error instanceof Error) {
+          return {
+            'error.category': error.name === 'TypeError' ? 'type-error' : 'general',
+            'error.component': 'frontend',
+          };
+        }
+        return {};
+      },
+    },
+  },
+});
+```
 
 자세한 계측 정보는 [@imqa/instrumentation-browser-exception](../instrumentations/instrumentation-browser-exception.mdx) 참조
 
@@ -1796,6 +1825,39 @@ IMQA.setGlobalAttributes({
   // 기타 사용자 지정 속성...
 });
 ```
+
+### `getDeviceId`
+
+```ts
+IMQA.getDeviceId(): string | null
+```
+
+웹뷰 환경에서 네이티브 앱의 디바이스 ID를 조회합니다. 이 메서드는 IMQA Android/iOS SDK와 연동된 웹뷰 환경에서만 유효한 값을 반환합니다.
+
+- **반환값:** (`string | null`): 디바이스 ID 또는 `null` (웹뷰가 아니거나 네이티브 리소스가 없는 경우)
+
+**동작 방식:**
+- **Android WebView**: `window.IMQANative.getResources()`를 통해 네이티브 리소스에서 `device.id`를 조회
+- **iOS WebView**: `window.__imqa_resources`에서 `device.id`를 조회
+- **일반 웹 브라우저**: `null` 반환
+
+**사용 예시:**
+
+```typescript
+// 디바이스 ID 조회
+const deviceId = IMQA.getDeviceId();
+
+if (deviceId) {
+  console.log('Device ID:', deviceId);
+  // 디바이스 ID를 활용한 로직 수행
+} else {
+  console.log('웹뷰 환경이 아니거나 디바이스 ID를 조회할 수 없습니다.');
+}
+```
+
+<Gha keyword="NOTE" title="웹뷰 전용 기능">
+이 API는 IMQA Android/iOS SDK가 설치된 네이티브 앱 내의 웹뷰에서만 정상 동작합니다. 일반 웹 브라우저 환경에서는 항상 `null`을 반환합니다. 네이티브-웹뷰 연동에 대한 자세한 내용은 [Mobile SDK 연동](#mobile-sdk-연동) 섹션을 참조하세요.
+</Gha>
 
 ### `setUserIdAttribute`
 

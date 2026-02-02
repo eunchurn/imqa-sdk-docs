@@ -47,6 +47,7 @@ cover: web
 | 옵션 | 타입 | 기본값 | 설명 |
 |------|------|--------|------|
 | `captureConsoleError` | `boolean` | `true` | `console.error` 호출을 exception으로 캡처할지 여부 |
+| `applyCustomAttributes` | `(error: Error \| string \| Event) => Attributes` | `undefined` | 에러 발생 시 커스텀 속성을 추가하는 콜백 함수 |
 
 > `screenNameOption`은 모든 계측기에서 공통으로 사용되는 옵션입니다.
 
@@ -54,6 +55,7 @@ cover: web
 
 - `captureConsoleError: true` (기본값): `console.error` 호출이 exception으로 캡처됨
 - `captureConsoleError: false`: `console.error` 계측이 비활성화되어 exception으로 캡처되지 않음
+- `applyCustomAttributes`: 에러가 기록될 때 span과 log에 커스텀 속성을 추가하는 콜백 함수. 에러 객체, 문자열, 또는 Event를 인자로 받아 추가할 속성 객체를 반환
 
 ### 설정 예시
 
@@ -66,6 +68,51 @@ const errorInstrumentation = new IMQAErrorInstrumentation({});
 // console.error 캡처 비활성화
 const errorInstrumentation = new IMQAErrorInstrumentation({
   captureConsoleError: false,
+});
+
+// 커스텀 속성 추가
+const errorInstrumentation = new IMQAErrorInstrumentation({
+  applyCustomAttributes: (error) => {
+    if (error instanceof Error) {
+      return {
+        'error.category': error.name === 'TypeError' ? 'type-error' : 'general',
+        'error.component': 'frontend',
+      };
+    }
+    return {};
+  },
+});
+```
+
+#### IMQA.init()을 통한 설정
+
+```typescript
+IMQA.init({
+  collectorUrl: '{{IMQA_TRACES_COLLECTOR_URL}}',
+  serviceName: '{{NAME_OF_YOUR_SERVICE}}',
+  serviceKey: '{{KEY_OF_YOUR_SERVICE}}',
+  serviceVersion: '{{VERSION_OF_YOUR_SERVICE}}',
+  instrumentations: {
+    errors: {
+      captureConsoleError: true,
+      applyCustomAttributes: (error) => {
+        // 에러 유형에 따라 분류
+        if (error instanceof Error) {
+          return {
+            'error.category': categorizeError(error),
+            'error.severity': getSeverity(error),
+          };
+        }
+        // Event 타입 (리소스 로딩 실패 등)
+        if (error instanceof Event) {
+          return {
+            'error.category': 'resource-error',
+          };
+        }
+        return {};
+      },
+    },
+  },
 });
 ```
 
@@ -423,6 +470,65 @@ console.error('Operation failed:', error, 'Additional context:', data);
 ```
 
 ## 고급 기능
+
+### 커스텀 속성 추가 (applyCustomAttributes)
+
+`applyCustomAttributes` 콜백을 사용하면 에러 발생 시 추가 컨텍스트를 span과 log에 첨부할 수 있습니다:
+
+```typescript
+IMQA.init({
+  // ... 기본 설정
+  instrumentations: {
+    errors: {
+      applyCustomAttributes: (error) => {
+        const attributes: Record<string, string> = {};
+
+        // Error 객체인 경우
+        if (error instanceof Error) {
+          // 에러 이름으로 카테고리 분류
+          switch (error.name) {
+            case 'TypeError':
+              attributes['error.category'] = 'type-error';
+              break;
+            case 'ReferenceError':
+              attributes['error.category'] = 'reference-error';
+              break;
+            case 'NetworkError':
+              attributes['error.category'] = 'network-error';
+              break;
+            default:
+              attributes['error.category'] = 'general';
+          }
+
+          // 에러 메시지에서 추가 정보 추출
+          if (error.message.includes('fetch')) {
+            attributes['error.source'] = 'api-call';
+          }
+        }
+
+        // Event 타입 (리소스 로딩 실패)
+        if (error instanceof Event && error.target) {
+          const target = error.target as HTMLElement;
+          attributes['error.category'] = 'resource-load-error';
+          attributes['error.element'] = target.tagName?.toLowerCase() || 'unknown';
+        }
+
+        // 공통 속성
+        attributes['error.timestamp'] = new Date().toISOString();
+        attributes['error.page'] = window.location.pathname;
+
+        return attributes;
+      },
+    },
+  },
+});
+```
+
+**활용 시나리오:**
+- 에러 유형별 분류 및 필터링
+- 비즈니스 컨텍스트 추가 (사용자 상태, 기능 영역 등)
+- 디버깅을 위한 추가 메타데이터 첨부
+- 에러 심각도 자동 분류
 
 ### 스택 트레이스 제한
 
