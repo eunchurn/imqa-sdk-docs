@@ -1,6 +1,6 @@
 ---
 title: Android SDK 설치 가이드 (Extension)
-description: IMQA Android SDK v1.1.5 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.1.6 설치 및 설정 방법을 안내합니다.
 nav: 411
 pdf: true
 cover: android
@@ -59,7 +59,7 @@ Maven 이용시 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추�
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.1.5'
+  implementation 'io.imqa:imqa-android-sdk:1.1.6'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.1.5")
+  implementation("io.imqa:imqa-android-sdk:1.1.6")
 }
 ```
 
@@ -82,7 +82,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.5-release.aar')
+  implementation files('libs/imqa-android-sdk-1.1.6-release.aar')
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.5-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.1.6-release.aar"))
 }
 ```
 
@@ -166,9 +166,9 @@ class Application : android.app.Application() {
         options.setCollectorURL("여기에 url을 입력해주세요.")
         options.setServiceKey("여기에 service key를 입력해주세요.")
         options.setSampleRate("샘플링 비율(0.0~1.0) 값을 입력해주세요.") // default=1.0
-        options.setServiceNameSpace("Namespace"); 
+        options.setServiceNameSpace("Namespace")
         options.setRemoteCollectionControlEnable(true)
-        //options.setEnvironment(Environment.DEVELOPMENT);
+        //options.setEnvironment(Environment.DEVELOPMENT)
         //options.setUserEventEnable(true)
 
         IMQA.setup(options)
@@ -195,9 +195,9 @@ public class Application extends android.app.Application {
         options.setServiceKey("여기에 service key를 입력해주세요.");
         options.setSampleRate("샘플링 비율(0.0~1.0) 값을 입력해주세요."); // default=1.0
         options.setServiceNameSpace("Namespace"); 
-        options.setRemoteCollectionControlEnable(true)
+        options.setRemoteCollectionControlEnable(true);
         //options.setEnvironment(Environment.DEVELOPMENT);        
-        //options.setUserEventEnable(true)
+        //options.setUserEventEnable(true);
         
         IMQA.setup(options);
         IMQA.initialize(this.getApplicationContext(), this);
@@ -217,8 +217,8 @@ public class Application extends android.app.Application {
 - (option)`setRemoteCollectionControlEnable`: 원격 수집 제어 활성화 설정 (default=false)  
   - SDK는 api로 전달된 서버 설정에 따라 적용됩니다.
   - On/Off (default=on)
-  - 전송 실패 시 자동 중지 정책 (defalut=false)
-  - 자동 중지 정책 실패 횟수 기준(defalut=5)
+  - 전송 실패 시 자동 중지 정책 (default=false)
+  - 자동 중지 정책 실패 횟수 기준(default=5)
 
 ### 3. Https 설정
 
@@ -321,7 +321,7 @@ imqa-android-sdk-extension-버전-release.aar 파일을 복사 후 dependencies 
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.5-release.aar') //IMQA SDK
+  implementation files('libs/imqa-android-sdk-1.1.6-release.aar') //IMQA SDK
   //IMQA SDK Extensions 추가
   implementation files('libs/imqa-android-sdk-extensions-1.0.1-release.aar') 
   //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.1' //Maven 사용시 
@@ -332,7 +332,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.5-release.aar")) //IMQA SDK
+  implementation(files("libs/imqa-android-sdk-1.1.6-release.aar")) //IMQA SDK
   //IMQA SDK Extensions 추가 
   implementation(files("libs/imqa-android-sdk-extensions-1.0.1-release.aar")) 
   //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.1") //Maven 사용시 
@@ -560,7 +560,7 @@ Cordova 라이브러리를 사용하는 경우 Webview를 다음과 같이 설�
 #### Cordova Library `build.gradle`  
 
 ```groovy
-    compileOnly(files("libs/imqa-android-sdk-1.1.0-release.aar"))
+    compileOnly(files("libs/imqa-android-sdk-1.1.6-release.aar"))
 ```
 
 #### Webview Interface 설정
