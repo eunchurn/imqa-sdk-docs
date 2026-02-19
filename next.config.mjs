@@ -28,7 +28,10 @@ const nextConfig = {
   distDir,
   // output,
   output: 'standalone',
-  serverExternalPackages: ['@sparticuz/chromium', '@octokit/core'],
+  serverExternalPackages: ['@sparticuz/chromium', 'puppeteer-core', '@octokit/core'],
+  outputFileTracingIncludes: {
+    '/api/generate-pdf': ['./node_modules/@sparticuz/chromium/**/*'],
+  },
   trailingSlash: false,
   transpilePackages: ['next-mdx-remote'],
   // Enable experimental features for better SSR performance
