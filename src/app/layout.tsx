@@ -1,5 +1,5 @@
 import { Toaster } from '@/components/ui/toaster'
-import { nanumsquareneo } from '@/fonts'
+import { pretendard } from '@/fonts'
 import cn from '@/lib/cn'
 import { svg } from '@/utils/icon'
 import resolveMdxUrl from '@/utils/resolveMdxUrl'
@@ -72,7 +72,7 @@ export default function RootLayout(props: RootLayoutProps) {
         className={cn(
           // inter.className,
           // pretendard.className,
-          nanumsquareneo.className,
+          pretendard.className,
           'bg-surface break-words text-on-surface',
           'scrollbar-thin',
         )}

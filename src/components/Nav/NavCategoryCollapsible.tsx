@@ -39,7 +39,7 @@ export function NavCategoryCollapsible({
     <Collapsible.Root
       className={cn(
         'text-sm [--NavItem-pad:.75rem] [--arrow-size:theme(spacing.4)]',
-        !docsEntries.some(([, doc]) => doc.url === `/${asPath}`) && 'opacity-50',
+        !docsEntries.some(([, doc]) => doc.url === `/${asPath}`) && 'opacity-50 dark:opacity-75',
       )}
       open={open}
       onOpenChange={setOpen}
