@@ -19,6 +19,9 @@ temp/
 
 tsconfig.tsbuildinfo
 
+# packages
+*.tgz
+
 # env
 .env
 .env.local

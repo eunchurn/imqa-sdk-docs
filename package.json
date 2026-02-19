@@ -75,6 +75,7 @@
   "scripts": {
     "dev": "MDX=docs next",
     "start": "node .next/standalone/server.js",
+    "prebuild": "rm -f public/imqa-vite-sourcemap-latest.tgz && npm pack @imqa/vite-sourcemap --pack-destination public/ && mv public/imqa-vite-sourcemap-*.tgz public/imqa-vite-sourcemap-latest.tgz",
     "build": "MDX=docs next build",
     "github:build": "MDX=docs OUTPUT=export BASE_PATH=/imqa-sdk-docs next build",
     "format": "prettier -w src/",
