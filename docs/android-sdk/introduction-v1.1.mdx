@@ -1,6 +1,6 @@
 ---
 title: Android SDK 설치 가이드 (Extension)
-description: IMQA Android SDK v1.1.6 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.1.7 설치 및 설정 방법을 안내합니다.
 nav: 411
 pdf: true
 cover: android
@@ -59,7 +59,7 @@ Maven 이용시 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추�
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.1.6'
+  implementation 'io.imqa:imqa-android-sdk:1.1.7'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.1.6")
+  implementation("io.imqa:imqa-android-sdk:1.1.7")
 }
 ```
 
@@ -82,7 +82,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.6-release.aar')
+  implementation files('libs/imqa-android-sdk-1.1.7-release.aar')
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.6-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.1.7-release.aar"))
 }
 ```
 
@@ -321,7 +321,7 @@ imqa-android-sdk-extension-버전-release.aar 파일을 복사 후 dependencies 
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.6-release.aar') //IMQA SDK
+  implementation files('libs/imqa-android-sdk-1.1.7-release.aar') //IMQA SDK
   //IMQA SDK Extensions 추가
   implementation files('libs/imqa-android-sdk-extensions-1.0.1-release.aar') 
   //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.1' //Maven 사용시 
@@ -332,7 +332,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.6-release.aar")) //IMQA SDK
+  implementation(files("libs/imqa-android-sdk-1.1.7-release.aar")) //IMQA SDK
   //IMQA SDK Extensions 추가 
   implementation(files("libs/imqa-android-sdk-extensions-1.0.1-release.aar")) 
   //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.1") //Maven 사용시 
@@ -560,7 +560,7 @@ Cordova 라이브러리를 사용하는 경우 Webview를 다음과 같이 설�
 #### Cordova Library `build.gradle`  
 
 ```groovy
-    compileOnly(files("libs/imqa-android-sdk-1.1.6-release.aar"))
+    compileOnly(files("libs/imqa-android-sdk-1.1.7-release.aar"))
 ```
 
 #### Webview Interface 설정
@@ -1025,8 +1025,8 @@ option.setUserEventEnable(true);
 
 **setDeviceIdType(deviceIdType: DeviceIdType)**
 
-deviceId를 타입을 설정합니다. 디폴트 값은 ANDROID_ID 입니다.
-- ANDROID_ID : 안드로이드에서 제공하는 식별자 (SSAID)
+deviceId를 타입을 설정합니다. 디폴트 값은 UUID 입니다.
+- ANDROID_ID : 안드로이드에서 제공하는 식별자(SSAID)를 UUID 형식으로 변환
 - UUID: SDK 내부에서 생성되는 랜덤 식별자 (앱 삭제 후 재설치시 새로 생성)
 
  **매개변수:**
