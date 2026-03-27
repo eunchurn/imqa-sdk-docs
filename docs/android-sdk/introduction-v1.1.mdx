@@ -1,6 +1,6 @@
 ---
 title: Android SDK 설치 가이드 (Extension)
-description: IMQA Android SDK v1.1.7 설치 및 설정 방법을 안내합니다.
+description: IMQA Android SDK v1.1.10 설치 및 설정 방법을 안내합니다.
 nav: 411
 pdf: true
 cover: android
@@ -59,7 +59,7 @@ Maven 이용시 애플리케이션의 `dependencies` 섹션에 IMQA SDK를 추�
 
 ```groovy
 dependencies {
-  implementation 'io.imqa:imqa-android-sdk:1.1.7'
+  implementation 'io.imqa:imqa-android-sdk:1.1.10'
 }
 ```
 
@@ -67,7 +67,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation("io.imqa:imqa-android-sdk:1.1.7")
+  implementation("io.imqa:imqa-android-sdk:1.1.10")
 }
 ```
 
@@ -82,7 +82,7 @@ dependencies {
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.7-release.aar')
+  implementation files('libs/imqa-android-sdk-1.1.10-release.aar')
 }
 ```
 
@@ -90,7 +90,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.7-release.aar"))
+  implementation(files("libs/imqa-android-sdk-1.1.10-release.aar"))
 }
 ```
 
@@ -321,7 +321,7 @@ imqa-android-sdk-extension-버전-release.aar 파일을 복사 후 dependencies 
 
 ```groovy
 dependencies {
-  implementation files('libs/imqa-android-sdk-1.1.7-release.aar') //IMQA SDK
+  implementation files('libs/imqa-android-sdk-1.1.10-release.aar') //IMQA SDK
   //IMQA SDK Extensions 추가
   implementation files('libs/imqa-android-sdk-extensions-1.0.1-release.aar') 
   //implementation 'io.imqa:imqa-android-sdk-extensions:1.0.1' //Maven 사용시 
@@ -332,7 +332,7 @@ dependencies {
 
 ```kotlin
 dependencies {
-  implementation(files("libs/imqa-android-sdk-1.1.7-release.aar")) //IMQA SDK
+  implementation(files("libs/imqa-android-sdk-1.1.10-release.aar")) //IMQA SDK
   //IMQA SDK Extensions 추가 
   implementation(files("libs/imqa-android-sdk-extensions-1.0.1-release.aar")) 
   //implementation ("io.imqa:imqa-android-sdk-extensions:1.0.1") //Maven 사용시 
@@ -517,12 +517,17 @@ binding.button.setOnClickListener(new View.OnClickListener() {
 options.setUserEventEnable(true) 추가시 수집됩니다.
 IMQA.sendClickEvent() 와 같이 사용시 이벤트가 중복으로 수집될 수 있습니다.  
 자동 수집 옵션이 활성화되었을때 특정 View를 클릭 이벤트 수집 대상에서 제외하려면
-android:tag="imqa_ignore" 로 설정하면 해당 View는 자동 수집에서 무시됩니다.
+android:tag="imqa_ignore" 로 설정하면 해당 View는 자동 수집에서 무시됩니다.   
+또한 Text/ID 수집 여부는 옵션으로 제어할 수 있습니다.
+해당 옵션은 자동 계측 및 수동 이벤트 모두에 적용되며, OFF 시 모든 이벤트에서 해당 값이 비어있게 됩니다. (개별 View 단위 설정 불가)
 
 > IMQAOption options = new IMQAOption();  
 > options.setDefault();  
 > ... 생략 ...  
 > options.setUserEventEnable(true);  
+> // 추가 옵션   
+> options.setUserEventTextEnable(false); // Text 수집 비활성화 (기본값: true)
+> options.setUserEventIdEnable(false);   // ID 수집 비활성화 (기본값: true)
 
 ### 웹뷰 페이지 세션 연결
 
@@ -560,7 +565,7 @@ Cordova 라이브러리를 사용하는 경우 Webview를 다음과 같이 설�
 #### Cordova Library `build.gradle`  
 
 ```groovy
-    compileOnly(files("libs/imqa-android-sdk-1.1.7-release.aar"))
+    compileOnly(files("libs/imqa-android-sdk-1.1.10-release.aar"))
 ```
 
 #### Webview Interface 설정
@@ -1026,7 +1031,7 @@ option.setUserEventEnable(true);
 **setDeviceIdType(deviceIdType: DeviceIdType)**
 
 deviceId를 타입을 설정합니다. 디폴트 값은 UUID 입니다.
-- ANDROID_ID : 안드로이드에서 제공하는 식별자(SSAID)를 UUID 형식으로 변환
+- ANDROID_ID : SSAID를 UUID 형식으로 변환
 - UUID: SDK 내부에서 생성되는 랜덤 식별자 (앱 삭제 후 재설치시 새로 생성)
 
  **매개변수:**
