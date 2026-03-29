@@ -137,10 +137,12 @@ cover: web
 사용자 상호작용 계측을 활성화하거나 비활성화합니다. `true`로 설정하면 클릭, 입력 등 사용자 상호작용 이벤트가 자동으로 계측됩니다. `IMQAUserInteractionInstrumentationConfig`을 통해 상호작용 계측의 세부 설정을 커스터마이즈할 수 있습니다.
 
 ```typescript
-interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
+interface IMQAUserInteractionInstrumentationConfig extends InstrumentationConfig {
     eventNames?: EventName[];
     shouldPreventSpanCreation?: ShouldPreventSpanCreation;
     events?: UserInteractionEventsConfig;
+    captureText?: boolean;
+    captureId?: boolean;
 }
 ```
 - `eventNames`: 계측할 이벤트 목록을 지정합니다. 기본값은 `DEFAULT_AUTO_INSTRUMENTED_EVENTS`입니다.
@@ -150,6 +152,8 @@ interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
   - 미디어 이벤트: `ended`, `pause`, `play`
 - `shouldPreventSpanCreation`: Span이 생성될 때 호출되는 콜백 함수입니다. `true`를 반환하면 Span 기록을 방지합니다. 이 핸들러를 사용하여 생성된 Span에 추가 속성을 추가할 수 있습니다.
 - `events`: 사용자 상호작용 이벤트를 설정합니다. `UserInteractionEventsConfig` 인터페이스를 사용하여 세부 설정을 지정할 수 있습니다.
+- `captureText`: (`boolean`, 기본값: `true`) `false`로 설정하면 모든 이벤트 span attribute에서 `target_element_text` 값을 포함하지 않으며, Operation Name 폴백에서 `innerText`를 제외합니다.
+- `captureId`: (`boolean`, 기본값: `true`) `false`로 설정하면 모든 이벤트 span attribute에서 `target_element_id` 값을 포함하지 않으며, Operation Name 폴백에서 `id`를 제외합니다.
 
 ```typescript
 type UserInteractionEventsConfig = {
@@ -176,6 +180,45 @@ const DEFAULT_AUTO_INSTRUMENTED_EVENTS: UserInteractionEventsConfig = {
   pause: true,
   play: true,
 };
+```
+
+### Ignore 설정
+
+특정 요소를 계측 대상에서 제외하려면 HTML 요소에 `data-imqa="ignore"` 속성을 추가합니다. 해당 요소에서 발생하는 이벤트는 span과 trace가 생성되지 않습니다.
+
+```html
+<button data-imqa="ignore">민감한 버튼</button>
+```
+
+### Operation Name 폴백 로직
+
+사용자 상호작용 이벤트의 Operation Name은 다음 우선순위로 결정됩니다:
+
+| captureText | captureId | innerText 있음 | id 있음 | Operation Name |
+|:-----------:|:---------:|:--------------:|:-------:|----------------|
+| `true` | `true` | `"Submit"` | `"formSubmit"` | `Submit [click]` |
+| `false` | `true` | `"Submit"` | `"formSubmit"` | `formSubmit [click]` |
+| `true` | `false` | `"Submit"` | `"formSubmit"` | `Submit [click]` |
+| `false` | `false` | `"Submit"` | `"formSubmit"` | `button [click]` |
+
+### 설정 예시
+
+```typescript
+// 개인정보 보호: text 수집 비활성화, id만 사용
+instrumentations: {
+  interactions: {
+    captureText: false,
+    captureId: true
+  }
+}
+
+// 최소 수집: tag만 사용
+instrumentations: {
+  interactions: {
+    captureText: false,
+    captureId: false
+  }
+}
 ```
 
 ## 예시

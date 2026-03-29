@@ -1274,7 +1274,7 @@ IMQA.init({
 | `document`       | `boolean`  | optional  | 문서 로드 계측을 활성화하거나 비활성화합니다. |
 | `errors`         | `boolean`  | optional  | 오류 계측을 활성화하거나 비활성화합니다.                                                                  |
 | `fetch`          | `boolean`  | optional  | Fetch API 계측을 활성화하거나 비활성화합니다.|
-| `interactions`   | `boolean`  | optional  | 사용자 상호작용 계측을 활성화하거나 비활성화합니다. |
+| `interactions`   | `boolean \| IMQAUserInteractionInstrumentationConfig`  | optional  | 사용자 상호작용 계측을 활성화하거나 비활성화합니다. |
 | `longtask`       | `boolean`  | optional  | 장시간 작업 계측을 활성화하거나 비활성화합니다. |
 | `visibility`     | `boolean`  | optional  | 페이지 가시성 계측을 활성화하거나 비활성화합니다.   |
 | `connectivity`   | `boolean`  | optional  | 네트워크 연결 상태 계측을 활성화하거나 비활성화합니다. |
@@ -1418,10 +1418,12 @@ type IMQAFetchInstrumentationConfig = {
 자세한 계측 정보는 [@imqa/instrumentation-user-interaction](../instrumentations/instrumentation-user-interaction.mdx) 참조
 
 ```typescript
-interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
+interface IMQAUserInteractionInstrumentationConfig extends InstrumentationConfig {
     eventNames?: EventName[];
     shouldPreventSpanCreation?: ShouldPreventSpanCreation;
     events?: UserInteractionEventsConfig;
+    captureText?: boolean;
+    captureId?: boolean;
 }
 ```
 - `eventNames`: 계측할 이벤트 목록을 지정합니다. 기본값은 `DEFAULT_AUTO_INSTRUMENTED_EVENTS`입니다.
@@ -1431,6 +1433,8 @@ interface UserInteractionInstrumentationConfig extends InstrumentationConfig {
   - 미디어 이벤트: `ended`, `pause`, `play`
 - `shouldPreventSpanCreation`: Span이 생성될 때 호출되는 콜백 함수입니다. `true`를 반환하면 Span 기록을 방지합니다. 이 핸들러를 사용하여 생성된 Span에 추가 속성을 추가할 수 있습니다.
 - `events`: 사용자 상호작용 이벤트를 설정합니다. `UserInteractionEventsConfig` 인터페이스를 사용하여 세부 설정을 지정할 수 있습니다.
+- `captureText`: (`boolean`, 기본값: `true`) `false`로 설정하면 모든 이벤트 span attribute에서 `target_element_text` 값을 포함하지 않으며, Operation Name 폴백에서 `innerText`를 제외합니다.
+- `captureId`: (`boolean`, 기본값: `true`) `false`로 설정하면 모든 이벤트 span attribute에서 `target_element_id` 값을 포함하지 않으며, Operation Name 폴백에서 `id`를 제외합니다.
 
 ```typescript
 type UserInteractionEventsConfig = {
@@ -1457,6 +1461,51 @@ const DEFAULT_AUTO_INSTRUMENTED_EVENTS: UserInteractionEventsConfig = {
   pause: true,
   play: true,
 };
+```
+
+#### Ignore 설정
+
+특정 요소를 계측 대상에서 제외하려면 HTML 요소에 `data-imqa="ignore"` 속성을 추가합니다. 해당 요소에서 발생하는 이벤트는 span과 trace가 생성되지 않습니다.
+
+```html
+<button data-imqa="ignore">민감한 버튼</button>
+<input data-imqa="ignore" type="text" placeholder="개인정보 입력" />
+```
+
+#### Operation Name 폴백 로직
+
+사용자 상호작용 이벤트의 Operation Name은 다음 우선순위로 결정됩니다:
+
+| captureText | captureId | innerText 있음 | id 있음 | Operation Name |
+|:-----------:|:---------:|:--------------:|:-------:|----------------|
+| `true` | `true` | `"Submit"` | `"formSubmit"` | `Submit [click]` |
+| `false` | `true` | `"Submit"` | `"formSubmit"` | `formSubmit [click]` |
+| `true` | `false` | `"Submit"` | `"formSubmit"` | `Submit [click]` |
+| `false` | `false` | `"Submit"` | `"formSubmit"` | `button [click]` |
+
+#### 설정 예시
+
+```typescript
+IMQA.init({
+  collectorUrl: 'https://ingest.imqa.io',
+  serviceName: 'my-frontend-app',
+  serviceVersion: '1.0.0',
+  serviceKey: '<YOUR_SERVICE_KEY_HERE>',
+  instrumentations: {
+    interactions: {
+      captureText: true,   // innerText 수집 여부 (기본값: true)
+      captureId: true,     // id 수집 여부 (기본값: true)
+      events: {
+        click: true,
+        dblclick: true,
+        submit: true,
+        change: true,
+        mousedown: false,  // 비활성화
+        mouseup: false,    // 비활성화
+      }
+    }
+  }
+});
 ```
 
 ###### longtask instrumentation
