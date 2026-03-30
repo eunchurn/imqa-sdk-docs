@@ -1272,7 +1272,7 @@ IMQA.init({
 |------------------|------------|-----------|------------------------------------------------------------------------------------------------------------|
 | `console`        | `boolean`  | optional  | 콘솔 계측을 활성화하거나 비활성화합니다.  |
 | `document`       | `boolean`  | optional  | 문서 로드 계측을 활성화하거나 비활성화합니다. |
-| `errors`         | `boolean`  | optional  | 오류 계측을 활성화하거나 비활성화합니다.                                                                  |
+| `errors`         | `boolean \| IMQAErrorInstrumentationConfig`  | optional  | 오류 계측을 활성화하거나 비활성화합니다.                                                                  |
 | `fetch`          | `boolean`  | optional  | Fetch API 계측을 활성화하거나 비활성화합니다.|
 | `interactions`   | `boolean \| IMQAUserInteractionInstrumentationConfig`  | optional  | 사용자 상호작용 계측을 활성화하거나 비활성화합니다. |
 | `longtask`       | `boolean`  | optional  | 장시간 작업 계측을 활성화하거나 비활성화합니다. |
